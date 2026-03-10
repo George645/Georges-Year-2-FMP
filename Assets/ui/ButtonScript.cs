@@ -10,7 +10,7 @@ public class ButtonScript : MonoBehaviour{
         Time.timeScale = 1;
         SceneManager.LoadScene("Main Menu");
         try {
-            Destroy(FindAnyObjectByType<Player>());
+            Destroy(FindAnyObjectByType<CameraScript>());
         }
         catch { }
     }

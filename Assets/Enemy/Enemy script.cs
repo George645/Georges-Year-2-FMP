@@ -16,7 +16,7 @@ public class EnemyScript : MonoBehaviour{
         do {
             transform.position = new Vector3(Random.value * 1000, 20f, Random.value * 1000);
             canExitLoop = true;
-            foreach (GameObject location in Player.startingPositions) {
+            foreach (GameObject location in CameraScript.startingPositions) {
                 canExitLoop = ((location.transform.position - transform.position).sqrMagnitude < 10000);
             }
         } while (canExitLoop);
@@ -32,7 +32,7 @@ public class EnemyScript : MonoBehaviour{
             do {
                 transform.position = new Vector3(Random.value * 1000, 20f, Random.value * 1000);
                 canExitLoop = true;
-                foreach (GameObject location in Player.startingPositions) {
+                foreach (GameObject location in CameraScript.startingPositions) {
                     canExitLoop = ((location.transform.position - transform.position).sqrMagnitude < 10000);
                 }
             } while (canExitLoop);

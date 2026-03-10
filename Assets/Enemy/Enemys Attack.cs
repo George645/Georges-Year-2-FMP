@@ -56,9 +56,6 @@ public class EnemysAttack : MonoBehaviour{
                 if (target.GetComponent<SoldierScript>() != null) {
                     target.GetComponent<SoldierScript>().TakeDamage(damage);
                 }
-                else if (target.GetComponent<Player>() != null) {
-                    target.GetComponent<Player>().TakeDamage(damage);
-                }
                 else if (target.GetComponent<SoldierSpawner>() != null) {
                     target.GetComponent<SoldierSpawner>().TakeDamage(damage);
                 }
