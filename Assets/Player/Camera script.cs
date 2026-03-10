@@ -78,6 +78,7 @@ public class CameraScript : MonoBehaviour {
         //Movement
         if (CheckMousePositionForMovement() || MovementKeysPressed()) Movement();
     }
+    
     #region rotation
     bool CheckMousePositionForRotation() {
         if (Input.mousePosition.x < Screen.width / distanceFromEdgeOfScreenDivider || Input.mousePosition.x > Screen.width - Screen.width / distanceFromEdgeOfScreenDivider) {
