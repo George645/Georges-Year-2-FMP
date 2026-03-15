@@ -16,7 +16,7 @@ public class ButtonScript : MonoBehaviour{
     }
     public void StartGame() {
         Time.timeScale = 1;
-        SceneManager.LoadScene("Hi");
+        SceneManager.LoadScene("Main scene");
     }
     public void QuitGame() {
         #if UNITY_EDITOR

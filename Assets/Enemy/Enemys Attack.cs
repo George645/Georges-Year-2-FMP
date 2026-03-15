@@ -52,7 +52,6 @@ public class EnemysAttack : MonoBehaviour{
     private void FixedUpdate() {
         if (target != null && (target.transform.position - transform.position).magnitude < attackRange.radius) {
             if (counter <= 0) {
-                Debug.Log("deal damage");
                 if (target.GetComponent<SoldierScript>() != null) {
                     target.GetComponent<SoldierScript>().TakeDamage(damage);
                 }

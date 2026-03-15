@@ -5,15 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CameraScript : MonoBehaviour {
-    double rotation;
-    double startZ = -10f;
-    double startX = 0f;
     int distanceFromEdgeOfScreenDivider = 50;
-    Vector3 startMousePosition;
-    LineScript ol;
-    LineRenderer lr;
-    Vector3 mousePosStart, mousePosEnd;
-    int unitWidth, mask, previousUnitWidth = 10;
+    Vector3 unitStartPosition, unitEndPosition;
+    Unit currentlySelected;
+    [SerializeField]
+    GameObject highlightedTargetPositionParent;
 
     public static CameraScript instance;
     public static List<GameObject> startingPositions;
@@ -26,8 +22,7 @@ public class CameraScript : MonoBehaviour {
 
     private void Awake() {
         if (startingPositions == null) {
-            startingPositions = new();
-            startingPositions.Add(transform.gameObject);
+            startingPositions = new() { transform.gameObject };
             foreach (LineRenderer line in FindObjectsByType<LineRenderer>(FindObjectsSortMode.None)) {
                 startingPositions.Add(line.gameObject);
             }
@@ -44,31 +39,21 @@ public class CameraScript : MonoBehaviour {
     }
     void Update() {
         if (Input.GetMouseButtonDown(0)) {
+            DisableLastSelection();
             CheckIfClickingOnUnit();
         }
-        if (ol != null) {
-            GetUnitWidth();
-            mask = LayerMask.GetMask("Default");
+        if (currentlySelected != null) {
             if (Input.GetMouseButtonDown(1)) {
-                RaycastHit hit;
-                Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000f, mask);
-                mousePosStart = hit.point;
-                ShowMarkers(true);
+                SetStartPosition();
             }
-            else if (Input.GetMouseButton(1)) {
-                RaycastHit hit;
-                Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000f, mask);
-                mousePosEnd = hit.point;
-                ol.unitWidth = unitWidth;
+            if (Input.GetMouseButton(1)) {
+                SetEndPosition();
             }
-            else if (Input.GetMouseButtonUp(1)) {
-                RaycastHit hit;
-                Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000f, mask);
-                ol.unitWidth = unitWidth;
-                mousePosEnd = hit.point;
-                previousUnitWidth = unitWidth;
-                ShowMarkers(false);
+            if (Input.GetMouseButtonUp(1)) {
+                SetEndPosition();
+                SendPositionalDataToUnit();
             }
+            SetMovementLine();
         }
     }
     void FixedUpdate() {
@@ -78,12 +63,103 @@ public class CameraScript : MonoBehaviour {
         //Movement
         if (CheckMousePositionForMovement() || MovementKeysPressed()) Movement();
     }
-    
+
+    #region moving units
+    List<GameObject> currentlyManipulatedTargetPositions = new();
+    void DisableLastSelection() {
+        if (currentlySelected != null) {
+            currentlySelected.selected = false;
+            currentlySelected = null;
+        }
+        currentlyManipulatedTargetPositions = new();
+    }
+    void CheckIfClickingOnUnit() {
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 100, out RaycastHit hitInfo, 100)) {
+            if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
+                currentlySelected = hitInfo.collider.transform.parent.GetComponent<Unit>();
+                currentlySelected.selected = true;
+                for (int i = 0; i < currentlySelected.NumberOfSoldiers; i++) {
+                    currentlyManipulatedTargetPositions.Add(highlightedTargetPositionParent.transform.GetChild(i).gameObject);
+                }
+            }
+        }
+    }
+
+    void SetStartPosition() {
+        unitStartPosition = ScreenPointToGroundPoint(Input.mousePosition);
+    }
+    void SetEndPosition() {
+        unitEndPosition = ScreenPointToGroundPoint(Input.mousePosition);
+    }
+    void SetMovementLine() {
+        if (Vector3.SqrMagnitude(unitStartPosition - unitEndPosition) < 4 /* 2 squared */) {
+            if (highlightedTargetPositionParent.transform.GetChild(0).GetComponent<MeshRenderer>().enabled) {
+                ToggleMeshRenderers(false);
+            }
+            Vector3 startingPosition = unitStartPosition - currentlySelected.offsetPerTroop * currentlySelected.CurrentWidth / 2;
+            int currentWidth = 0;
+            int currentRow = 0;
+            for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
+                currentlyManipulatedTargetPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.offsetPerRow;
+                currentWidth++;
+                if (currentWidth == currentlySelected.CurrentWidth) {
+                    currentRow++;
+                    currentWidth = 0;
+                }
+            }
+        }
+        else {
+            if (!highlightedTargetPositionParent.transform.GetChild(0).GetComponent<MeshRenderer>().enabled) {
+                ToggleMeshRenderers(true);
+            }
+            Vector3 startingPosition = unitStartPosition;
+            Vector3 soldierOffsetPerTroop = (unitEndPosition - unitStartPosition).normalized * currentlySelected.offsetPerTroop.magnitude;
+            Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
+            int currentWidth = 0;
+            int currentRow = 0;
+            for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
+                currentlyManipulatedTargetPositions[i].transform.position = startingPosition + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
+                currentWidth++;
+                if ((currentWidth * soldierOffsetPerTroop).sqrMagnitude > (startingPosition - unitEndPosition).sqrMagnitude) {
+                    currentRow++;
+                    currentWidth = 0;
+                }
+            }
+        }
+    }
+    void ToggleMeshRenderers(bool isEnabled) {
+        for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
+            highlightedTargetPositionParent.transform.GetChild(i).GetComponent<MeshRenderer>().enabled = isEnabled;
+        }
+    }
+    void SendPositionalDataToUnit() {
+        ToggleMeshRenderers(false);
+        List<Vector3> ListOfPositions = new();
+        foreach (GameObject thing in currentlyManipulatedTargetPositions) {
+            ListOfPositions.Add(thing.transform.position);
+        }
+        Debug.Log("positional data sent");
+        currentlySelected.NewPositions(ListOfPositions);
+    }
+    /// <summary>
+    /// returns zero if there is no collision with the floor
+    /// </summary>
+    /// <param name="screenPoint"> the point on the screen that you wish the ray to come from </param>
+    /// <returns></returns>
+    Vector3 ScreenPointToGroundPoint(Vector3 screenPoint) {
+        Ray raycast = Camera.main.ScreenPointToRay(screenPoint);
+        LayerMask groundMask = 1 << LayerMask.NameToLayer("Ground");
+        if (Physics.Raycast(raycast.origin, raycast.direction * 1000, out RaycastHit hitInfo, 1000, groundMask.value)) {
+            return hitInfo.point;
+        }
+        return Vector3.zero;
+    }
+    #endregion
+
     #region rotation
     bool CheckMousePositionForRotation() {
-        if (Input.mousePosition.x < Screen.width / distanceFromEdgeOfScreenDivider || Input.mousePosition.x > Screen.width - Screen.width / distanceFromEdgeOfScreenDivider) {
-            return true;
-        }
+        if (Input.mousePosition.x > Screen.width || Input.mousePosition.x < 0 || Input.mousePosition.y > Screen.height || Input.mousePosition.y < 0) return false;
+        if (Input.mousePosition.x < Screen.width / distanceFromEdgeOfScreenDivider || Input.mousePosition.x > Screen.width - Screen.width / distanceFromEdgeOfScreenDivider) return true;
         return false;
     }
     bool RotationKeysPressed() {
@@ -110,6 +186,7 @@ public class CameraScript : MonoBehaviour {
         return false;
     }
     bool CheckMousePositionForMovement() {
+        if (Input.mousePosition.x > Screen.width || Input.mousePosition.x < 0 || Input.mousePosition.y > Screen.height || Input.mousePosition.y < 0) return false;
         if (Input.mousePosition.y < Screen.height / distanceFromEdgeOfScreenDivider || Input.mousePosition.y > Screen.height - Screen.height / distanceFromEdgeOfScreenDivider) return true;
         return false;
     }
@@ -131,63 +208,4 @@ public class CameraScript : MonoBehaviour {
     }
     #endregion
 
-    #region moving units
-    private void CheckIfClickingOnUnit() {
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000, LayerMask.GetMask("SoldierLayer")) && hit.transform.name.Contains("Soldier")) {
-            if (ol != null) {
-                ol.selected = false;
-            }
-            ol = hit.transform.parent.parent.GetChild(0).GetComponent<LineScript>();
-            ol.selected = true;
-            previousUnitWidth = ol.unitWidth;
-            lr = hit.transform.parent.parent.GetChild(0).GetComponent<LineRenderer>();
-        }
-        else {
-            if (ol != null) {
-                SetMarkingFalse();
-                ol.selected = false;
-                ol = null;
-                lr = null;
-            }
-        }
-    }
-    void SetMarkingFalse() {
-
-        foreach (SoldierMarker sm in ol.soldierMarkerList) {
-            if (sm == null) {
-                ol.soldierMarkerList.Remove(sm);
-                SetMarkingFalse();
-                break;
-            }
-            sm.marking = false;
-            sm.transform.position = new Vector3(sm.stm.endPosition.x, 19, sm.stm.endPosition.z);
-        }
-    }
-    private void GetUnitWidth() {
-        unitWidth = (int)Math.Round(Vector3.Distance(mousePosStart, mousePosEnd), 1);
-        if (unitWidth < 3) {
-            unitWidth = previousUnitWidth;
-        }
-        else {
-            try {
-                unitWidth = Math.Clamp(unitWidth, 3, ol.soldierMarkerList.Count / 3);
-            }
-            catch {
-                unitWidth = 1;
-            }
-        }
-    }
-    private void ShowMarkers(bool setTo) {
-        foreach (SoldierMarker soldierMarker in ol.soldierMarkerList) {
-            if (soldierMarker == null) {
-                ol.soldierMarkerList.Remove(soldierMarker);
-                ShowMarkers(setTo);
-                break;
-            }
-            soldierMarker.GetComponent<MeshRenderer>().enabled = setTo;
-            soldierMarker.marking = setTo;
-        }
-    }
-    #endregion
 }
