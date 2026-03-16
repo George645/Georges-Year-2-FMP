@@ -31,9 +31,8 @@ public class Soldier : MonoBehaviour {
 
         if (Vector3.SqrMagnitude(transform.position - targetPosition) < .01f) {
             transform.position = targetPosition;
-            if (transform.forward != -unit.offsetPerRow.normalized) {
-                Debug.Log("a");
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, -unit.offsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+            if (transform.forward != -unit.OffsetPerRow.normalized) {
+                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
             }
             else moving = false;
         }

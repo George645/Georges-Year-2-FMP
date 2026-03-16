@@ -78,8 +78,11 @@ public class Unit : MonoBehaviour {
     int startingSoldierTotal;
     [SerializeField]
     public Vector3 offsetPerTroop; // Make a thing in the unit editor like with starting soldier total
+    public Vector3 OffsetPerRow {
+        get { return offsetPerRow; }
+    }// Make a thing in the unit editor like with starting soldier total
     [SerializeField]
-    public Vector3 offsetPerRow; // Make a thing in the unit editor like with starting soldier total
+    Vector3 offsetPerRow;
 
     public void InstantArrangeByWidth(int widthCount) {
         currentWidth = widthCount;

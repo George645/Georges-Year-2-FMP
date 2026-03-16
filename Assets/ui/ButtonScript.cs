@@ -14,7 +14,7 @@ public class ButtonScript : MonoBehaviour{
         }
         catch { }
     }
-    public void StartGame() {
+    public void StartBattleSceneGame() {
         Time.timeScale = 1;
         SceneManager.LoadScene("Main scene");
     }

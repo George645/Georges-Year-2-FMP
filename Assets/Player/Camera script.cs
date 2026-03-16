@@ -100,7 +100,7 @@ public class CameraScript : MonoBehaviour {
             int currentWidth = 0;
             int currentRow = 0;
             for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
-                currentlyManipulatedTargetPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.offsetPerRow;
+                currentlyManipulatedTargetPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.OffsetPerRow;
                 currentWidth++;
                 if (currentWidth == currentlySelected.CurrentWidth) {
                     currentRow++;
