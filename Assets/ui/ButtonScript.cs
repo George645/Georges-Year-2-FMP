@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class ButtonScript : MonoBehaviour{
     public void ResumeGame() {
@@ -14,9 +15,9 @@ public class ButtonScript : MonoBehaviour{
         }
         catch { }
     }
-    public void StartBattleSceneGame() {
+    public void ChangeScene(string sceneName) {
         Time.timeScale = 1;
-        SceneManager.LoadScene("Main scene");
+        SceneManager.LoadScene(sceneName);
     }
     public void QuitGame() {
         #if UNITY_EDITOR
