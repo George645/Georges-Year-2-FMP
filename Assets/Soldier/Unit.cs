@@ -139,46 +139,31 @@ public class Unit : MonoBehaviour {
 
         InstantArrangeByWidth(quantity / 5);
     }
-    Mesh StoredMesh {
+    GameObject StoredItem {
         get {
-            if (staticMesh == null) {
-                staticMesh = serializedMesh;
+            if (staticItem == null) {
+                staticItem = serializedItem;
             }
-            return staticMesh;
+            return staticItem;
         }
     }
     [SerializeField]
-    Mesh serializedMesh;
-    public static Mesh staticMesh;
-    Material StoredMaterial {
-        get {
-            if (staticMaterial == null) {
-                staticMaterial = serializedMaterial;
-            }
-            return staticMaterial;
-        }
-    }
-    [SerializeField]
-    Material serializedMaterial;
-    public static Material staticMaterial;
+    GameObject serializedItem;
+    public static GameObject staticItem;
 
     void AddSoldierAndTargetPosition() {
-        GameObject addedSoldier = new();
+        GameObject addedSoldier = Instantiate(serializedItem);
         addedSoldier.transform.parent = transform;
         addedSoldier.transform.name = "Soldier " + childSoldiers.Count;
-        addedSoldier.AddComponent<MeshFilter>().mesh = StoredMesh;
-        addedSoldier.AddComponent<MeshRenderer>().material = StoredMaterial;
         addedSoldier.AddComponent<CapsuleCollider>();
         addedSoldier.gameObject.layer = LayerMask.NameToLayer("soldierDetection");
 
         childSoldiers.Add(addedSoldier.AddComponent<Soldier>());
         childSoldiers[^1].unit = this;
 
-        GameObject addedTargetPosition = new GameObject();
+        GameObject addedTargetPosition = Instantiate(serializedItem);
         addedTargetPosition.transform.parent = transform;
         addedTargetPosition.transform.name = "Target position for soldier " + targetPositions.Count;
-        addedTargetPosition.AddComponent<MeshFilter>().mesh = StoredMesh;
-        addedTargetPosition.AddComponent<MeshRenderer>().material = StoredMaterial;
 
         targetPositions.Add(addedTargetPosition.AddComponent<TargetPosition>());
         targetPositions[^1].thisSoldier = childSoldiers[^1];
