@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Collections;
-using Unity.VisualScripting;
+using UnityEngine.PlayerLoop;
 
 public class Unit : MonoBehaviour {
     List<Soldier> childSoldiers = new();
@@ -14,7 +14,6 @@ public class Unit : MonoBehaviour {
     }
     [SerializeField, HideInInspector]
     int currentWidth;
-
     public int NumberOfSoldiers {
         get {
             if (childSoldiers.Count == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
@@ -24,6 +23,62 @@ public class Unit : MonoBehaviour {
             return childSoldiers.Count;
         }
     }
+    private void Start() {
+        InitializePositions();
+    }
+
+
+
+    #region General unit questions
+    void InitializePositions() {
+        Debug.Log(NumberOfSoldiers);
+        unitPositions = new Vector3[childSoldiers.Count()];
+        for (int i = 0; i < childSoldiers.Count(); i++) {
+            unitPositions[i] = childSoldiers[i].transform.position;
+            Debug.Log(unitPositions[i]);
+        }
+    }
+    Vector3[] unitPositions = { };
+    /// <summary>
+    /// Checks if there is a soldier from this unit in a given position
+    /// </summary>
+    /// <param name="position"> the position that is being checked </param>
+    /// <returns> returns true if there is a soldier in the given position </returns>
+    public bool SoldierInPosition(Vector3 position) {
+        foreach (Soldier child in childSoldiers) {
+            if (Vector3.SqrMagnitude(child.transform.position - position) < 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /// <summary>
+    /// Sets the position so the unit knows where all of the soldiers in a unit are
+    /// </summary>
+    /// <param name="unitIndexInChildren"> Use transform.getindex for this </param>
+    /// <param name="newPosition"> This is the position that the unit is attempting to get to </param>
+    /// <returns> this returns whether or not you can set the position to that position based off of the other soldiers in the area </returns>
+    public bool SetNewPositionOfSoldier(int unitIndexInChildren, Vector3 newPosition) {
+        int listIndex = ChildIndexToListIndex(unitIndexInChildren);
+        for (int i = 0; i < childSoldiers.Count; i++) {
+            if (i == listIndex) continue;
+            Soldier current = childSoldiers[i];
+            if (Vector3.Magnitude(current.transform.position - childSoldiers[listIndex].transform.position) < 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void Push(int siblingIndex, Vector3 direction) {
+        throw new NotImplementedException();
+    }
+
+    int ChildIndexToListIndex(int siblingIndex) {
+        return siblingIndex / 2;
+
+    }
+    #endregion
 
     #region Move unit
     internal void NewPositions(List<Vector3> listOfPositions) {

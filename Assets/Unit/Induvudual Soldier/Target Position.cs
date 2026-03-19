@@ -4,7 +4,7 @@ public class TargetPosition : MonoBehaviour {
     public Soldier thisSoldier;
 
 
-    #region setPosition
+    #region Set position
     public void NewPosition(Vector3 position) {
         transform.position = new Vector3(transform.parent.InverseTransformPoint(position).x, transform.parent.TransformPoint(Vector3.zero).y, transform.parent.InverseTransformPoint(position).z); //for some reason, we are having to clamp the y component of this.
         thisSoldier.SetTarget(new Vector3(position.x, transform.position.y, position.z) + Vector3.up);
@@ -19,6 +19,7 @@ public class TargetPosition : MonoBehaviour {
         transform.localPosition = position;
         thisSoldier.transform.position = transform.position + Vector3.up;
         thisSoldier.targetPosition = transform.position + Vector3.up;
+        transform.parent.GetComponent<Unit>().SetNewPositionOfSoldier(transform.GetSiblingIndex(), transform.position + Vector3.up);
     }
     #endregion
 }

@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Soldier : MonoBehaviour {
@@ -12,11 +11,27 @@ public class Soldier : MonoBehaviour {
     int speed = 10;
     [SerializeField]
     int speedOfRotation = 3;
+    int siblingIndex = -1;
+    int SiblingIndex {
+        get {
+            if (siblingIndex != -1) {
+                return siblingIndex;
+            }
+            else {
+                siblingIndex = transform.GetSiblingIndex();
+                return siblingIndex;
+            }
+        }
+    }
     public void SetTarget(Vector3 targetPosition) {
         this.targetPosition = targetPosition;
         moving = true;
     }
     private void FixedUpdate() {
+        Movement();
+    }
+    bool canMove;
+    void Movement() {
         if (!moving) return;
         if (targetPosition != transform.position) {
             directionOfMovement = (targetPosition - transform.position).normalized;
@@ -25,7 +40,19 @@ public class Soldier : MonoBehaviour {
                 transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 return;
             }
-
+            if (!unit.SetNewPositionOfSoldier(SiblingIndex, transform.position + directionOfMovement / 100 * speed)) {
+                if (unit.SetNewPositionOfSoldier(SiblingIndex, directionOfMovement + transform.right / 200 * speed)) {
+                    directionOfMovement += transform.right / 2;
+                }
+                else if (unit.SetNewPositionOfSoldier(SiblingIndex, directionOfMovement - transform.right / 200 * speed)) {
+                    directionOfMovement -= transform.right / 2;
+                }
+                else {
+                    unit.Push(SiblingIndex, directionOfMovement);
+                    directionOfMovement = Vector3.zero;
+                }
+            }
+            directionOfMovement.Normalize();
             transform.position += directionOfMovement / 100 * speed;
         }
 
