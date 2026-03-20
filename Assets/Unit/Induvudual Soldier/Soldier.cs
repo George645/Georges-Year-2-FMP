@@ -28,44 +28,67 @@ public class Soldier : MonoBehaviour {
         moving = true;
     }
     private void FixedUpdate() {
-        Movement();
+        Movement(targetPosition, false);
+    }
+    public void Pushed(Vector3 inDirection) {
+        Movement(transform.position + inDirection, true);
     }
     bool canMove;
-    void Movement() {
+    void Movement(Vector3 targetPos, bool ignoreRotation) {
         if (!moving) return;
-        if (targetPosition != transform.position) {
-            directionOfMovement = (targetPosition - transform.position).normalized;
+        if (targetPos != transform.position) {
+            directionOfMovement = (targetPos - transform.position).normalized;
 
-            if (transform.forward != directionOfMovement) {
+            if (!ignoreRotation && !RotateTowards(directionOfMovement)) {
                 transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 return;
             }
-            if (!unit.SetNewPositionOfSoldier(SiblingIndex, transform.position + directionOfMovement / 100 * speed)) {
-                if (unit.SetNewPositionOfSoldier(SiblingIndex, directionOfMovement + transform.right / 200 * speed)) {
-                    directionOfMovement += transform.right / 2;
+            if (unit.SoldierInPosition(transform.position + directionOfMovement / 1000 * speed, SiblingIndex)) {
+                if (!unit.SoldierInPosition(transform.position + (directionOfMovement + transform.right).normalized / 200 * speed, SiblingIndex)) {
+                    directionOfMovement += transform.right;
+                    directionOfMovement.Normalize();
                 }
-                else if (unit.SetNewPositionOfSoldier(SiblingIndex, directionOfMovement - transform.right / 200 * speed)) {
-                    directionOfMovement -= transform.right / 2;
+                else if (!unit.SoldierInPosition(transform.position + (directionOfMovement - transform.right).normalized / 200 * speed, SiblingIndex)) {
+                    directionOfMovement -= transform.right;
+                    directionOfMovement.Normalize();
                 }
                 else {
-                    unit.Push(SiblingIndex, directionOfMovement);
+                    //unit.Push(SiblingIndex, transform.position + directionOfMovement);
+                    //directionOfMovement += transform.right * (2*Mathf.RoundToInt(Random.Range(0, 1) - 1));
                     directionOfMovement = Vector3.zero;
                 }
             }
-            directionOfMovement.Normalize();
-            transform.position += directionOfMovement / 100 * speed;
-        }
-
-        if (Vector3.SqrMagnitude(transform.position - targetPosition) < .01f) {
-            transform.position = targetPosition;
-            if (transform.forward != -unit.OffsetPerRow.normalized) {
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+            else {
+                Debug.Log("hi");
             }
-            else moving = false;
+            transform.position += directionOfMovement / 200 * speed;
         }
 
-
+        if (Vector3.SqrMagnitude(transform.position - targetPos) < .01f) {
+            transform.position = targetPos;
+            if (!ignoreRotation && !RotateTowards(-unit.OffsetPerRow.normalized)) {
+                return;
+            }
+            else {
+                if (transform.position != targetPosition) {
+                    Movement(targetPosition, false);
+                }
+                moving = false;
+            }
+        }
         if (directionOfMovement.y != 0) Debug.LogWarning("movement direction y should be 0");
+    }
+    /// <summary>
+    /// turns towards a direction
+    /// </summary>
+    /// <param name="direction">The direction to end facing</param>
+    /// <returns>Whether or not the soldier is facing the direction</returns>
+    bool RotateTowards(Vector3 direction) {
+        transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+        if (transform.forward == direction) {
+            return true;
+        }
+        return false;
     }
     #endregion
 }

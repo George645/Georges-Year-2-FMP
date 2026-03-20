@@ -17,6 +17,7 @@ public class Unit : MonoBehaviour {
     public int NumberOfSoldiers {
         get {
             if (childSoldiers.Count == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
+                Debug.Log(transform.GetComponentsInChildren<Soldier>().ToList().Count());
                 childSoldiers = transform.GetComponentsInChildren<Soldier>().ToList();
                 targetPositions = transform.GetComponentsInChildren<TargetPosition>().ToList();
             }
@@ -27,18 +28,17 @@ public class Unit : MonoBehaviour {
         InitializePositions();
     }
 
-
+    int offsetDistance = 4;
 
     #region General unit questions
     void InitializePositions() {
-        Debug.Log(NumberOfSoldiers);
-        unitPositions = new Vector3[childSoldiers.Count()];
+        Debug.Log(NumberOfSoldiers); // <- required for the game to work
+        unitPositions = new();
         for (int i = 0; i < childSoldiers.Count(); i++) {
-            unitPositions[i] = childSoldiers[i].transform.position;
-            Debug.Log(unitPositions[i]);
+            unitPositions.Add(childSoldiers[i].transform.position);
         }
     }
-    Vector3[] unitPositions = { };
+    List<Vector3> unitPositions;
     /// <summary>
     /// Checks if there is a soldier from this unit in a given position
     /// </summary>
@@ -46,11 +46,35 @@ public class Unit : MonoBehaviour {
     /// <returns> returns true if there is a soldier in the given position </returns>
     public bool SoldierInPosition(Vector3 position) {
         foreach (Soldier child in childSoldiers) {
-            if (Vector3.SqrMagnitude(child.transform.position - position) < 1) {
+            if (Vector3.SqrMagnitude(child.transform.position - position) < offsetDistance) {
                 return false;
             }
         }
         return true;
+    }
+    public bool SoldierInPosition(Vector3 position, int excludedIndex) {
+        foreach (Soldier child in childSoldiers) {
+            if (child == childSoldiers[ChildIndexToListIndex(excludedIndex)]) {
+                continue;
+            }
+            if (Vector3.SqrMagnitude(child.transform.position - position) < offsetDistance) {
+                return false;
+            }
+        }
+        return true;
+    }
+    List<Soldier> GetSoldiersInPosition(Vector3 position, int excludeIndex) {
+        List<Soldier> returningList = new();
+        foreach (Soldier child in childSoldiers) {
+            if (child == childSoldiers[excludeIndex]) {
+                continue;
+            }
+            Vector3 offset = child.transform.position - position;
+            if (Vector3.SqrMagnitude(offset) < offsetDistance) {
+                returningList.Add(child);
+            }
+        }
+        return returningList;
     }
     /// <summary>
     /// Sets the position so the unit knows where all of the soldiers in a unit are
@@ -63,20 +87,21 @@ public class Unit : MonoBehaviour {
         for (int i = 0; i < childSoldiers.Count; i++) {
             if (i == listIndex) continue;
             Soldier current = childSoldiers[i];
-            if (Vector3.Magnitude(current.transform.position - childSoldiers[listIndex].transform.position) < 1) {
+            if (Vector3.Magnitude(current.transform.position - childSoldiers[listIndex].transform.position) < offsetDistance) {
                 return false;
             }
         }
         return true;
     }
 
-    public void Push(int siblingIndex, Vector3 direction) {
-        throw new NotImplementedException();
+    public void Push(int siblingIndex, Vector3 position) {
+        foreach (Soldier inTheWay in GetSoldiersInPosition(position, ChildIndexToListIndex(siblingIndex))) {
+            inTheWay.Pushed(2 * inTheWay.transform.position - position);
+        }
     }
 
     int ChildIndexToListIndex(int siblingIndex) {
         return siblingIndex / 2;
-
     }
     #endregion
 
