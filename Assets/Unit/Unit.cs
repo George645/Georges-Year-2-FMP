@@ -53,6 +53,7 @@ public class Unit : MonoBehaviour {
         return true;
     }
     public bool SoldierInPosition(Vector3 position, int excludedIndex) {
+        Debug.DrawRay(position, Vector3.up, Color.red, 1);
         foreach (Soldier child in childSoldiers) {
             if (child == childSoldiers[ChildIndexToListIndex(excludedIndex)]) {
                 continue;
@@ -61,6 +62,31 @@ public class Unit : MonoBehaviour {
                 return false;
             }
         }
+        return true;
+    }
+    public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection, Vector3 headingDirection) {
+        Debug.DrawRay(position, Vector3.up, Color.red, 1);
+        foreach (Soldier child in childSoldiers) {
+            if (child == childSoldiers[ChildIndexToListIndex(excludedIndex)]) {
+                continue;
+            }
+            Vector3 directionAndDistanceBetweenSoldiers = child.transform.position - position;
+            float magnitude = Vector3.SqrMagnitude(directionAndDistanceBetweenSoldiers);
+            if (Vector3.SqrMagnitude(directionAndDistanceBetweenSoldiers) < offsetDistance) {
+                Debug.DrawLine(child.transform.position, position, Color.red, 1);
+                Vector3 headingDirectionRight = new Vector3(headingDirection.z, headingDirection.y, -headingDirection.x);
+                Debug.Log(Vector3.Dot(headingDirectionRight, directionAndDistanceBetweenSoldiers));
+                //if (Vector3.Dot(headingDirectionRight, directionAndDistanceBetweenSoldiers) < 0) {
+                //    child.Pushed(-headingDirectionRight);
+                //}
+                //else {
+                //    child.Pushed(headingDirectionRight);
+                //}
+                soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
+                return false;
+            }
+        }
+        soldierRelativeDirection = Vector3.zero;
         return true;
     }
     List<Soldier> GetSoldiersInPosition(Vector3 position, int excludeIndex) {

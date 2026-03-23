@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Soldier : MonoBehaviour {
@@ -31,7 +32,19 @@ public class Soldier : MonoBehaviour {
         Movement(targetPosition, false);
     }
     public void Pushed(Vector3 inDirection) {
-        Movement(transform.position + inDirection, true);
+        transform.position += inDirection / 25 * speed;
+        if (moving == false) {
+            moving = true;
+        }
+        else {
+            moving = false;
+            StartCoroutine(nameof(MoveAfterDelay));
+        }
+        //moving = true;
+    }
+    IEnumerator MoveAfterDelay() {
+        yield return new WaitForSeconds(0.1f);
+        moving = true;
     }
     bool canMove;
     void Movement(Vector3 targetPos, bool ignoreRotation) {
@@ -43,25 +56,25 @@ public class Soldier : MonoBehaviour {
                 transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 return;
             }
-            if (unit.SoldierInPosition(transform.position + directionOfMovement / 1000 * speed, SiblingIndex)) {
-                if (!unit.SoldierInPosition(transform.position + (directionOfMovement + transform.right).normalized / 200 * speed, SiblingIndex)) {
-                    directionOfMovement += transform.right;
-                    directionOfMovement.Normalize();
-                }
-                else if (!unit.SoldierInPosition(transform.position + (directionOfMovement - transform.right).normalized / 200 * speed, SiblingIndex)) {
-                    directionOfMovement -= transform.right;
-                    directionOfMovement.Normalize();
-                }
-                else {
-                    //unit.Push(SiblingIndex, transform.position + directionOfMovement);
-                    //directionOfMovement += transform.right * (2*Mathf.RoundToInt(Random.Range(0, 1) - 1));
-                    directionOfMovement = Vector3.zero;
-                }
-            }
-            else {
-                Debug.Log("hi");
-            }
-            transform.position += directionOfMovement / 200 * speed;
+            //if (!(Vector3.SqrMagnitude(transform.position - targetPos) < 10)) {
+            //    if (!unit.SoldierInPosition(transform.position + directionOfMovement / 100 * speed, SiblingIndex, out Vector3 soldierInPosition, directionOfMovement)) {
+            //        if (Vector3.Dot(transform.right, soldierInPosition) < 0) {
+            //            directionOfMovement = transform.right;
+            //        }
+            //        else if (Vector3.Dot(transform.right, soldierInPosition) > 0) {
+            //            directionOfMovement = -transform.right;
+            //        }
+            //        else {
+            //            //unit.Push(SiblingIndex, transform.position + directionOfMovement);
+            //            //directionOfMovement += transform.right * (2*Mathf.RoundToInt(Random.Range(0, 1) - 1));
+            //            directionOfMovement = Vector3.zero;
+            //        }
+            //    }
+            //}
+            //else {
+            //    Debug.Log("hi");
+            //}
+            transform.position += directionOfMovement / 100 * speed;
         }
 
         if (Vector3.SqrMagnitude(transform.position - targetPos) < .01f) {
