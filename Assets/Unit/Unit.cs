@@ -75,7 +75,6 @@ public class Unit : MonoBehaviour {
             if (Vector3.SqrMagnitude(directionAndDistanceBetweenSoldiers) < offsetDistance) {
                 Debug.DrawLine(child.transform.position, position, Color.red, 1);
                 Vector3 headingDirectionRight = new Vector3(headingDirection.z, headingDirection.y, -headingDirection.x);
-                Debug.Log(Vector3.Dot(headingDirectionRight, directionAndDistanceBetweenSoldiers));
                 //if (Vector3.Dot(headingDirectionRight, directionAndDistanceBetweenSoldiers) < 0) {
                 //    child.Pushed(-headingDirectionRight);
                 //}
@@ -245,33 +244,26 @@ public class Unit : MonoBehaviour {
 
         InstantArrangeByWidth(quantity / 5);
     }
-    GameObject StoredItem {
-        get {
-            if (staticItem == null) {
-                staticItem = serializedItem;
-            }
-            return staticItem;
-        }
-    }
+
     [SerializeField]
     GameObject serializedItem;
+    [SerializeField]
+    GameObject serializedItem2;
     public static GameObject staticItem;
 
     void AddSoldierAndTargetPosition() {
         GameObject addedSoldier = Instantiate(serializedItem);
         addedSoldier.transform.parent = transform;
         addedSoldier.transform.name = "Soldier " + childSoldiers.Count;
-        addedSoldier.AddComponent<CapsuleCollider>();
-        addedSoldier.gameObject.layer = LayerMask.NameToLayer("soldierDetection");
+        childSoldiers.Add(addedSoldier.GetComponent<Soldier>());
 
-        childSoldiers.Add(addedSoldier.AddComponent<Soldier>());
         childSoldiers[^1].unit = this;
 
-        GameObject addedTargetPosition = Instantiate(serializedItem);
+        GameObject addedTargetPosition = Instantiate(serializedItem2);
         addedTargetPosition.transform.parent = transform;
         addedTargetPosition.transform.name = "Target position for soldier " + targetPositions.Count;
+        targetPositions.Add(addedTargetPosition.GetComponent<TargetPosition>());
 
-        targetPositions.Add(addedTargetPosition.AddComponent<TargetPosition>());
         targetPositions[^1].thisSoldier = childSoldiers[^1];
     }
     #endregion
