@@ -64,23 +64,15 @@ public class Unit : MonoBehaviour {
         }
         return true;
     }
-    public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection, Vector3 headingDirection) {
-        Debug.DrawRay(position, Vector3.up, Color.red, 1);
+    public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection) {
+        Soldier excludedChild = childSoldiers[ChildIndexToListIndex(excludedIndex)];
         foreach (Soldier child in childSoldiers) {
-            if (child == childSoldiers[ChildIndexToListIndex(excludedIndex)]) {
+            if (child == excludedChild) {
                 continue;
             }
             Vector3 directionAndDistanceBetweenSoldiers = child.transform.position - position;
-            float magnitude = Vector3.SqrMagnitude(directionAndDistanceBetweenSoldiers);
-            if (Vector3.SqrMagnitude(directionAndDistanceBetweenSoldiers) < offsetDistance) {
-                Debug.DrawLine(child.transform.position, position, Color.red, 1);
-                Vector3 headingDirectionRight = new Vector3(headingDirection.z, headingDirection.y, -headingDirection.x);
-                //if (Vector3.Dot(headingDirectionRight, directionAndDistanceBetweenSoldiers) < 0) {
-                //    child.Pushed(-headingDirectionRight);
-                //}
-                //else {
-                //    child.Pushed(headingDirectionRight);
-                //}
+            float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
+            if (magnitude < offsetDistance) {
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
             }

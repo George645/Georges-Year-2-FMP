@@ -11,8 +11,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main scene.unity
     guid: e577b3a214daa3942a714fb562b4f475
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Death.unity
     guid: 35425ab9d7c0e964c93a284d0dde2ade
+  - enabled: 0
+    path: Assets/Scenes/Set up battle.unity
+    guid: a4511b7279e6acd4cb9fd8a1990e4c92
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

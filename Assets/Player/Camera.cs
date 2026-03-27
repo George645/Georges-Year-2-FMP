@@ -1,13 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CameraScript : MonoBehaviour {
-    int distanceFromEdgeOfScreenDivider = 50;
+    int distanceFromEdgeOfScreenDivider = 20;
     Vector3 unitStartPosition, unitEndPosition;
     Unit currentlySelected;
     [SerializeField]
@@ -16,10 +13,13 @@ public class CameraScript : MonoBehaviour {
     public static CameraScript instance;
     public static List<GameObject> startingPositions;
 
-    int sensitivity {
+    [SerializeField, Range(0, 200)]
+    int backupSensitivity;
+    int Sensitivity {
         get {
-            return PlayerPrefs.GetInt("Sensitivity", 50); //make a sensitivity slider in the pause menu to handle this: make it a 0-100 slider
+            return PlayerPrefs.GetInt("Sensitivity", backupSensitivity); //make a Sensitivity slider in the pause menu to handle this: make it a 0-100 slider
         }
+        set { }
     }
 
     private void Awake() {
@@ -79,12 +79,11 @@ public class CameraScript : MonoBehaviour {
         currentlyManipulatedTargetPositions = new();
     }
     void CheckIfClickingOnUnit() {
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 100, out RaycastHit hitInfo, 100)) {
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
             if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
                 currentlySelected = hitInfo.collider.transform.parent.GetComponent<Unit>();
                 currentlySelected.selected = true;
                 for (int i = 0; i < currentlySelected.NumberOfSoldiers; i++) {
-                    Debug.Log(currentlySelected.NumberOfSoldiers);
                     currentlyManipulatedTargetPositions.Add(highlightedTargetPositionParent.transform.GetChild(i).gameObject);
                 }
             }
@@ -174,13 +173,13 @@ public class CameraScript : MonoBehaviour {
     void Rotate() {
         float rotationAmount = 0;
         if (Input.mousePosition.x > 0 && Input.mousePosition.x < Screen.width / distanceFromEdgeOfScreenDivider)
-            rotationAmount -= 1 * sensitivity;
+            rotationAmount -= 1 * Sensitivity;
         if (Input.GetKey(KeyCode.Q))
-            rotationAmount -= 1 * sensitivity;
+            rotationAmount -= 1 * Sensitivity;
         if (Input.mousePosition.x < Screen.width && Input.mousePosition.x > Screen.width - Screen.width / distanceFromEdgeOfScreenDivider)
-            rotationAmount += 1 * sensitivity;
+            rotationAmount += 1 * Sensitivity;
         if (Input.GetKey(KeyCode.E))
-            rotationAmount += 1 * sensitivity;
+            rotationAmount += 1 * Sensitivity;
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + rotationAmount / 100, transform.eulerAngles.z);
     }
@@ -202,14 +201,14 @@ public class CameraScript : MonoBehaviour {
         Vector3 right = new Vector3(transform.right.x, 0, transform.right.z).normalized;
 
         //vertical movement
-        if (Input.mousePosition.y > 0 && Input.mousePosition.y < Screen.height / distanceFromEdgeOfScreenDivider) movement -= forwards * sensitivity;
-        if (Input.GetKey(KeyCode.S)) movement -= forwards * sensitivity;
-        if (Input.mousePosition.y < Screen.height && Input.mousePosition.y > Screen.height - Screen.height / distanceFromEdgeOfScreenDivider) movement += forwards * sensitivity;
-        if (Input.GetKey(KeyCode.W)) movement += forwards * sensitivity;
+        if (Input.mousePosition.y > 0 && Input.mousePosition.y < Screen.height / distanceFromEdgeOfScreenDivider) movement -= forwards * Sensitivity;
+        if (Input.GetKey(KeyCode.S)) movement -= forwards * Sensitivity;
+        if (Input.mousePosition.y < Screen.height && Input.mousePosition.y > Screen.height - Screen.height / distanceFromEdgeOfScreenDivider) movement += forwards * Sensitivity;
+        if (Input.GetKey(KeyCode.W)) movement += forwards * Sensitivity;
 
         //horizontal movement
-        if (Input.GetKey(KeyCode.A)) movement -= right * sensitivity;
-        if (Input.GetKey(KeyCode.D)) movement += right * sensitivity;
+        if (Input.GetKey(KeyCode.A)) movement -= right * Sensitivity;
+        if (Input.GetKey(KeyCode.D)) movement += right * Sensitivity;
         transform.parent.position += movement / 100;
     }
     #endregion
@@ -259,5 +258,4 @@ public class CameraScript : MonoBehaviour {
         positions[index] = new PositionAndRotation(transform.localPosition, transform.localRotation);
     }
 #endif
-
 }

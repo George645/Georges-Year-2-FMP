@@ -49,46 +49,49 @@ public class Soldier : MonoBehaviour {
     bool rightStuck = false;
     bool leftStuck = false;
     void Movement(Vector3 targetPos) {
+        Vector3 currentPosition = transform.position;
+        Vector3 rightDirection = transform.right;
+        Vector3 facingDirection = transform.forward;
+
         if (!moving) return;
         
         //sets the position to the destination if close enough
-        if (Vector3.SqrMagnitude(transform.position - targetPos) < .01f) {
+        if (Vector3.SqrMagnitude(currentPosition - targetPos) < .01f) {
             transform.position = targetPos;
             if (!RotateTowards(-unit.OffsetPerRow.normalized)) {
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 return;
             }
             else {
-                if (transform.position != targetPosition) {
-                    Movement(targetPosition);
-                }
                 moving = false;
             }
         }
 
         //moves towards the destination if possible, if not, tries to move around the unit in front
-        if (targetPos != transform.position) {
-            directionOfMovement = (targetPos - transform.position).normalized;
+        if (targetPos != currentPosition) {
+            directionOfMovement = (targetPos - currentPosition).normalized;
 
             if (!RotateTowards(directionOfMovement)) {
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 return;
             }
-            if (!unit.SoldierInPosition(transform.position + directionOfMovement / 100 * speed, SiblingIndex, out Vector3 soldierInPosition, directionOfMovement) && !ignoreColliders) {
-                if (Vector3.Dot(transform.right, soldierInPosition) < 0) {
+            if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, SiblingIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
+                float dotProduct = Vector3.Dot(rightDirection, soldierInPosition);
+                if (dotProduct < 0) {
                     if (rightStuck) {
                         StartCoroutine(nameof(TemporarilyIgnoreColliders));
                     }
                     leftStuck = true;
-                    directionOfMovement = transform.right;
+                    directionOfMovement = rightDirection;
                 }
-                else if (Vector3.Dot(transform.right, soldierInPosition) > 0) {
+                else if (dotProduct > 0) {
+                    if (leftStuck) {
+                        StartCoroutine(nameof(TemporarilyIgnoreColliders));
+                    }
                     rightStuck = true;
-                    directionOfMovement = -transform.right;
+                    directionOfMovement = -rightDirection;
                 }
                 else {
-                    //unit.Push(SiblingIndex, transform.position + directionOfMovement);
-                    //directionOfMovement += transform.right * (2*Mathf.RoundToInt(Random.Range(0, 1) - 1));
                     directionOfMovement = Vector3.zero;
                 }
             }
