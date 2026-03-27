@@ -24,9 +24,17 @@ public class Soldier : MonoBehaviour {
             }
         }
     }
+    Vector3 rightDirection;
+    Vector3 currentPosition;
+    Vector3 facingDirection;
     public void SetTarget(Vector3 targetPosition) {
         this.targetPosition = targetPosition;
         moving = true;
+    }
+    private void Start() {
+        rightDirection = transform.right;
+        currentPosition = transform.position;
+        facingDirection = transform.forward;
     }
     private void FixedUpdate() {
         Movement(targetPosition);
@@ -49,17 +57,16 @@ public class Soldier : MonoBehaviour {
     bool rightStuck = false;
     bool leftStuck = false;
     void Movement(Vector3 targetPos) {
-        Vector3 currentPosition = transform.position;
-        Vector3 rightDirection = transform.right;
-        Vector3 facingDirection = transform.forward;
 
         if (!moving) return;
-        
+
         //sets the position to the destination if close enough
         if (Vector3.SqrMagnitude(currentPosition - targetPos) < .01f) {
             transform.position = targetPos;
             if (!RotateTowards(-unit.OffsetPerRow.normalized)) {
                 transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+                rightDirection = transform.right;
+                facingDirection = transform.forward;
                 return;
             }
             else {
@@ -73,6 +80,8 @@ public class Soldier : MonoBehaviour {
 
             if (!RotateTowards(directionOfMovement)) {
                 transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+                rightDirection = transform.right;
+                facingDirection = transform.forward;
                 return;
             }
             if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, SiblingIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
@@ -100,6 +109,8 @@ public class Soldier : MonoBehaviour {
                 rightStuck = false;
             }
             transform.position += directionOfMovement / 100 * speed;
+            currentPosition += directionOfMovement / 100 * speed;
+            unit.UpdateSoldierPosition(currentPosition, siblingIndex);
         }
 
         if (directionOfMovement.y != 0) Debug.LogWarning("movement direction y should be 0");

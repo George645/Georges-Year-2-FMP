@@ -8,6 +8,7 @@ using UnityEngine.PlayerLoop;
 public class Unit : MonoBehaviour {
     List<Soldier> childSoldiers = new();
     List<TargetPosition> targetPositions = new();
+    List<Vector3> unitPositions;
     public bool selected = false;
     public int CurrentWidth {
         get { return currentWidth; }
@@ -38,7 +39,6 @@ public class Unit : MonoBehaviour {
             unitPositions.Add(childSoldiers[i].transform.position);
         }
     }
-    List<Vector3> unitPositions;
     /// <summary>
     /// Checks if there is a soldier from this unit in a given position
     /// </summary>
@@ -52,25 +52,29 @@ public class Unit : MonoBehaviour {
         }
         return true;
     }
+    public void UpdateSoldierPosition(Vector3 position, int siblingIndex) {
+        unitPositions[ChildIndexToListIndex(siblingIndex)] = position;
+    }
     public bool SoldierInPosition(Vector3 position, int excludedIndex) {
         Debug.DrawRay(position, Vector3.up, Color.red, 1);
-        foreach (Soldier child in childSoldiers) {
-            if (child == childSoldiers[ChildIndexToListIndex(excludedIndex)]) {
+        Vector3 excludedPosition = unitPositions[ChildIndexToListIndex(excludedIndex)];
+        foreach (Vector3 childPosition in unitPositions) {
+            if (childPosition == excludedPosition) {
                 continue;
             }
-            if (Vector3.SqrMagnitude(child.transform.position - position) < offsetDistance) {
+            if (Vector3.SqrMagnitude(childPosition - position) < offsetDistance) {
                 return false;
             }
         }
         return true;
     }
     public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection) {
-        Soldier excludedChild = childSoldiers[ChildIndexToListIndex(excludedIndex)];
-        foreach (Soldier child in childSoldiers) {
-            if (child == excludedChild) {
+        Vector3 excludedPosition = unitPositions[ChildIndexToListIndex(excludedIndex)];
+        foreach (Vector3 childPosition in unitPositions) {
+            if (childPosition == excludedPosition) {
                 continue;
             }
-            Vector3 directionAndDistanceBetweenSoldiers = child.transform.position - position;
+            Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
@@ -82,13 +86,14 @@ public class Unit : MonoBehaviour {
     }
     List<Soldier> GetSoldiersInPosition(Vector3 position, int excludeIndex) {
         List<Soldier> returningList = new();
-        foreach (Soldier child in childSoldiers) {
-            if (child == childSoldiers[excludeIndex]) {
+        Vector3 excludedPosition = unitPositions[ChildIndexToListIndex(excludeIndex)];
+        foreach (Vector3 childPosition in unitPositions) {
+            if (childPosition == excludedPosition) {
                 continue;
             }
-            Vector3 offset = child.transform.position - position;
+            Vector3 offset = childPosition - position;
             if (Vector3.SqrMagnitude(offset) < offsetDistance) {
-                returningList.Add(child);
+                returningList.Add(childSoldiers[unitPositions.IndexOf(childPosition)]);
             }
         }
         return returningList;
