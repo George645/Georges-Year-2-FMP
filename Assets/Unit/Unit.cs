@@ -69,14 +69,15 @@ public class Unit : MonoBehaviour {
         return true;
     }
     public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection) {
-        Vector3 excludedPosition = unitPositions[ChildIndexToListIndex(excludedIndex)];
-        foreach (Vector3 childPosition in unitPositions) {
-            if (childPosition == excludedPosition) {
-                continue;
-            }
+        int count = unitPositions.Count;
+        for (int i = 0; i < count; i++) {
+            Vector3 childPosition = unitPositions[i];
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
+                if (i == excludedIndex) {
+                    continue;
+                }
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
             }
