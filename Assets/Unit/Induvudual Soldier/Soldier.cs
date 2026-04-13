@@ -13,6 +13,7 @@ public class Soldier : MonoBehaviour {
     [SerializeField]
     int speedOfRotation = 4;
     int siblingIndex = -1;
+    public int indexInArrays = -1;
     int SiblingIndex {
         get {
             if (siblingIndex != -1) {
@@ -36,7 +37,7 @@ public class Soldier : MonoBehaviour {
         currentPosition = transform.position;
         facingDirection = transform.forward;
     }
-    private void FixedUpdate() {
+    private void Update() {
         Movement(targetPosition);
     }
     public void Pushed(Vector3 inDirection) {
@@ -63,6 +64,8 @@ public class Soldier : MonoBehaviour {
         //sets the position to the destination if close enough
         if (Vector3.SqrMagnitude(currentPosition - targetPos) < .01f) {
             transform.position = targetPos;
+            currentPosition = targetPos;
+            unit.UpdateSoldierPosition(currentPosition, siblingIndex, this);
             if (!RotateTowards(-unit.OffsetPerRow.normalized)) {
                 transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 rightDirection = transform.right;
@@ -110,7 +113,7 @@ public class Soldier : MonoBehaviour {
             }
             transform.position += directionOfMovement / 100 * speed;
             currentPosition += directionOfMovement / 100 * speed;
-            unit.UpdateSoldierPosition(currentPosition, siblingIndex);
+            unit.UpdateSoldierPosition(currentPosition, siblingIndex, this);
         }
 
         if (directionOfMovement.y != 0) Debug.LogWarning("movement direction y should be 0");
@@ -133,5 +136,12 @@ public class Soldier : MonoBehaviour {
         }
         return false;
     }
+    #endregion
+    #region Draw square
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected() {
+        CustomGrid.instance.DisplaySoldierCheckingSquares(this);
+    }
+#endif
     #endregion
 }

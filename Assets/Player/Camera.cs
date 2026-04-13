@@ -22,14 +22,6 @@ public class CameraScript : MonoBehaviour {
         set { }
     }
 
-    private void Awake() {
-        if (startingPositions == null) {
-            startingPositions = new() { transform.gameObject };
-            foreach (LineRenderer line in FindObjectsByType<LineRenderer>(FindObjectsSortMode.None)) {
-                startingPositions.Add(line.gameObject);
-            }
-        }
-    }
     private void Start() {
         if (instance == null) {
             DontDestroyOnLoad(this.gameObject);
@@ -57,8 +49,7 @@ public class CameraScript : MonoBehaviour {
             }
             SetMovementLine();
         }
-    }
-    void FixedUpdate() {
+        AddOrSubtractScrollAmount();
         //Rotation
         if (CheckMousePositionForRotation() || RotationKeysPressed()) Rotate();
 
@@ -66,7 +57,7 @@ public class CameraScript : MonoBehaviour {
         if (CheckMousePositionForMovement() || MovementKeysPressed()) Movement();
 
         //vertical movement and rotation
-        if (Scrolling()) LerpBetweenPoints(currentIndex - direction);
+        AddScrollingDelta();
     }
 
     #region moving units
@@ -181,7 +172,7 @@ public class CameraScript : MonoBehaviour {
         if (Input.GetKey(KeyCode.E))
             rotationAmount += 1 * Sensitivity;
 
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + rotationAmount / 100, transform.eulerAngles.z);
+        transform.parent.eulerAngles = new Vector3(transform.parent.eulerAngles.x, transform.parent.eulerAngles.y + rotationAmount / 100, transform.parent.eulerAngles.z);
     }
     #endregion
 
@@ -209,53 +200,58 @@ public class CameraScript : MonoBehaviour {
         //horizontal movement
         if (Input.GetKey(KeyCode.A)) movement -= right * Sensitivity;
         if (Input.GetKey(KeyCode.D)) movement += right * Sensitivity;
+
+        //speed boost
+        if (Input.GetKey(KeyCode.LeftShift)) movement *= 3;
+
         transform.parent.position += movement / 100;
     }
     #endregion
 
-    int direction;
-    bool Scrolling() {
-        if (Input.mouseScrollDelta.y == 0) {
-            return false;
-        }
-        Debug.Log(Input.mouseScrollDelta);
-        direction = (int)Input.mouseScrollDelta.y;
-        return true;
+    #region scrolling
+
+    float scrolledDelta = 1;
+    [SerializeField]
+    float scrolledPosition = 0;
+    void AddOrSubtractScrollAmount() {
+        scrolledDelta += Input.mouseScrollDelta.y;
     }
 
-    [SerializeField, HideInInspector]
-    int positionsCount;
-    [SerializeField, HideInInspector] // can't be above or below the positions count
-    int currentIndex;
+    float minValue = 0;
+    float maxValue = 90;
     [SerializeField]
-    List<PositionAndRotation> positions;
-    public void LerpBetweenPoints(int targetIndex) {
-        StartCoroutine(LerpBetweenPointsCoroutine(targetIndex));
-    }
+    float positionZMultiplier = 25;
     [SerializeField]
-    int speed = 10;
-    IEnumerator LerpBetweenPointsCoroutine(int targetIndex) {
-        if (!(targetIndex >= positionsCount || targetIndex < 0)) {
-            float time = Time.time;
-            PositionAndRotation startingPosition = new(transform.localPosition, transform.localRotation);
-            while (Time.time - time <= 10f / speed) {
-                transform.localPosition = Vector3.Lerp(startingPosition.position, positions[targetIndex].position, (Time.time - time) / (10f / speed));
-                transform.localRotation = Quaternion.Lerp(startingPosition.rotation, positions[targetIndex].rotation, (Time.time - time) / (10f / speed));
-                yield return null;
-            }
-            SetCameraPosition(targetIndex);
-            currentIndex = targetIndex;
-            yield return null;
-        }
-    }
+    float positionZAddition = 10;
+    [SerializeField]
+    float positionYMultiplier = 20;
+    [SerializeField]
+    float positionYAddition = 5;
+    [SerializeField]
+    float rotationMultiplier = 50;
 
-    public void SetCameraPosition(int index) {
-        transform.localPosition = positions[index].position;
-        transform.localRotation = positions[index].rotation;
+    float degreesToRadians = 0.01745328f;
+    float time = 0;
+    Vector3 priorPosition;
+    Quaternion priorRotation;
+
+    [SerializeField]
+    float a;
+    [SerializeField]
+    float b;
+    [SerializeField]
+    float c;
+    public void AddScrollingDelta() {
+        if (scrolledDelta != 0) {
+            priorPosition = transform.localPosition;
+            priorRotation = transform.localRotation;
+            time = Time.time;
+        }
+        scrolledPosition = Math.Clamp(scrolledPosition + scrolledDelta * PlayerPrefs.GetInt("Sensitivity", 50) * 0.2f, -maxValue, minValue);
+        scrolledDelta = 0;
+        transform.localPosition = Vector3.Lerp(priorPosition, new Vector3(0, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionYMultiplier + positionYAddition, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionZMultiplier + positionZAddition), Math.Clamp(Time.time - time, 0, 1));
+        transform.localRotation = Quaternion.Lerp(priorRotation, new Quaternion(0, 180, Mathf.Sin(scrolledPosition * degreesToRadians) * rotationMultiplier, priorRotation.w), Math.Clamp((Time.time - time) / 50, 0, 1));
+        
     }
-#if UNITY_EDITOR
-    public void SetElementAtIndexToPosition(int index) {
-        positions[index] = new PositionAndRotation(transform.localPosition, transform.localRotation);
-    }
-#endif
+    #endregion
 }

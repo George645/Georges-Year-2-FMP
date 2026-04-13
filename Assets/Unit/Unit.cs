@@ -4,11 +4,14 @@ using System.Linq;
 using System;
 using System.Collections;
 using UnityEngine.PlayerLoop;
+using UnityEditor;
+using UnityEngine.Rendering;
 
 public class Unit : MonoBehaviour {
     List<Soldier> childSoldiers = new();
     List<TargetPosition> targetPositions = new();
-    List<Vector3> unitPositions;
+    List<Vector3> soldierPositions;
+    BoundingBox BoundingBox;
     public bool selected = false;
     public int CurrentWidth {
         get { return currentWidth; }
@@ -18,13 +21,33 @@ public class Unit : MonoBehaviour {
     public int NumberOfSoldiers {
         get {
             if (childSoldiers.Count == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
-                Debug.Log(transform.GetComponentsInChildren<Soldier>().ToList().Count());
                 childSoldiers = transform.GetComponentsInChildren<Soldier>().ToList();
                 targetPositions = transform.GetComponentsInChildren<TargetPosition>().ToList();
             }
             return childSoldiers.Count;
         }
     }
+
+    public Vector3 CenterPoint {
+        get {
+            if (Application.isEditor && !Application.isPlaying) {
+                Bounds bound = new Bounds(transform.GetChild(0).transform.position, Vector3.zero);
+                for (int i = 2; i < transform.childCount; i += 2) {
+                    bound.Encapsulate(transform.GetChild(i).position);
+                }
+                return bound.center;
+            }
+            if (BoundingBox == null) {
+                BoundingBox = new BoundingBox(transform.GetChild(0).transform.position);
+                for (int i = 2; i < transform.childCount; i += 2) {
+                    BoundingBox.Encapsulate(transform.GetChild(i).position);
+                }
+                return BoundingBox.Center;
+            }
+            return BoundingBox.Center;
+        }
+    }
+
     private void Start() {
         InitializePositions();
     }
@@ -33,11 +56,18 @@ public class Unit : MonoBehaviour {
 
     #region General unit questions
     void InitializePositions() {
-        Debug.Log(NumberOfSoldiers); // <- required for the game to work
-        unitPositions = new();
-        for (int i = 0; i < childSoldiers.Count(); i++) {
-            unitPositions.Add(childSoldiers[i].transform.position);
+        soldierPositions = new();
+        BoundingBox = new();
+        for (int i = 0; i < NumberOfSoldiers; i++) {
+            soldierPositions.Add(childSoldiers[i].transform.position);
+            BoundingBox.Encapsulate(transform.GetChild(i * 2).transform.position);
         }
+
+
+    }
+    void SoldierDeath(int UnitIndex) {
+        //remove from all lists and the bounds.
+        //remove from the grid system
     }
     /// <summary>
     /// Checks if there is a soldier from this unit in a given position
@@ -45,39 +75,41 @@ public class Unit : MonoBehaviour {
     /// <param name="position"> the position that is being checked </param>
     /// <returns> returns true if there is a soldier in the given position </returns>
     public bool SoldierInPosition(Vector3 position) {
-        foreach (Soldier child in childSoldiers) {
-            if (Vector3.SqrMagnitude(child.transform.position - position) < offsetDistance) {
-                return false;
-            }
-        }
-        return true;
-    }
-    public void UpdateSoldierPosition(Vector3 position, int siblingIndex) {
-        unitPositions[ChildIndexToListIndex(siblingIndex)] = position;
-    }
-    public bool SoldierInPosition(Vector3 position, int excludedIndex) {
-        Debug.DrawRay(position, Vector3.up, Color.red, 1);
-        Vector3 excludedPosition = unitPositions[ChildIndexToListIndex(excludedIndex)];
-        foreach (Vector3 childPosition in unitPositions) {
-            if (childPosition == excludedPosition) {
-                continue;
-            }
+        foreach (Vector3 childPosition in soldierPositions) {
             if (Vector3.SqrMagnitude(childPosition - position) < offsetDistance) {
                 return false;
             }
         }
         return true;
     }
+    public void UpdateSoldierPosition(Vector3 position, int siblingIndex, Soldier soldier) {
+        CustomGrid.instance.UpdateSoldierPosition(soldier); // <- make this a parameter to pass in
+        int ListIndex = ChildIndexToListIndex(siblingIndex);
+        soldierPositions[ListIndex] = position;
+        BoundingBox.ChangePoint(ListIndex, position);
+    }
+    public bool SoldierInPosition(Vector3 position, int excludedIndex) {
+        Soldier[] nearbySoldiers = CustomGrid.instance.RetrieveNearbySoldiers(position);
+        Soldier excludedSoldier = transform.GetChild(excludedIndex).GetComponent<Soldier>();
+        foreach (Soldier nearbySoldier in nearbySoldiers) {
+            if (nearbySoldier.transform == excludedSoldier) {
+                continue;
+            }
+            if (Vector3.SqrMagnitude(nearbySoldier.transform.position - position) < offsetDistance) {
+                return false;
+            }
+        }
+        return true;
+    }
     public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection) {
-        int count = unitPositions.Count;
-        for (int i = 0; i < count; i++) {
-            Vector3 childPosition = unitPositions[i];
+        Soldier[] nearbySoldiers = CustomGrid.instance.RetrieveNearbySoldiers(position);
+        Vector3 excludedPosition = soldierPositions[ChildIndexToListIndex(excludedIndex)];
+        for (int i = 0; i < nearbySoldiers.Length; i++) {
+            Vector3 childPosition = nearbySoldiers[i].transform.position;
+            if (excludedPosition == childPosition) continue;
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
-                if (i == excludedIndex) {
-                    continue;
-                }
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
             }
@@ -87,14 +119,14 @@ public class Unit : MonoBehaviour {
     }
     List<Soldier> GetSoldiersInPosition(Vector3 position, int excludeIndex) {
         List<Soldier> returningList = new();
-        Vector3 excludedPosition = unitPositions[ChildIndexToListIndex(excludeIndex)];
-        foreach (Vector3 childPosition in unitPositions) {
+        Vector3 excludedPosition = soldierPositions[ChildIndexToListIndex(excludeIndex)];
+        foreach (Vector3 childPosition in soldierPositions) {
             if (childPosition == excludedPosition) {
                 continue;
             }
             Vector3 offset = childPosition - position;
             if (Vector3.SqrMagnitude(offset) < offsetDistance) {
-                returningList.Add(childSoldiers[unitPositions.IndexOf(childPosition)]);
+                returningList.Add(childSoldiers[soldierPositions.IndexOf(childPosition)]);
             }
         }
         return returningList;
@@ -107,7 +139,7 @@ public class Unit : MonoBehaviour {
     /// <returns> this returns whether or not you can set the position to that position based off of the other soldiers in the area </returns>
     public bool SetNewPositionOfSoldier(int unitIndexInChildren, Vector3 newPosition) {
         int listIndex = ChildIndexToListIndex(unitIndexInChildren);
-        for (int i = 0; i < childSoldiers.Count; i++) {
+        for (int i = 0; i < NumberOfSoldiers; i++) {
             if (i == listIndex) continue;
             Soldier current = childSoldiers[i];
             if (Vector3.Magnitude(current.transform.position - childSoldiers[listIndex].transform.position) < offsetDistance) {
@@ -118,9 +150,9 @@ public class Unit : MonoBehaviour {
     }
 
     public void Push(int siblingIndex, Vector3 position) {
-        foreach (Soldier inTheWay in GetSoldiersInPosition(position, ChildIndexToListIndex(siblingIndex))) {
-            inTheWay.Pushed(2 * inTheWay.transform.position - position);
-        }
+        //foreach (Soldier inTheWay in GetSoldiersInPosition(position, ChildIndexToListIndex(siblingIndex))) {
+        //    inTheWay.Pushed(2 * inTheWay.transform.position - position);
+        //}
     }
 
     int ChildIndexToListIndex(int siblingIndex) {
@@ -133,38 +165,48 @@ public class Unit : MonoBehaviour {
         StartCoroutine(nameof(UpdatePosition), listOfPositions);
     }
     IEnumerator UpdatePosition(List<Vector3> listOfPositions) {
-        List<TargetPosition> oldTargetPositions = new(targetPositions);
+        List<Vector3> oldSoldierPositions = new(soldierPositions);
+        List<TargetPosition> oldTargetPositions2 = new(targetPositions);
         int count = 0;
         for (int h = 0; h < targetPositions.Count; h++) {
-            if (oldTargetPositions.Count == 0 || listOfPositions.Count == 0) {
+            if (oldSoldierPositions.Count == 0 || listOfPositions.Count == 0) {
                 break;
             }
 
             float maxDistance = -1;
             int indexOfNewPosition = 0;
+            
             for (int i = 0; i < listOfPositions.Count; i++) {
-                for (int j = 0; j < oldTargetPositions.Count; j++) {
-                    if (Math.Abs(Vector3.SqrMagnitude(listOfPositions[i] - oldTargetPositions[j].transform.position)) > maxDistance) {
+                for (int j = 0; j < oldSoldierPositions.Count; j++) {
+                    float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldSoldierPositions[i]);
+                    if (sqrMagnitude > maxDistance) {
                         indexOfNewPosition = i;
-                        maxDistance = Vector3.SqrMagnitude(listOfPositions[i] - oldTargetPositions[j].transform.position);
+                        maxDistance = sqrMagnitude;
                     }
+                }
+                count++;
+                if (count > 30) {
+                    yield return null;
+                    count = 0;
                 }
             }
 
             int indexOfOldPosition = -1;
             float minDistance = float.MaxValue;
-            for (int i = 0; i < oldTargetPositions.Count; i++) {
-                if (Math.Abs(Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldTargetPositions[i].transform.position)) < minDistance) {
-                    minDistance = Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldTargetPositions[i].transform.position);
+            for (int i = 0; i < oldSoldierPositions.Count; i++) {
+                float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldSoldierPositions[i]);
+                if (sqrMagnitude < minDistance) {
+                    minDistance = sqrMagnitude;
                     indexOfOldPosition = i;
                 }
             }
-
-            oldTargetPositions[indexOfOldPosition].NewPosition(listOfPositions[indexOfNewPosition]);
-            oldTargetPositions.RemoveAt(indexOfOldPosition);
+            
+            oldTargetPositions2[indexOfOldPosition].NewPosition(listOfPositions[indexOfNewPosition]);
+            oldTargetPositions2.RemoveAt(indexOfOldPosition);
+            oldSoldierPositions.RemoveAt(indexOfOldPosition);
             listOfPositions.RemoveAt(indexOfNewPosition);
             count++;
-            if (oldTargetPositions.Count > 0 && 180 / oldTargetPositions.Count < count / 2) {
+            if (oldSoldierPositions.Count > 0 && (180 / oldSoldierPositions.Count) * (180 / oldSoldierPositions.Count) < count) {
                 yield return null;
                 count = 0;
             }
@@ -264,5 +306,15 @@ public class Unit : MonoBehaviour {
 
         targetPositions[^1].thisSoldier = childSoldiers[^1];
     }
+    #endregion
+
+    #region Unity editor
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected() {
+        CustomGrid.instance.DisplayUnitCheckingSquares(this);
+        if (Application.isPlaying)
+            BoundingBox.DisplayBox();
+    }
+#endif
     #endregion
 }
