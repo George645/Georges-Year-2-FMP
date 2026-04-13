@@ -7,6 +7,7 @@ public class CameraScript : MonoBehaviour {
     int distanceFromEdgeOfScreenDivider = 20;
     Vector3 unitStartPosition, unitEndPosition;
     Unit currentlySelected;
+    List<Unit> currentlySelectedList;
     [SerializeField]
     GameObject highlightedTargetPositionParent;
 
@@ -47,7 +48,11 @@ public class CameraScript : MonoBehaviour {
                 SetEndPosition();
                 SendPositionalDataToUnit();
             }
-            SetMovementLine();
+            if (currentlySelectedList.Count >= 0)
+                for (int i = 0; i < currentlySelectedList.Count; i++)
+                    SetMovementLine(i);
+            else
+                SetMovementLine(currentlySelected);
         }
         AddOrSubtractScrollAmount();
         //Rotation
@@ -72,10 +77,19 @@ public class CameraScript : MonoBehaviour {
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
             if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
+                if (Input.GetKey(KeyCode.LeftShift)) {
+                    if (currentlySelectedList.Count == 0) {
+                        currentlySelectedList.Add(currentlySelected);
+                    }
+                }
+                else {
+                    currentlySelectedList = new();
+                }
                 currentlySelected = hitInfo.collider.transform.parent.GetComponent<Unit>();
                 currentlySelected.selected = true;
-                for (int i = 0; i < currentlySelected.NumberOfSoldiers; i++) {
-                    currentlyManipulatedTargetPositions.Add(highlightedTargetPositionParent.transform.GetChild(i).gameObject);
+                if (currentlySelectedList.Count >= 1) {
+                    currentlySelectedList.Add(currentlySelected);
+                    currentlySelected = null;
                 }
             }
         }
@@ -85,10 +99,20 @@ public class CameraScript : MonoBehaviour {
         unitStartPosition = ScreenPointToGroundPoint(Input.mousePosition);
     }
     void SetEndPosition() {
-        unitEndPosition = ScreenPointToGroundPoint(Input.mousePosition);
+        Vector3 groundPointOfEndPosition = ScreenPointToGroundPoint(Input.mousePosition);
+        if ((groundPointOfEndPosition - unitStartPosition).sqrMagnitude < currentlySelected.offsetPerTroop.sqrMagnitude * 3)
+            unitEndPosition = unitStartPosition;
+        else if ((groundPointOfEndPosition - unitStartPosition).sqrMagnitude > currentlySelected.offsetPerTroop.sqrMagnitude * (currentlySelected.NumberOfSoldiers / 3))
+            unitEndPosition = groundPointOfEndPosition.normalized * currentlySelected.offsetPerTroop.sqrMagnitude * (currentlySelected.NumberOfSoldiers / 3);
+        else
+            unitEndPosition = groundPointOfEndPosition;
     }
-    void SetMovementLine() {
-        if (Vector3.SqrMagnitude(unitStartPosition - unitEndPosition) < 4 /* 2 squared */) {
+    void SetMovementLine(int Count) {
+        if (currentlySelectedList.Count >= 1) {
+            unitStartPosition += unitEndPosition * Count / currentlySelectedList.Count;
+            throw new NotImplementedException("Make it so that then this is working with multiple units");
+        }
+        if (Vector3.SqrMagnitude(unitStartPosition - unitEndPosition) == 0) {
             if (highlightedTargetPositionParent.transform.GetChild(0).GetComponent<MeshRenderer>().enabled) {
                 ToggleMeshRenderers(false);
             }
@@ -251,7 +275,7 @@ public class CameraScript : MonoBehaviour {
         scrolledDelta = 0;
         transform.localPosition = Vector3.Lerp(priorPosition, new Vector3(0, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionYMultiplier + positionYAddition, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionZMultiplier + positionZAddition), Math.Clamp(Time.time - time, 0, 1));
         transform.localRotation = Quaternion.Lerp(priorRotation, new Quaternion(0, 180, Mathf.Sin(scrolledPosition * degreesToRadians) * rotationMultiplier, priorRotation.w), Math.Clamp((Time.time - time) / 50, 0, 1));
-        
+
     }
     #endregion
 }

@@ -39,6 +39,7 @@ public class Soldier : MonoBehaviour {
     }
     private void Update() {
         Movement(targetPosition);
+        
     }
     public void Pushed(Vector3 inDirection) {
         transform.position += inDirection / 25 * speed;
@@ -137,6 +138,7 @@ public class Soldier : MonoBehaviour {
         return false;
     }
     #endregion
+
     #region Draw square
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected() {

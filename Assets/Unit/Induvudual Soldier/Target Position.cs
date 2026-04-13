@@ -6,8 +6,27 @@ public class TargetPosition : MonoBehaviour {
 
     #region Set position
     public void NewPosition(Vector3 position) {
-        transform.position = new Vector3(transform.parent.InverseTransformPoint(position).x, transform.parent.TransformPoint(Vector3.zero).y, transform.parent.InverseTransformPoint(position).z); //for some reason, we are having to clamp the y component of this.
-        thisSoldier.SetTarget(new Vector3(position.x, transform.position.y, position.z) + Vector3.up);
+        transform.position = new Vector3(position.x, 19, position.z); 
+        thisSoldier.SetTarget(new Vector3(position.x, 20, position.z) + Vector3.up); // if height is implemented, this will need changing
+    }
+    #endregion
+
+    #region toggleVisibility
+    bool enabled = false;
+    MeshRenderer meshRenderer;
+    private void Start() {
+        meshRenderer = transform.GetComponent<MeshRenderer>();
+        meshRenderer.enabled = false;
+    }
+    public void Enable() {
+        if (enabled) return;
+        meshRenderer.enabled = true;
+        enabled = true;
+    }
+    public void Disable() {
+        if (!enabled) return;
+        meshRenderer.enabled = false;
+        enabled = false;
     }
     #endregion
 

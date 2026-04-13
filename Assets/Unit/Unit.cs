@@ -51,6 +51,10 @@ public class Unit : MonoBehaviour {
     private void Start() {
         InitializePositions();
     }
+    private void Update() {
+        if (Input.GetKey(KeyCode.Space)) foreach (TargetPosition targetPosition in targetPositions) targetPosition.Enable();
+        else foreach (TargetPosition targetPosition in targetPositions) targetPosition.Disable();
+    }
 
     int offsetDistance = 4;
 
@@ -175,7 +179,7 @@ public class Unit : MonoBehaviour {
 
             float maxDistance = -1;
             int indexOfNewPosition = 0;
-            
+
             for (int i = 0; i < listOfPositions.Count; i++) {
                 for (int j = 0; j < oldSoldierPositions.Count; j++) {
                     float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldSoldierPositions[i]);
@@ -184,11 +188,11 @@ public class Unit : MonoBehaviour {
                         maxDistance = sqrMagnitude;
                     }
                 }
-                count++;
-                if (count > 30) {
-                    yield return null;
-                    count = 0;
-                }
+                //count++;
+                //if (count > 30) {
+                //    yield return null;
+                //    count = 0;
+                //}
             }
 
             int indexOfOldPosition = -1;
@@ -200,7 +204,7 @@ public class Unit : MonoBehaviour {
                     indexOfOldPosition = i;
                 }
             }
-            
+
             oldTargetPositions2[indexOfOldPosition].NewPosition(listOfPositions[indexOfNewPosition]);
             oldTargetPositions2.RemoveAt(indexOfOldPosition);
             oldSoldierPositions.RemoveAt(indexOfOldPosition);

@@ -17,12 +17,14 @@ public class NumberOfUnits : MonoBehaviour {
     }
 
     public static void ChangeEnemyNumber(float amount) {
-        EnemyNumber.GetComponent<TMP_Text>().text = amount.ToString();
+        if (EnemyNumber != null)
+            EnemyNumber.GetComponent<TMP_Text>().text = amount.ToString();
         EnemyQuantityOfUnits = (int)amount;
     }
 
     public static void ChangePlayerNumber(float amount) {
-        PlayerNumber.GetComponent<TMP_Text>().text = amount.ToString();
+        if (PlayerNumber != null)
+            PlayerNumber.GetComponent<TMP_Text>().text = amount.ToString();
         PlayerQuantityOfUnits = (int)amount;
     }
 }
