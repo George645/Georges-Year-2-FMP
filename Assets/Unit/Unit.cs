@@ -13,6 +13,7 @@ public class Unit : MonoBehaviour {
     List<Vector3> soldierPositions;
     BoundingBox BoundingBox;
     public bool selected = false;
+    public bool playersUnit;
     public int CurrentWidth {
         get { return currentWidth; }
     }
@@ -47,14 +48,20 @@ public class Unit : MonoBehaviour {
             return BoundingBox.Center;
         }
     }
-
+    #region Unity functions
+    private void Awake() {
+    }
     private void Start() {
         InitializePositions();
+        if (playersUnit)
+            foreach (Soldier soldier in childSoldiers)
+                FindFirstObjectByType<Highlightedtargetpositions>().CreateHighlightedPosition();
     }
     private void Update() {
         if (Input.GetKey(KeyCode.Space)) foreach (TargetPosition targetPosition in targetPositions) targetPosition.Enable();
         else foreach (TargetPosition targetPosition in targetPositions) targetPosition.Disable();
     }
+    #endregion
 
     int offsetDistance = 4;
 
@@ -72,6 +79,7 @@ public class Unit : MonoBehaviour {
     void SoldierDeath(int UnitIndex) {
         //remove from all lists and the bounds.
         //remove from the grid system
+        //remove from highlighted target positions
     }
     /// <summary>
     /// Checks if there is a soldier from this unit in a given position

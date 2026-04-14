@@ -589,5 +589,4 @@ public class CustomGrid : MonoBehaviour {
         DisplayGrids();
     }
 #endif
-
 }
