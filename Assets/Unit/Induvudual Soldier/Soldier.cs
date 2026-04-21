@@ -139,10 +139,16 @@ public class Soldier : MonoBehaviour {
     }
     #endregion
 
-    #region Draw square
+    #region Draw debuggin shit
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
         CustomGrid.instance.DisplaySoldierCheckingSquares(this);
+        CustomGrid.instance.ColourSoldiersExcluding(this);
+        DrawCapsuleAroundThis(Color.darkRed);
+    }
+    public void DrawCapsuleAroundThis(Color color) {
+        
+        Gizmos.DrawCube(transform.position - Vector3.zero * 0.5f, Vector3.one);
     }
 #endif
     #endregion

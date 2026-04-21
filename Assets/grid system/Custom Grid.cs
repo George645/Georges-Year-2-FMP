@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class CustomGrid : MonoBehaviour {
@@ -578,6 +579,13 @@ public class CustomGrid : MonoBehaviour {
         }
     }
     #endregion
+
+    public void ColourSoldiersExcluding(Soldier soldier) {
+
+        Soldier[] SameSquare = new Soldier[] { };
+        SameSquare = RetrieveSoldiersInSquare(soldierSquareIndex[soldier.indexInArrays], SameSquare);
+        throw Error I can see at all times;
+    }
 
     private void OnDrawGizmos() {
         DisplayGrids();
