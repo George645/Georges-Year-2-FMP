@@ -293,54 +293,11 @@ public class CustomGrid : MonoBehaviour {
 
     #endregion
 
-    public Soldier[] RetrieveNearbySoldiers(Vector3 position) {
-        int arrayPositionOfPosition = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
-        int[] neighbourPositionsToCheck = SoldierNeighbours(arrayPositionOfPosition);
-        Soldier[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
-        for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
-            soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
-        }
-        
-        return soldiersNearby;
-    }
-    public Soldier[] RetrieveSoldiersInSquare(int squareIndex, Soldier[] priorSoldierArray) {
-        int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
-        int firstIndexOfSquareIndex = indexOfSquareIndex;
-        int lastIndexOfSquareIndex = indexOfSquareIndex;
-        int priorSoldierArrayLength = priorSoldierArray.Length;
-        while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
-            firstIndexOfSquareIndex--;
-        while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
-            lastIndexOfSquareIndex++;
-        Soldier[] returningArray = new Soldier[priorSoldierArrayLength + lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
-        for (int i = 0; i < priorSoldierArrayLength; i++) {
-            returningArray[i] = priorSoldierArray[i];
-        }
-        for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
-            returningArray[i - firstIndexOfSquareIndex + priorSoldierArrayLength] = soldierReferences[firstIndexOfSquareIndex];
-        }
-        return returningArray;
-    }
-    public Soldier[] RetrieveSoldiersInSquare(int squareIndex) {
-        int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
-        int firstIndexOfSquareIndex = indexOfSquareIndex;
-        int lastIndexOfSquareIndex = indexOfSquareIndex;
-        while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
-            firstIndexOfSquareIndex--;
-        while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
-            lastIndexOfSquareIndex++;
-        Soldier[] returningArray = new Soldier[lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
-        for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
-            returningArray[i - firstIndexOfSquareIndex] = soldierReferences[firstIndexOfSquareIndex];
-        }
-        return returningArray;
-    }
     public void UpdateSoldierPosition(Soldier soldier) {
         int index = soldier.indexInArrays;
         soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(soldier.transform.position));
         SoldierSort(index);
     }
-
     void CreateSoldierList() {
         Soldier[] tempList = FindObjectsByType<Soldier>(FindObjectsSortMode.None);
         soldierReferences = new Soldier[tempList.Length];
@@ -352,9 +309,16 @@ public class CustomGrid : MonoBehaviour {
         }
         SoldierSort();
     }
-
-
-
+    public Soldier[] RetrieveNearbySoldiers(Vector3 position) {
+        int arrayPositionOfPosition = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
+        int[] neighbourPositionsToCheck = SoldierNeighbours(arrayPositionOfPosition);
+        Soldier[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
+        for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
+            soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
+        }
+        
+        return soldiersNearby;
+    }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
         int indexOfSquareIndex = -1;
         int addingToIndex = 0;
@@ -390,9 +354,6 @@ public class CustomGrid : MonoBehaviour {
         }
         return indexOfSquareIndex;
     }
-
-
-
     int[] SoldierNeighbours(int index) {
         int[] returningArray = new int[8];
         int count = 0;
@@ -418,6 +379,39 @@ public class CustomGrid : MonoBehaviour {
             }
         }
         returningArray = returningArray.Where(x => x != 0).ToArray();
+        return returningArray;
+    }
+
+    public Soldier[] RetrieveSoldiersInSquare(int squareIndex, Soldier[] priorSoldierArray) {
+        int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
+        int firstIndexOfSquareIndex = indexOfSquareIndex;
+        int lastIndexOfSquareIndex = indexOfSquareIndex;
+        int priorSoldierArrayLength = priorSoldierArray.Length;
+        while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
+            firstIndexOfSquareIndex--;
+        while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
+            lastIndexOfSquareIndex++;
+        Soldier[] returningArray = new Soldier[priorSoldierArrayLength + lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
+        for (int i = 0; i < priorSoldierArrayLength; i++) {
+            returningArray[i] = priorSoldierArray[i];
+        }
+        for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
+            returningArray[i - firstIndexOfSquareIndex + priorSoldierArrayLength] = soldierReferences[firstIndexOfSquareIndex];
+        }
+        return returningArray;
+    }
+    public Soldier[] RetrieveSoldiersInSquare(int squareIndex) {
+        int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
+        int firstIndexOfSquareIndex = indexOfSquareIndex;
+        int lastIndexOfSquareIndex = indexOfSquareIndex;
+        while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
+            firstIndexOfSquareIndex--;
+        while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
+            lastIndexOfSquareIndex++;
+        Soldier[] returningArray = new Soldier[lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
+        for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
+            returningArray[i - firstIndexOfSquareIndex] = soldierReferences[firstIndexOfSquareIndex];
+        }
         return returningArray;
     }
 
