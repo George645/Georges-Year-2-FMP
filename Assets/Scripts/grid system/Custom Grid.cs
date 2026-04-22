@@ -581,10 +581,12 @@ public class CustomGrid : MonoBehaviour {
     #endregion
 
     public void ColourSoldiersExcluding(Soldier soldier) {
-
-        Soldier[] SameSquare = new Soldier[] { };
-        SameSquare = RetrieveSoldiersInSquare(soldierSquareIndex[soldier.indexInArrays], SameSquare);
-        throw Error I can see at all times;
+        Soldier[] SoldiersNearby = new Soldier[] { };
+        SoldiersNearby = RetrieveNearbySoldiers(soldier.transform.position);
+        foreach (Soldier soldier1 in SoldiersNearby) {
+            if (soldier1 == soldier) continue;
+            soldier1.DrawCapsuleAroundThis(Color.softRed);
+        }
     }
 
     private void OnDrawGizmos() {

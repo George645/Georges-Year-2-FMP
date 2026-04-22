@@ -1,4 +1,7 @@
 using System.Collections;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 public class Soldier : MonoBehaviour {
@@ -139,16 +142,18 @@ public class Soldier : MonoBehaviour {
     }
     #endregion
 
-    #region Draw debuggin shit
+    #region Draw debugs
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
+        if (Selection.activeGameObject != gameObject) return;
         CustomGrid.instance.DisplaySoldierCheckingSquares(this);
         CustomGrid.instance.ColourSoldiersExcluding(this);
         DrawCapsuleAroundThis(Color.darkRed);
     }
     public void DrawCapsuleAroundThis(Color color) {
-        
-        Gizmos.DrawCube(transform.position - Vector3.zero * 0.5f, Vector3.one);
+        color.a = 0.3f;
+        Gizmos.color = color;
+        Gizmos.DrawCube(transform.position + Vector3.up * 2, Vector3.one * 3);
     }
 #endif
     #endregion
