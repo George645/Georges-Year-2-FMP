@@ -322,9 +322,21 @@ public class CustomGrid : MonoBehaviour {
         int[] neighbourPositionsToCheck = SoldierNeighbours(arrayPositionOfPosition);
         Soldier[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
         for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
-            soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
+            if (soldiersNearby!= null) {
+                string[] names = new string[soldiersNearby.Length];
+                int count = 0;
+                foreach (Soldier soldier2 in soldiersNearby) {
+                    names[count] = soldier2.transform.name;
+                    count++;
+                }
+                Debug.Log(String.Join(',', names));
+            }
+            else {
+                Debug.Log("0");
+            }
+                soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
         }
-        
+
         return soldiersNearby;
     }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
@@ -392,9 +404,12 @@ public class CustomGrid : MonoBehaviour {
 
     public Soldier[] RetrieveSoldiersInSquare(int squareIndex, Soldier[] priorSoldierArray) {
         int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
+        throw new soldiuer binary search is not giving me the fooking results I want. FIX THIS NOW!
+        if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) return null;
+
         int firstIndexOfSquareIndex = indexOfSquareIndex;
         int lastIndexOfSquareIndex = indexOfSquareIndex;
-        int priorSoldierArrayLength = priorSoldierArray.Length;
+        int priorSoldierArrayLength = priorSoldierArray == null ? 0 : priorSoldierArray.Length;
         while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
             firstIndexOfSquareIndex--;
         while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
@@ -410,6 +425,8 @@ public class CustomGrid : MonoBehaviour {
     }
     public Soldier[] RetrieveSoldiersInSquare(int squareIndex) {
         int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
+        if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) return null;
+
         int firstIndexOfSquareIndex = indexOfSquareIndex;
         int lastIndexOfSquareIndex = indexOfSquareIndex;
         while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
@@ -523,7 +540,7 @@ public class CustomGrid : MonoBehaviour {
         if (soldierReferences == null || soldierSquareIndex == null || soldierReferences.Length == 0 || soldierSquareIndex.Length == 0) CreateSoldierList();
         UpdateSoldierPosition(soldier);
 
-        int index = soldier.indexInArrays; 
+        int index = soldier.indexInArrays;
         FillInSoldierSquare(soldierSquareIndex[index], new Color(0, 0, 1, .2f));
 
         int[] neighbouringSquares = SoldierNeighbours(soldierSquareIndex[index]);
@@ -537,6 +554,7 @@ public class CustomGrid : MonoBehaviour {
         Vector3 corner1Vector = SoldierSpaceToWorldSpace(corner1);
         Vector3 corner2Vector = SoldierSpaceToWorldSpace(corner2);
         Vector3 midpoint = (corner1Vector + corner2Vector) / 2;
+        MiscFunctions.GLNumbers.DisplayNumber(index, midpoint, null, null, 0.5f);
         //Debug.Log(corner1Vector + ", " + corner2Vector + ", " + midpoint);
         Gizmos.color = color;
         Gizmos.DrawCube(midpoint, new Vector3(corner2Vector.x - corner1Vector.x, 0, corner2Vector.z - corner1Vector.z));
