@@ -148,9 +148,9 @@ public class Soldier : MonoBehaviour {
         if (Selection.activeGameObject != gameObject) return;
         CustomGrid.instance.DisplaySoldierCheckingSquares(this);
         CustomGrid.instance.ColourSoldiersExcluding(this);
-        DrawCapsuleAroundThis(Color.darkRed);
+        DrawCubeAroundThis(Color.darkRed);
     }
-    public void DrawCapsuleAroundThis(Color color) {
+    public void DrawCubeAroundThis(Color color) {
         color.a = 0.3f;
         Gizmos.color = color;
         Gizmos.DrawCube(transform.position + Vector3.up * 2, Vector3.one * 3);

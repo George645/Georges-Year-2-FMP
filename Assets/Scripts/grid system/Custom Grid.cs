@@ -1,9 +1,7 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class CustomGrid : MonoBehaviour {
@@ -16,6 +14,9 @@ public class CustomGrid : MonoBehaviour {
         SetInstance();
     }
     private void Awake() {
+        MakeArrays();
+    }
+    void MakeArrays() {
         unitReferences = new Unit[] { };
         unitSquareIndex = new int[] { };
         soldierReferences = new Soldier[] { };
@@ -295,6 +296,12 @@ public class CustomGrid : MonoBehaviour {
     #endregion
 
     public void UpdateSoldierPosition(Soldier soldier) {
+        if (!Application.isPlaying && soldierSquareIndex.Length == 0) {
+            Debug.Log("hi");
+            MakeArrays();
+            CreateSoldierList();
+            CreateUnitList();
+        }
         int index = soldier.indexInArrays;
         soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(soldier.transform.position));
         SoldierSort(index);
@@ -476,7 +483,7 @@ public class CustomGrid : MonoBehaviour {
                 soldierReferences[i].indexInArrays = i;
             }
         else if (startingIndexInSquareIndexArray > arrayPositionOfCorrectPosition) {
-            if (unitSquareIndex[0] < squareIndex)
+            if (soldierSquareIndex[0] < squareIndex)
                 arrayPositionOfCorrectPosition += 1;
             for (int i = startingIndexInSquareIndexArray; i > arrayPositionOfCorrectPosition; i--) {
                 soldierSquareIndex[i] = soldierSquareIndex[i - 1];
@@ -515,11 +522,13 @@ public class CustomGrid : MonoBehaviour {
         if (!displaySoldierGrid) return;
         if (soldierReferences == null || soldierSquareIndex == null || soldierReferences.Length == 0 || soldierSquareIndex.Length == 0) CreateSoldierList();
         UpdateSoldierPosition(soldier);
-        int index = Array.FindIndex(soldierReferences, x => x == soldier); // <- make a check when this is null, remake the unitgrid list
+
+        int index = soldier.indexInArrays; 
         FillInSoldierSquare(soldierSquareIndex[index], new Color(0, 0, 1, .2f));
-        int[] indexes = SoldierNeighbours(soldierSquareIndex[index]);
-        foreach (int index2 in indexes) {
-            FillInSoldierSquare(index2, lightBlue);
+
+        int[] neighbouringSquares = SoldierNeighbours(soldierSquareIndex[index]);
+        foreach (int squareReferenceNumber in neighbouringSquares) {
+            FillInSoldierSquare(squareReferenceNumber, lightBlue);
         }
     }
     void FillInSoldierSquare(int index, Color color) { // <- make a variable to check if you would like this debugginng on or not
@@ -585,7 +594,7 @@ public class CustomGrid : MonoBehaviour {
         SoldiersNearby = RetrieveNearbySoldiers(soldier.transform.position);
         foreach (Soldier soldier1 in SoldiersNearby) {
             if (soldier1 == soldier) continue;
-            soldier1.DrawCapsuleAroundThis(Color.softRed);
+            soldier1.DrawCubeAroundThis(Color.softRed);
         }
     }
 
