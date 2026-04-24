@@ -157,12 +157,12 @@ namespace MiscFunctions {
             GL.Vertex(position + classSize * (new Vector3(0.5f, 0, 0.75f * 1)));
         }
         private static void Draw6(Vector3 position) {
-            for (int i = 90; i < 270; i++) {
-                GL.Vertex(position + classSize * (new Vector3(0, 0, 0.5f) + 0.5f * new Vector3(Mathf.Cos(i * Mathf.Deg2Rad), 0, Mathf.Sin(i * Mathf.Deg2Rad))));
-                GL.Vertex(position + classSize * (new Vector3(0, 0, 0.5f) + 0.5f * new Vector3(Mathf.Cos((i + 1) * Mathf.Deg2Rad), 0, Mathf.Sin((1 + i) * Mathf.Deg2Rad))));
+            for (int i = 45; i < 180; i++) {
+                GL.Vertex(position + classSize * new Vector3(0.5f * Mathf.Cos(i * Mathf.Deg2Rad), 0, Mathf.Sin(i * Mathf.Deg2Rad)));
+                GL.Vertex(position + classSize * new Vector3(0.5f * Mathf.Cos((i + 1) * Mathf.Deg2Rad), 0, Mathf.Sin((1 + i) * Mathf.Deg2Rad)));
 
-                GL.Vertex(position + classSize * (new Vector3(0, 0, 0.5f) + 0.5f * new Vector3(0.75f * Mathf.Cos(i * Mathf.Deg2Rad), 0, 0.75f * Mathf.Sin(i * Mathf.Deg2Rad))));
-                GL.Vertex(position + classSize * (new Vector3(0, 0, 0.5f) + 0.5f * new Vector3(0.75f * Mathf.Cos((i + 1) * Mathf.Deg2Rad), 0, 0.75f * Mathf.Sin((1 + i) * Mathf.Deg2Rad))));
+                GL.Vertex(position + classSize * new Vector3(0.5f * 0.75f * Mathf.Cos(i * Mathf.Deg2Rad), 0, 0.75f * Mathf.Sin(i * Mathf.Deg2Rad)));
+                GL.Vertex(position + classSize * new Vector3(0.5f * 0.75f * Mathf.Cos((i + 1) * Mathf.Deg2Rad), 0, 0.75f * Mathf.Sin((1 + i) * Mathf.Deg2Rad)));
             }
             for (int i = 0; i < 360; i++) {
                 GL.Vertex(position - classSize * (new Vector3(0, 0, 0.5f) - 0.5f * new Vector3(Mathf.Cos(i * Mathf.Deg2Rad), 0, Mathf.Sin(i * Mathf.Deg2Rad))));

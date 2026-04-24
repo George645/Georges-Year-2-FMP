@@ -11,6 +11,7 @@ public class CustomGrid : MonoBehaviour {
 
     #region Unity functions
     private void OnValidate() {
+        
         SetInstance();
     }
     private void Awake() {
@@ -297,7 +298,6 @@ public class CustomGrid : MonoBehaviour {
 
     public void UpdateSoldierPosition(Soldier soldier) {
         if (!Application.isPlaying && soldierSquareIndex.Length == 0) {
-            Debug.Log("hi");
             MakeArrays();
             CreateSoldierList();
             CreateUnitList();
@@ -321,22 +321,24 @@ public class CustomGrid : MonoBehaviour {
         int arrayPositionOfPosition = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
         int[] neighbourPositionsToCheck = SoldierNeighbours(arrayPositionOfPosition);
         Soldier[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
+                string[] names;
         for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
             if (soldiersNearby!= null) {
-                string[] names = new string[soldiersNearby.Length];
+                names = new string[soldiersNearby.Length];
                 int count = 0;
                 foreach (Soldier soldier2 in soldiersNearby) {
                     names[count] = soldier2.transform.name;
                     count++;
                 }
-                Debug.Log(String.Join(',', names));
+                Debug.Log(String.Join(',', names) + "," + i + ", " + neighbourPositionsToCheck[i]);
             }
             else {
-                Debug.Log("0");
+                Debug.Log("0 " + i + ", " + neighbourPositionsToCheck[i]);
             }
                 soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
         }
-
+        throw new merge sort no work
+        Debug.Log(String.Join(", ", soldierSquareIndex));
         return soldiersNearby;
     }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
@@ -358,7 +360,7 @@ public class CustomGrid : MonoBehaviour {
                 }
             }
             if (soldierSquareIndex[middleIndexChecking] == squareIndex) {
-                indexOfSquareIndex = addingToIndex;
+                indexOfSquareIndex = addingToIndex + (middleIndexChecking - startingIndexChecking);
             }
             else if (soldierSquareIndex[middleIndexChecking] > squareIndex) {
                 endingIndexChecking = middleIndexChecking;
@@ -404,8 +406,10 @@ public class CustomGrid : MonoBehaviour {
 
     public Soldier[] RetrieveSoldiersInSquare(int squareIndex, Soldier[] priorSoldierArray) {
         int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
-        throw new soldiuer binary search is not giving me the fooking results I want. FIX THIS NOW!
-        if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) return null;
+        if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) {
+            Debug.Log(squareIndex + ",  " + soldierSquareIndex[indexOfSquareIndex] + ", " + indexOfSquareIndex);
+            return priorSoldierArray;
+        }
 
         int firstIndexOfSquareIndex = indexOfSquareIndex;
         int lastIndexOfSquareIndex = indexOfSquareIndex;
@@ -413,7 +417,7 @@ public class CustomGrid : MonoBehaviour {
         while (firstIndexOfSquareIndex - 1 >= 0 && soldierSquareIndex[firstIndexOfSquareIndex - 1] == squareIndex)
             firstIndexOfSquareIndex--;
         while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
-            lastIndexOfSquareIndex++;
+            lastIndexOfSquareIndex++; //yan was here
         Soldier[] returningArray = new Soldier[priorSoldierArrayLength + lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
         for (int i = 0; i < priorSoldierArrayLength; i++) {
             returningArray[i] = priorSoldierArray[i];
