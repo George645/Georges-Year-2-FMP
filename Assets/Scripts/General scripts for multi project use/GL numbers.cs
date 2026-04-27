@@ -155,7 +155,7 @@ namespace MiscFunctions {
             GL.Vertex(position + classSize * (new Vector3(0.5f, 0, 0.75f * 1)));
         }
         private static void Draw6(Vector3 position) {
-            for (int i = 45; i < 180; i++) {
+            for (int i = 60; i < 200; i++) {
                 GL.Vertex(position + classSize * new Vector3(0.5f * Mathf.Cos(i * Mathf.Deg2Rad), 0, Mathf.Sin(i * Mathf.Deg2Rad)));
                 GL.Vertex(position + classSize * new Vector3(0.5f * Mathf.Cos((i + 1) * Mathf.Deg2Rad), 0, Mathf.Sin((1 + i) * Mathf.Deg2Rad)));
 
