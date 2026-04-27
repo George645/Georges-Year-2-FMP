@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class CustomGrid : MonoBehaviour {
@@ -11,7 +14,7 @@ public class CustomGrid : MonoBehaviour {
 
     #region Unity functions
     private void OnValidate() {
-        
+
         SetInstance();
     }
     private void Awake() {
@@ -315,30 +318,16 @@ public class CustomGrid : MonoBehaviour {
             soldierReferences[i].indexInArrays = i;
             soldierSquareIndex[i] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(tempList[i].transform.position));
         }
+        Debug.Log("hi");
         SoldierSort();
     }
     public Soldier[] RetrieveNearbySoldiers(Vector3 position) {
         int arrayPositionOfPosition = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
         int[] neighbourPositionsToCheck = SoldierNeighbours(arrayPositionOfPosition);
         Soldier[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
-                string[] names;
         for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
-            if (soldiersNearby!= null) {
-                names = new string[soldiersNearby.Length];
-                int count = 0;
-                foreach (Soldier soldier2 in soldiersNearby) {
-                    names[count] = soldier2.transform.name;
-                    count++;
-                }
-                Debug.Log(String.Join(',', names) + "," + i + ", " + neighbourPositionsToCheck[i]);
-            }
-            else {
-                Debug.Log("0 " + i + ", " + neighbourPositionsToCheck[i]);
-            }
-                soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
+            soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
         }
-        throw new merge sort no work
-        Debug.Log(String.Join(", ", soldierSquareIndex));
         return soldiersNearby;
     }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
@@ -356,7 +345,7 @@ public class CustomGrid : MonoBehaviour {
                     return addingToIndex;
                 }
                 else if (soldierSquareIndex[endingIndexChecking] > squareIndex) {
-                    return addingToIndex;
+                    return addingToIndex - 1;
                 }
             }
             if (soldierSquareIndex[middleIndexChecking] == squareIndex) {
@@ -407,7 +396,6 @@ public class CustomGrid : MonoBehaviour {
     public Soldier[] RetrieveSoldiersInSquare(int squareIndex, Soldier[] priorSoldierArray) {
         int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
         if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) {
-            Debug.Log(squareIndex + ",  " + soldierSquareIndex[indexOfSquareIndex] + ", " + indexOfSquareIndex);
             return priorSoldierArray;
         }
 
@@ -423,7 +411,7 @@ public class CustomGrid : MonoBehaviour {
             returningArray[i] = priorSoldierArray[i];
         }
         for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
-            returningArray[i - firstIndexOfSquareIndex + priorSoldierArrayLength] = soldierReferences[firstIndexOfSquareIndex];
+            returningArray[i - firstIndexOfSquareIndex + priorSoldierArrayLength] = soldierReferences[i];
         }
         return returningArray;
     }
@@ -439,7 +427,7 @@ public class CustomGrid : MonoBehaviour {
             lastIndexOfSquareIndex++;
         Soldier[] returningArray = new Soldier[lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
         for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
-            returningArray[i - firstIndexOfSquareIndex] = soldierReferences[firstIndexOfSquareIndex];
+            returningArray[i - firstIndexOfSquareIndex] = soldierReferences[i];
         }
         return returningArray;
     }
@@ -454,9 +442,8 @@ public class CustomGrid : MonoBehaviour {
         Array.Copy(soldierSquareIndex, duplicateSoldierSquareIndexArray, soldierSquareIndex.Length);
         Array.Copy(soldierReferences, duplicateSoldierReferenceArray, soldierSquareIndex.Length);
 
-        SoldierSort(0, soldierSquareIndex.Length - 1, ref soldierReferences, ref duplicateSoldierReferenceArray, ref soldierSquareIndex, ref duplicateSoldierSquareIndexArray);
+        SoldierSort(0, soldierSquareIndex.Length, ref soldierReferences, ref duplicateSoldierReferenceArray, ref soldierSquareIndex, ref duplicateSoldierSquareIndexArray);
     }
-
     void SoldierSort(int begin, int end, ref Soldier[] soldierArray1, ref Soldier[] soldierArray2, ref int[] intArray1, ref int[] intArray2) {
         if (end - begin <= 1) return;
 
@@ -473,6 +460,7 @@ public class CustomGrid : MonoBehaviour {
         int middle = middleConst;
 
         for (int i = begin; i < end; i++) {
+            //Debug.Log(intArray1[begin] + ", " + intArray1[middle] + ", " + (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])));
             if (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])) {
                 soldierArray2[i] = soldierArray1[begin];
                 soldierArray2[i].indexInArrays = i;
@@ -486,16 +474,12 @@ public class CustomGrid : MonoBehaviour {
                 middle++;
             }
         }
-        for (int i = begin; i < end; i++) {
-            soldierArray1[i] = soldierArray2[i];
-            intArray1[i] = intArray1[i];
-        }
     }
 
     void SoldierSort(int startingIndexInSquareIndexArray) {
         int squareIndex = soldierSquareIndex[startingIndexInSquareIndexArray];
         Soldier soldier = soldierReferences[startingIndexInSquareIndexArray];
-        soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex[startingIndexInSquareIndexArray - 1];
+        soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex[startingIndexInSquareIndexArray + 1];
         int arrayPositionOfCorrectPosition = SoldierBinarySearchForSquare(squareIndex);
         if (startingIndexInSquareIndexArray < arrayPositionOfCorrectPosition)
             for (int i = startingIndexInSquareIndexArray; i < arrayPositionOfCorrectPosition; i++) {
@@ -559,7 +543,6 @@ public class CustomGrid : MonoBehaviour {
         Vector3 corner2Vector = SoldierSpaceToWorldSpace(corner2);
         Vector3 midpoint = (corner1Vector + corner2Vector) / 2;
         MiscFunctions.GLNumbers.DisplayNumber(index, midpoint, null, null, 0.5f);
-        //Debug.Log(corner1Vector + ", " + corner2Vector + ", " + midpoint);
         Gizmos.color = color;
         Gizmos.DrawCube(midpoint, new Vector3(corner2Vector.x - corner1Vector.x, 0, corner2Vector.z - corner1Vector.z));
     }

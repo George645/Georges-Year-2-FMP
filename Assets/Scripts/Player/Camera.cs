@@ -157,7 +157,6 @@ public class CameraScript : MonoBehaviour {
             Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
             int currentWidth = 0;
             int currentRow = 0;
-            Debug.Log(localCurrentlyManipulatedPositions.Count);
             for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {
                 localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
                 currentWidth++;

@@ -115,6 +115,8 @@ public class Unit : MonoBehaviour {
     }
     public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection) {
         Soldier[] nearbySoldiers = CustomGrid.instance.RetrieveNearbySoldiers(position);
+        soldierRelativeDirection = Vector3.zero;
+        if (nearbySoldiers == null) return false;
         Vector3 excludedPosition = soldierPositions[ChildIndexToListIndex(excludedIndex)];
         for (int i = 0; i < nearbySoldiers.Length; i++) {
             Vector3 childPosition = nearbySoldiers[i].transform.position;
@@ -126,7 +128,6 @@ public class Unit : MonoBehaviour {
                 return false;
             }
         }
-        soldierRelativeDirection = Vector3.zero;
         return true;
     }
     List<Soldier> GetSoldiersInPosition(Vector3 position, int excludeIndex) {
