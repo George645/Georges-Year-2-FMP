@@ -140,7 +140,7 @@ public class CameraScript : MonoBehaviour {
             int currentWidth = 0;
             int currentRow = 0;
             for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {
-                localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.OffsetPerRow;
+                localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.offsetPerRow;
                 currentWidth++;
                 if (currentWidth == currentlySelected.CurrentWidth) {
                     currentRow++;
@@ -155,6 +155,8 @@ public class CameraScript : MonoBehaviour {
             Vector3 startingPosition = localUnitStartPosition;
             Vector3 soldierOffsetPerTroop = (localUnitEndPosition - localUnitStartPosition).normalized * currentlySelected.offsetPerTroop.magnitude;
             Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
+            currentlySelected.offsetPerTroop = soldierOffsetPerTroop;
+            currentlySelected.offsetPerRow = soldierOffsetPerRow;
             int currentWidth = 0;
             int currentRow = 0;
             for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {

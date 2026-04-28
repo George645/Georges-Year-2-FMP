@@ -95,7 +95,7 @@ public class Unit : MonoBehaviour {
         return true;
     }
     public void UpdateSoldierPosition(Vector3 position, int siblingIndex, Soldier soldier) {
-        CustomGrid.instance.UpdateSoldierPosition(soldier); // <- make this a parameter to pass in
+        CustomGrid.instance.UpdateSoldierPosition(soldier);
         int ListIndex = ChildIndexToListIndex(siblingIndex);
         soldierPositions[ListIndex] = position;
         BoundingBox.ChangePoint(ListIndex, position);
@@ -124,6 +124,25 @@ public class Unit : MonoBehaviour {
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
+                if (nearbySoldiers[i].unit.playersUnit != playersUnit) {
+                    Vector3 diagonalA = nearbySoldiers[i].unit.offsetPerTroop * nearbySoldiers[i].unit.CurrentWidth + nearbySoldiers[i].unit.offsetPerRow * (nearbySoldiers[i].unit.NumberOfSoldiers / nearbySoldiers[i].unit.CurrentWidth);
+                    Vector3 diagonalB = nearbySoldiers[i].unit.offsetPerTroop * nearbySoldiers[i].unit.CurrentWidth - nearbySoldiers[i].unit.offsetPerRow * (nearbySoldiers[i].unit.NumberOfSoldiers / nearbySoldiers[i].unit.CurrentWidth);
+                    Debug.Log(diagonalA + ", " + (position - nearbySoldiers[i].unit.CenterPoint) + ", " + diagonalB);
+                    Debug.Log(Vector3.Dot(diagonalA, position - nearbySoldiers[i].unit.CenterPoint));
+                    Debug.Log(Vector3.Dot(diagonalB, position - nearbySoldiers[i].unit.CenterPoint));
+
+                    //Vector3 startingPosition = localUnitStartPosition - currentlySelected.offsetPerTroop * currentlySelected.CurrentWidth / 2;
+                    //int currentWidth = 0;
+                    //int currentRow = 0;
+                    //for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {
+                    //    localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.offsetPerRow;
+                    //    currentWidth++;
+                    //    if (currentWidth == currentlySelected.CurrentWidth) {
+                    //        currentRow++;
+                    //        currentWidth = 0;
+                    //    }
+                    //}
+                }
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
             }
@@ -236,11 +255,11 @@ public class Unit : MonoBehaviour {
     int startingSoldierTotal;
     [SerializeField]
     public Vector3 offsetPerTroop; // Make a thing in the unit editor like with starting soldier total
-    public Vector3 OffsetPerRow {
-        get { return offsetPerRow; }
-    }// Make a thing in the unit editor like with starting soldier total
+    //public Vector3 OffsetPerRow {
+    //    get { return offsetPerRow; }
+    //}// Make a thing in the unit editor like with starting soldier total
     [SerializeField]
-    Vector3 offsetPerRow;
+    public Vector3 offsetPerRow;
 
     public void InstantArrangeByWidth(int widthCount) {
         currentWidth = widthCount;

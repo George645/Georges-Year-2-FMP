@@ -345,6 +345,7 @@ public class CustomGrid : MonoBehaviour {
                     return addingToIndex;
                 }
                 else if (soldierSquareIndex[endingIndexChecking] > squareIndex) {
+                    if (addingToIndex - 1 == -1) addingToIndex = 1;
                     return addingToIndex - 1;
                 }
             }
@@ -477,10 +478,20 @@ public class CustomGrid : MonoBehaviour {
     }
 
     void SoldierSort(int startingIndexInSquareIndexArray) {
+
         int squareIndex = soldierSquareIndex[startingIndexInSquareIndexArray];
         Soldier soldier = soldierReferences[startingIndexInSquareIndexArray];
-        soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex[startingIndexInSquareIndexArray + 1];
+        try {
+            soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex.Length < (startingIndexInSquareIndexArray) ? soldierSquareIndex[startingIndexInSquareIndexArray] : soldierSquareIndex[startingIndexInSquareIndexArray + 1];
+        }
+        catch {
+            Debug.Log(startingIndexInSquareIndexArray);
+            Debug.Log(soldierSquareIndex.Length < (startingIndexInSquareIndexArray));
+            throw new IndexOutOfRangeException();
+        }
         int arrayPositionOfCorrectPosition = SoldierBinarySearchForSquare(squareIndex);
+
+
         if (startingIndexInSquareIndexArray < arrayPositionOfCorrectPosition)
             for (int i = startingIndexInSquareIndexArray; i < arrayPositionOfCorrectPosition; i++) {
                 soldierSquareIndex[i] = soldierSquareIndex[i + 1];

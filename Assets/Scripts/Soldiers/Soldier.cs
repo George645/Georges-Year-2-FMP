@@ -70,8 +70,8 @@ public class Soldier : MonoBehaviour {
             transform.position = targetPos;
             currentPosition = targetPos;
             unit.UpdateSoldierPosition(currentPosition, siblingIndex, this);
-            if (!RotateTowards(-unit.OffsetPerRow.normalized)) {
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, -unit.OffsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+            if (!RotateTowards(-unit.offsetPerRow.normalized)) {
+                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, -unit.offsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
                 rightDirection = transform.right;
                 facingDirection = transform.forward;
                 return;
