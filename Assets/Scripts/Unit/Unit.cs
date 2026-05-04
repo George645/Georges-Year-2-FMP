@@ -48,6 +48,22 @@ public class Unit : MonoBehaviour {
             return BoundingBox.Center;
         }
     }
+
+    public Vector3 UnitFront {
+        get {
+            return Vector3.zero;
+        }
+    }
+    Vector3 unitFront;
+    public Vector3 UnitRight {
+        get {
+            return Vector3.zero;
+        }
+    }
+    Vector3 unitRight;
+
+
+
     #region Unity functions
     private void Awake() {
     }

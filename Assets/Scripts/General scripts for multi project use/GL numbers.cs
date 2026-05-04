@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MiscFunctions {
+namespace GLFunctions {
     public class GLNumbers {
         static float classSize;
         static Vector3 forwardDirection;

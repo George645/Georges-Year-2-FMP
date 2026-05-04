@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class CustomGrid : MonoBehaviour {
@@ -553,7 +550,7 @@ public class CustomGrid : MonoBehaviour {
         Vector3 corner1Vector = SoldierSpaceToWorldSpace(corner1);
         Vector3 corner2Vector = SoldierSpaceToWorldSpace(corner2);
         Vector3 midpoint = (corner1Vector + corner2Vector) / 2;
-        MiscFunctions.GLNumbers.DisplayNumber(index, midpoint, null, null, 0.5f);
+        GLFunctions.GLNumbers.DisplayNumber(index, midpoint, null, null, 0.5f);
         Gizmos.color = color;
         Gizmos.DrawCube(midpoint, new Vector3(corner2Vector.x - corner1Vector.x, 0, corner2Vector.z - corner1Vector.z));
     }

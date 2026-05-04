@@ -1,8 +1,12 @@
-using MiscFunctions;
+using GLFunctions;
 using UnityEngine;
 
 public class GLnumbersdebugger : MonoBehaviour {
     private void OnDrawGizmos() {
+        NumbersTester();
+        ArrowTest();
+    }
+    void NumbersTester() {
         GLNumbers.DisplayNumber(0, new Vector3(0, 0, 18));
         GLNumbers.DisplayNumber(1, new Vector3(0, 0, 15));
         GLNumbers.DisplayNumber(2, new Vector3(0, 0, 12));
@@ -16,5 +20,16 @@ public class GLnumbersdebugger : MonoBehaviour {
         GLNumbers.DisplayNumber(0123456789, new Vector3(0, 0, -12));
         GLNumbers.DisplayNumber(0123456789, new Vector3(0, 0, -15), null, null, .5f);
         GLNumbers.DisplayNumber(0123456789, new Vector3(0, 0, -21), null, null, 2);
+    }
+    [SerializeField]
+    Vector3 arrowStartPosition;
+    [SerializeField]
+    Vector3 arrowEndPosition;
+    [SerializeField]
+    Color arrowColor;
+    [SerializeField]
+    int ArrowHeadSize = 1;
+    void ArrowTest() {
+        GLshapes.DrawArrow(arrowStartPosition, arrowEndPosition, arrowColor, ArrowHeadSize);
     }
 }
