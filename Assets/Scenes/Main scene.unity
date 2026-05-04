@@ -161645,6 +161645,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f28c27db52a80b4b813df0c44357520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GLnumbersdebugger
+  arrowStartPosition: {x: 1, y: 0, z: 0}
+  arrowEndPosition: {x: 5, y: 0, z: 0}
+  arrowColor: {r: 0, g: 0, b: 0, a: 0}
+  ArrowHeadSize: 1
 --- !u!4 &621182961
 Transform:
   m_ObjectHideFlags: 0
