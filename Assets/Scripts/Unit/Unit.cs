@@ -49,18 +49,6 @@ public class Unit : MonoBehaviour {
         }
     }
 
-    public Vector3 UnitFront {
-        get {
-            return Vector3.zero;
-        }
-    }
-    Vector3 unitFront;
-    public Vector3 UnitRight {
-        get {
-            return Vector3.zero;
-        }
-    }
-    Vector3 unitRight;
 
 
 
@@ -80,6 +68,51 @@ public class Unit : MonoBehaviour {
     #endregion
 
     int offsetDistance = 4;
+
+    #region Unit functions
+    public Vector3 UnitFront {
+        get {
+            return -offsetPerRow * ((float)NumberOfSoldiers / (float)CurrentWidth) / 2;
+        }
+    }
+    public Vector3 UnitRight {
+        get {
+            return offsetPerTroop * (float)currentWidth / 2;
+        }
+    }
+
+    Vector3 GetForwardRightDiagonal() {
+        return UnitFront + UnitRight;
+    }
+    Vector3 GetForwardLeftDiagonal() {
+        return UnitFront - UnitRight;
+    }
+    string QuadrantOfPoint(Vector3 point) {
+        Debug.Log(Vector3.Dot(GetForwardRightDiagonal(), point - CenterPoint) + ", " + Vector3.Dot(GetForwardLeftDiagonal(), point - CenterPoint));
+        if (Vector3.Dot(Rotate90Degrees(GetForwardRightDiagonal()), point - CenterPoint) < 0) {
+            if (Vector3.Dot(Rotate90Degrees(GetForwardLeftDiagonal()), point - CenterPoint) < 0) {
+                return "left";
+            }
+            else {
+                return "front";
+            }
+        }
+        else {
+            if (Vector3.Dot(Rotate90Degrees(GetForwardLeftDiagonal()), point - CenterPoint) < 0) {
+                return "back";
+            }
+            else {
+                return "right";
+            }
+        }
+    }
+    Vector3 Rotate90Degrees(Vector3 startVector) {
+        return new Vector3(startVector.z, startVector.y, startVector.x);
+    } 
+    Vector3 UnRotate90Degrees(Vector3 startVector) {
+        return new Vector3(startVector.z, startVector.y, startVector.x);
+    }
+    #endregion
 
     #region General unit questions
     void InitializePositions() {
@@ -358,10 +391,35 @@ public class Unit : MonoBehaviour {
 
     #region Unity editor
 #if UNITY_EDITOR
+    [SerializeField]
+    bool drawPlayerArrow;
     private void OnDrawGizmosSelected() {
         CustomGrid.instance.DisplayUnitCheckingSquares(this);
         if (Application.isPlaying)
             BoundingBox.DisplayBox();
+        DisplayDiagonal();
+    }
+
+    void DisplayDiagonal() {
+        //Debug.Log(CenterPoint + ", " + (CenterPoint + GetForwardLeftDiagonal()) + ", " + GetForwardLeftDiagonal() + ", " + UnitFront + ", ");
+        GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardRightDiagonal()), Color.black);
+        Vector3 rotatedDiagonal = new Vector3(GetForwardRightDiagonal().z, GetForwardRightDiagonal().y, GetForwardRightDiagonal().x);
+        Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));
+        GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardLeftDiagonal()), Color.black, 1);
+        rotatedDiagonal = new Vector3(GetForwardLeftDiagonal().z, GetForwardLeftDiagonal().y, GetForwardLeftDiagonal().x);
+        Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));
+        if (drawPlayerArrow) {
+            GLFunctions.GLshapes.DrawArrow(CenterPoint, ScreenPointToGroundPoint(Event.current.mousePosition));
+            Debug.Log(QuadrantOfPoint(ScreenPointToGroundPoint(Event.current.mousePosition)));
+        }
+    }
+    Vector3 ScreenPointToGroundPoint(Vector3 screenPoint) {
+        Ray raycast = Camera.main.ScreenPointToRay(screenPoint);
+        LayerMask groundMask = 1 << LayerMask.NameToLayer("Ground");
+        if (Physics.Raycast(raycast.origin, raycast.direction * 1000, out RaycastHit hitInfo, 1000, groundMask.value)) {
+            return hitInfo.point;
+        }
+        return Vector3.zero;
     }
 #endif
     #endregion
