@@ -1,19 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using System.Collections;
-using UnityEngine.PlayerLoop;
-using UnityEditor;
-using UnityEngine.Rendering;
 
 public class Unit : MonoBehaviour {
     List<Soldier> childSoldiers = new();
     List<TargetPosition> targetPositions = new();
     List<Vector3> soldierPositions;
+
+
     BoundingBox BoundingBox;
     public bool selected = false;
     public bool playersUnit;
+
+    int offsetDistance = 4;
     public int CurrentWidth {
         get { return currentWidth; }
     }
@@ -67,7 +67,19 @@ public class Unit : MonoBehaviour {
     }
     #endregion
 
-    int offsetDistance = 4;
+    #region Target soldier positions
+    public List<Vector3> TargetSoldierPositions { get { return targetSoldierPositions; } private set { targetSoldierPositions = value; } }
+    List<Vector3> targetSoldierPositions;
+    public BoundingBox TargetPositionBoundingBox { get { return targetPositionBoundingBox; } private set { targetPositionBoundingBox = value; } }
+    BoundingBox targetPositionBoundingBox;
+    void SetNewTargetSolderPositions(List<Vector3> inputList) {
+        TargetSoldierPositions = inputList;
+        TargetPositionBoundingBox = new BoundingBox();
+        foreach (Vector3 vector in inputList) {
+            TargetPositionBoundingBox.Encapsulate(vector);
+        }
+    }
+    #endregion
 
     #region Unit functions
     public Vector3 UnitFront {
@@ -122,26 +134,13 @@ public class Unit : MonoBehaviour {
             soldierPositions.Add(childSoldiers[i].transform.position);
             BoundingBox.Encapsulate(transform.GetChild(i * 2).transform.position);
         }
-
+        SetNewTargetSolderPositions(soldierPositions);
 
     }
     void SoldierDeath(int UnitIndex) {
         //remove from all lists and the bounds.
         //remove from the grid system
-        //remove from highlighted target positions
-    }
-    /// <summary>
-    /// Checks if there is a soldier from this unit in a given position
-    /// </summary>
-    /// <param name="position"> the position that is being checked </param>
-    /// <returns> returns true if there is a soldier in the given position </returns>
-    public bool SoldierInPosition(Vector3 position) {
-        foreach (Vector3 childPosition in soldierPositions) {
-            if (Vector3.SqrMagnitude(childPosition - position) < offsetDistance) {
-                return false;
-            }
-        }
-        return true;
+        //remove from highlighted target positions (in the camera)
     }
     public void UpdateSoldierPosition(Vector3 position, int siblingIndex, Soldier soldier) {
         CustomGrid.instance.UpdateSoldierPosition(soldier);
@@ -149,19 +148,12 @@ public class Unit : MonoBehaviour {
         soldierPositions[ListIndex] = position;
         BoundingBox.ChangePoint(ListIndex, position);
     }
-    public bool SoldierInPosition(Vector3 position, int excludedIndex) {
-        Soldier[] nearbySoldiers = CustomGrid.instance.RetrieveNearbySoldiers(position);
-        Soldier excludedSoldier = transform.GetChild(excludedIndex).GetComponent<Soldier>();
-        foreach (Soldier nearbySoldier in nearbySoldiers) {
-            if (nearbySoldier.transform == excludedSoldier) {
-                continue;
-            }
-            if (Vector3.SqrMagnitude(nearbySoldier.transform.position - position) < offsetDistance) {
-                return false;
-            }
-        }
-        return true;
-    }
+
+    /// <summary>
+    /// Checks if there is a soldier from this unit in a given position
+    /// </summary>
+    /// <param name="position"> the position that is being checked </param>
+    /// <returns> returns true if there is a soldier in the given position </returns>
     public bool SoldierInPosition(Vector3 position, int excludedIndex, out Vector3 soldierRelativeDirection) {
         Soldier[] nearbySoldiers = CustomGrid.instance.RetrieveNearbySoldiers(position);
         soldierRelativeDirection = Vector3.zero;
@@ -246,6 +238,7 @@ public class Unit : MonoBehaviour {
         StartCoroutine(nameof(UpdatePosition), listOfPositions);
     }
     IEnumerator UpdatePosition(List<Vector3> listOfPositions) {
+        SetNewTargetSolderPositions(listOfPositions);
         List<Vector3> oldSoldierPositions = new(soldierPositions);
         List<TargetPosition> oldTargetPositions2 = new(targetPositions);
         int count = 0;
@@ -297,9 +290,6 @@ public class Unit : MonoBehaviour {
     #endregion
 
     #region Set up unit
-    int StartingSoldierTotal {
-        get { return PlayerPrefs.GetInt("Unit Size", 0) != 0 ? PlayerPrefs.GetInt("Unit Size") : startingSoldierTotal; }
-    }
     [SerializeField, HideInInspector]
     int startingSoldierTotal;
     [SerializeField]
@@ -312,7 +302,6 @@ public class Unit : MonoBehaviour {
 
     public void InstantArrangeByWidth(int widthCount) {
         currentWidth = widthCount;
-        Debug.Log(currentWidth);
         int currentWidthIndex = 0;
         int currentRowIndex = 0;
         Vector3 FirstPosition = (Vector3.forward + Vector3.right) / 2;
@@ -320,6 +309,7 @@ public class Unit : MonoBehaviour {
             Vector3 positionOfThisSoldier = FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
 
             targetPositions[i].InstantSetPosition(positionOfThisSoldier);
+
 
             currentWidthIndex++;
             if (currentWidthIndex == widthCount) {

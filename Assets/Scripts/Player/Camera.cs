@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour {
     int distanceFromEdgeOfScreenDivider = 20;
     Vector3 unitStartPosition, unitEndPosition;
-    Unit currentlySelected;
-    List<Unit> currentlySelectedList;
+
+    List<Unit> currentlySelectedUnits;
+    List<List<GameObject>> currentlyManipulatedTargetPositions = new();
+
     [SerializeField]
     GameObject highlightedTargetPositionParent;
 
@@ -23,20 +26,21 @@ public class CameraScript : MonoBehaviour {
     }
 
     private void Start() {
-        if (instance == null) {
+        if (instance == null)
             DontDestroyOnLoad(this.gameObject);
-            instance = this;
-        }
-        else {
+        else
             Destroy(this.gameObject);
-        }
+
+        instance = this;
+        currentlySelectedUnits = new();
+        DisableLastSelection();
     }
     void Update() {
         if (Input.GetMouseButtonDown(0)) {
             DisableLastSelection();
             CheckIfClickingOnUnit();
         }
-        if (currentlySelected != null) {
+        if (currentlySelectedUnits.Count != 0) {
             if (Input.GetMouseButtonDown(1)) {
                 SetStartPosition();
             }
@@ -45,154 +49,130 @@ public class CameraScript : MonoBehaviour {
             }
             if (Input.GetMouseButtonUp(1)) {
                 SetEndPosition();
+                SendPositionalDataToUnit();
             }
-            if (currentlySelectedList.Count >= 1) {
-                for (int i = 0; i < currentlySelectedList.Count; i++) {
-                    SetMovementLine(i);
-                    Debug.Log("movement Line set: " + i);
-                }
-            }
-            else {
-                SetMovementLine(-1);
-                Debug.Log("movement Line set: 0");
-            }
+            SetMovementLine();
         }
-        AddOrSubtractScrollAmount();
+
         //Rotation
         if (CheckMousePositionForRotation() || RotationKeysPressed()) Rotate();
 
         //Movement
         if (CheckMousePositionForMovement() || MovementKeysPressed()) Movement();
 
-        //vertical movement and rotation
+        //vertical movement and rotation (scroll(
+        AddOrSubtractScrollAmount();
         AddScrollingDelta();
     }
 
     #region moving units
-    List<List<GameObject>> currentlyManipulatedTargetPositions = new();
     void DisableLastSelection() {
-        if (currentlySelected != null) {
-            currentlySelected.selected = false;
-            currentlySelected = null;
+        if (currentlySelectedUnits.Count != 0) {
+            currentlySelectedUnits.ForEach(x => x.selected = false);
+            currentlySelectedUnits = new();
         }
         currentlyManipulatedTargetPositions = new();
     }
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
+            if (currentlySelectedUnits.Contains(hitInfo.collider.transform.parent.GetComponent<Unit>())) throw new NotImplementedException("Not implemented removing a unit from the lists");
             if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
-                currentlySelected = hitInfo.collider.transform.parent.GetComponent<Unit>();
-                currentlySelected.selected = true;
-                if (Input.GetKey(KeyCode.LeftShift)) {
-                    if (currentlySelectedList.Count == 0) {
-                        currentlySelectedList.Add(currentlySelected);
-                    }
-                }
-                else {
-                    currentlySelectedList = new();
-                }
-                currentlyManipulatedTargetPositions.Add(new());
-                Debug.Log(currentlyManipulatedTargetPositions.Count);
-                Debug.Log(currentlyManipulatedTargetPositions[currentlyManipulatedTargetPositions.Count - 1]);
-                for (int i = 0; i < currentlySelected.NumberOfSoldiers; i++) {
-                    currentlyManipulatedTargetPositions[currentlyManipulatedTargetPositions.Count - 1].Add(highlightedTargetPositionParent.transform.GetChild(i).gameObject);
-                }
-                if (currentlySelectedList.Count >= 1) {
-                    currentlySelected = null;
-                }
+                currentlySelectedUnits.Add(hitInfo.collider.transform.parent.GetComponent<Unit>());
+                currentlySelectedUnits[^1].selected = true;
+                currentlyManipulatedTargetPositions.Add(GetPotentialPositionDiskForUnit(currentlySelectedUnits[^1]));
             }
         }
+    }
+
+    List<GameObject> GetPotentialPositionDiskForUnit(Unit unit) {
+        List<GameObject> returningList = new();
+        // THIS ISN'T WORKING FOR SOME REASON
+        for (int i = 0; i < unit.NumberOfSoldiers; i++) {
+            returningList.Add(highlightedTargetPositionParent.GetComponentsInChildren<MeshRenderer>().Where(x => x.enabled == false).ToArray()[0].transform.gameObject); // <- This could be very ineffiecient
+        }
+        return returningList;
     }
 
     void SetStartPosition() {
         unitStartPosition = ScreenPointToGroundPoint(Input.mousePosition);
     }
     void SetEndPosition() {
-        Vector3 groundPointOfEndPosition = ScreenPointToGroundPoint(Input.mousePosition);
-        if ((groundPointOfEndPosition - unitStartPosition).sqrMagnitude < currentlySelected.offsetPerTroop.sqrMagnitude * 3)
-            unitEndPosition = unitStartPosition;
-        else if ((groundPointOfEndPosition - unitStartPosition).sqrMagnitude > currentlySelected.offsetPerTroop.sqrMagnitude * (currentlySelected.NumberOfSoldiers / (currentlySelected.NumberOfSoldiers > 120 ? 4 : 3)) * (currentlySelected.NumberOfSoldiers / 3))
-            unitEndPosition = unitStartPosition + (groundPointOfEndPosition - unitStartPosition).normalized * currentlySelected.offsetPerTroop.magnitude * (currentlySelected.NumberOfSoldiers / (currentlySelected.NumberOfSoldiers > 120 ? 4 : 3) - 0.1f);
-        else
-            unitEndPosition = groundPointOfEndPosition;
+        unitEndPosition = ScreenPointToGroundPoint(Input.mousePosition);
     }
-    void SetMovementLine(int Count) {
-        Vector3 localUnitStartPosition;
-        Vector3 localUnitEndPosition;
-        List<GameObject> localCurrentlyManipulatedPositions;
-        if (Count >= 0) {
-            localCurrentlyManipulatedPositions = currentlyManipulatedTargetPositions[Count];
-            localUnitStartPosition = unitStartPosition + unitEndPosition * Count / currentlySelectedList.Count;
-            localUnitEndPosition = unitEndPosition - unitStartPosition * Count / currentlySelectedList.Count;
-            currentlySelected = currentlySelectedList[Count];
-            throw new Exception("This doens't quite work yet");
-        }
-        else {
-            localCurrentlyManipulatedPositions = currentlyManipulatedTargetPositions[0];
-            localUnitStartPosition = unitStartPosition;
-            localUnitEndPosition = unitEndPosition;
-        }
-        if (Vector3.SqrMagnitude(localUnitStartPosition - localUnitEndPosition) == 0) {
-            if (highlightedTargetPositionParent.transform.GetChild(0).GetComponent<MeshRenderer>().enabled) {
-                ToggleMeshRenderers(false);
+    void SetMovementLine() {
+        if (Vector3.SqrMagnitude(unitStartPosition - unitEndPosition) < currentlySelectedUnits.Sum(x => x.offsetPerTroop.magnitude) * 3 + currentlySelectedUnits.Sum(x => x.offsetPerTroop.magnitude) * 0.5f) { // <- This is going to be veeery inefficient
+            foreach (List<GameObject> innerList in currentlyManipulatedTargetPositions.Where(x => x[^1].GetComponent<MeshRenderer>().enabled)) {
+                ToggleMeshRenderers(false, innerList);
             }
-            Vector3 startingPosition = localUnitStartPosition - currentlySelected.offsetPerTroop * currentlySelected.CurrentWidth / 2;
-            int currentWidth = 0;
-            int currentRow = 0;
-            for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {
-                localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.offsetPerRow;
-                currentWidth++;
-                if (currentWidth == currentlySelected.CurrentWidth) {
-                    currentRow++;
-                    currentWidth = 0;
+            Debug.Log(currentlySelectedUnits[0].TargetPositionBoundingBox);
+            Vector3 oldCenter = new Vector3(currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.x) / currentlySelectedUnits.Count(), 21, currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.z) / currentlySelectedUnits.Count());
+            Vector3 newCenter = unitStartPosition;
+            Vector3 offset = newCenter - oldCenter;
+
+            for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
+                List<GameObject> unitDisks = currentlyManipulatedTargetPositions[i];
+                Vector3 oldMidPoint = currentlySelectedUnits[i].TargetPositionBoundingBox.Center;
+                Vector3 relativeStartingPosition = -currentlySelectedUnits[i].offsetPerRow * (currentlySelectedUnits[i].NumberOfSoldiers / currentlySelectedUnits[i].CurrentWidth) / 2 - currentlySelectedUnits[i].offsetPerTroop * currentlySelectedUnits[i].CurrentWidth / 2;
+
+                int currentWidth = 0;
+                int currentRow = 0;
+                for (int j = 0; j < unitDisks.Count; j++) {
+                    unitDisks[i].transform.position = oldMidPoint + offset + relativeStartingPosition + currentWidth * currentlySelectedUnits[i].offsetPerTroop + currentRow * currentlySelectedUnits[i].offsetPerRow;
+                    currentWidth++;
+                    if (currentWidth == currentlySelectedUnits[i].CurrentWidth) {
+                        currentWidth = 0;
+                        currentRow++;
+                    }
                 }
             }
         }
         else {
-            if (!highlightedTargetPositionParent.transform.GetChild(0).GetComponent<MeshRenderer>().enabled) {
-                ToggleMeshRenderers(true);
+            foreach (List<GameObject> innerList in currentlyManipulatedTargetPositions.Where(x => x[^1].GetComponent<MeshRenderer>().enabled == false)) {
+                ToggleMeshRenderers(true, innerList);
             }
-            Vector3 startingPosition = localUnitStartPosition;
-            Vector3 soldierOffsetPerTroop = (localUnitEndPosition - localUnitStartPosition).normalized * currentlySelected.offsetPerTroop.magnitude;
-            Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
-            currentlySelected.offsetPerTroop = soldierOffsetPerTroop;
-            currentlySelected.offsetPerRow = soldierOffsetPerRow;
-            int currentWidth = 0;
-            int currentRow = 0;
-            for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {
-                localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
-                currentWidth++;
-                if ((currentWidth * soldierOffsetPerTroop).sqrMagnitude > (startingPosition - localUnitEndPosition).sqrMagnitude) {
-                    currentRow++;
-                    currentWidth = 0;
+
+            Vector3 startingPosition = unitStartPosition;
+
+            Vector3 distanceBetweenStartAndEnd = unitEndPosition - startingPosition;
+            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized / 2;
+            Vector3 distancePerUnit = distanceBetweenStartAndEndWithoutInBetweenGap / currentlySelectedUnits.Count;
+            
+            foreach (Unit unit in currentlySelectedUnits) {
+                Vector3 soldierOffsetPerTroop = distanceBetweenStartAndEnd.normalized * unit.offsetPerTroop.magnitude;
+                Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
+                int currentWidth = 0;
+                int currentRow = 0;
+                for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
+                    for (int j = 0; j < currentlyManipulatedTargetPositions[i].Count; j++) {
+                        currentlyManipulatedTargetPositions[i][j].transform.position = startingPosition + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
+                        currentWidth++;
+                        if ((currentWidth * soldierOffsetPerTroop).sqrMagnitude > (startingPosition - unitEndPosition).sqrMagnitude) {
+                            currentRow++;
+                            currentWidth = 0;
+                        }
+                    }
+                    startingPosition += distancePerUnit + distanceBetweenStartAndEnd.normalized / 2;
                 }
             }
         }
-        if (Input.GetMouseButtonUp(1)) {
-            if (Count >= 0) {
-                SendPositionalDataToUnit(Count);
-            }
-            else {
-                SendPositionalDataToUnit(0);
-            }
+    }
+    void ToggleMeshRenderers(bool isEnabled, List<GameObject> meshRenderers) {
+        for (int i = 0; i < meshRenderers.Count; i++) {
+            meshRenderers[i].GetComponent<MeshRenderer>().enabled = isEnabled;
         }
     }
-    void ToggleMeshRenderers(bool isEnabled) {
-        int count = 0;
-        for (int i = 0; i < currentlyManipulatedTargetPositions.Count - 1; i++) {
-            for (int j = 0; j < currentlyManipulatedTargetPositions[i].Count - 1;) {
-                highlightedTargetPositionParent.transform.GetChild(count).GetComponent<MeshRenderer>().enabled = isEnabled;
-                count++;
+    void SendPositionalDataToUnit() {
+        foreach (List<GameObject> innerList in currentlyManipulatedTargetPositions.Where(x => x[^1].GetComponent<MeshRenderer>().enabled)) {
+            ToggleMeshRenderers(false, innerList);
+        }
+        for (int i = 0; i < currentlySelectedUnits.Count(); i++) {
+            List<Vector3> ListOfPositions = new();
+            foreach (GameObject thing in currentlyManipulatedTargetPositions[i]) {
+                ListOfPositions.Add(thing.transform.position);
             }
+            Debug.Log("positional data sent");
+            currentlySelectedUnits[i].NewPositions(ListOfPositions);
         }
-    }
-    void SendPositionalDataToUnit(int index) {
-        ToggleMeshRenderers(false);
-        List<Vector3> ListOfPositions = new();
-        foreach (GameObject thing in currentlyManipulatedTargetPositions[index]) {
-            ListOfPositions.Add(thing.transform.position);
-        }
-        Debug.Log("positional data sent");
-        currentlySelected.NewPositions(ListOfPositions);
     }
     /// <summary>
     /// returns zero if there is no collision with the floor
