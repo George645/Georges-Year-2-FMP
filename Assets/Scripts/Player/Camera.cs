@@ -37,7 +37,8 @@ public class CameraScript : MonoBehaviour {
     }
     void Update() {
         if (Input.GetMouseButtonDown(0)) {
-            DisableLastSelection();
+            if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                DisableLastSelection();
             CheckIfClickingOnUnit();
         }
         if (currentlySelectedUnits.Count != 0) {
@@ -67,14 +68,17 @@ public class CameraScript : MonoBehaviour {
 
     #region moving units
     void DisableLastSelection() {
+        Debug.Log("hi");
         if (currentlySelectedUnits.Count != 0) {
             currentlySelectedUnits.ForEach(x => x.selected = false);
             currentlySelectedUnits = new();
         }
+        currentlyManipulatedTargetPositions.ForEach(x => x.ForEach(y => y.GetComponent<MeshRenderer>().allowOcclusionWhenDynamic = false));
         currentlyManipulatedTargetPositions = new();
     }
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
+            Debug.Log(currentlySelectedUnits.Count());
             if (currentlySelectedUnits.Contains(hitInfo.collider.transform.parent.GetComponent<Unit>())) throw new NotImplementedException("Not implemented removing a unit from the lists");
             if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
                 currentlySelectedUnits.Add(hitInfo.collider.transform.parent.GetComponent<Unit>());
@@ -86,13 +90,14 @@ public class CameraScript : MonoBehaviour {
 
     List<GameObject> GetPotentialPositionDiskForUnit(Unit unit) {
         List<GameObject> returningList = new();
-        // THIS ISN'T WORKING FOR SOME REASON
+
         for (int i = 0; i < unit.NumberOfSoldiers; i++) {
-            returningList.Add(highlightedTargetPositionParent.GetComponentsInChildren<MeshRenderer>().Where(x => x.enabled == false).ToArray()[0].transform.gameObject); // <- This could be very ineffiecient
+            returningList.Add(highlightedTargetPositionParent.GetComponentsInChildren<MeshRenderer>().Where(x => x.allowOcclusionWhenDynamic == false).ToArray()[0].transform.gameObject); // <- This could be very ineffiecient
+            returningList[^1].GetComponent<MeshRenderer>().allowOcclusionWhenDynamic = true;
         }
         return returningList;
     }
-
+    // crazy?
     void SetStartPosition() {
         unitStartPosition = ScreenPointToGroundPoint(Input.mousePosition);
     }
@@ -104,7 +109,6 @@ public class CameraScript : MonoBehaviour {
             foreach (List<GameObject> innerList in currentlyManipulatedTargetPositions.Where(x => x[^1].GetComponent<MeshRenderer>().enabled)) {
                 ToggleMeshRenderers(false, innerList);
             }
-            Debug.Log(currentlySelectedUnits[0].TargetPositionBoundingBox);
             Vector3 oldCenter = new Vector3(currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.x) / currentlySelectedUnits.Count(), 21, currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.z) / currentlySelectedUnits.Count());
             Vector3 newCenter = unitStartPosition;
             Vector3 offset = newCenter - oldCenter;
@@ -136,22 +140,21 @@ public class CameraScript : MonoBehaviour {
             Vector3 distanceBetweenStartAndEnd = unitEndPosition - startingPosition;
             Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized / 2;
             Vector3 distancePerUnit = distanceBetweenStartAndEndWithoutInBetweenGap / currentlySelectedUnits.Count;
-            
-            foreach (Unit unit in currentlySelectedUnits) {
-                Vector3 soldierOffsetPerTroop = distanceBetweenStartAndEnd.normalized * unit.offsetPerTroop.magnitude;
+            int currentWidth = 0;
+            int currentRow = 0;
+            for (int index = 0; index < currentlySelectedUnits.Count; index++) {
+                Vector3 soldierOffsetPerTroop = distanceBetweenStartAndEnd.normalized * currentlySelectedUnits[index].offsetPerTroop.magnitude;
                 Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
-                int currentWidth = 0;
-                int currentRow = 0;
-                for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
-                    for (int j = 0; j < currentlyManipulatedTargetPositions[i].Count; j++) {
-                        currentlyManipulatedTargetPositions[i][j].transform.position = startingPosition + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
-                        currentWidth++;
-                        if ((currentWidth * soldierOffsetPerTroop).sqrMagnitude > (startingPosition - unitEndPosition).sqrMagnitude) {
-                            currentRow++;
-                            currentWidth = 0;
-                        }
+                currentWidth = 0;
+                currentRow = 0;
+                Debug.Log(distanceBetweenStartAndEnd.normalized);
+                for (int j = 0; j < currentlyManipulatedTargetPositions[index].Count; j++) {
+                    currentlyManipulatedTargetPositions[index][j].transform.position = startingPosition + (distancePerUnit + distanceBetweenStartAndEnd.normalized * 3) * index + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
+                    currentWidth++;
+                    if ((currentWidth * soldierOffsetPerTroop).sqrMagnitude > (startingPosition - (startingPosition + distancePerUnit + distanceBetweenStartAndEnd.normalized / 2)).sqrMagnitude) {
+                        currentRow++;
+                        currentWidth = 0;
                     }
-                    startingPosition += distancePerUnit + distanceBetweenStartAndEnd.normalized / 2;
                 }
             }
         }
@@ -173,6 +176,7 @@ public class CameraScript : MonoBehaviour {
             Debug.Log("positional data sent");
             currentlySelectedUnits[i].NewPositions(ListOfPositions);
         }
+
     }
     /// <summary>
     /// returns zero if there is no collision with the floor

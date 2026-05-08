@@ -168,9 +168,6 @@ public class Unit : MonoBehaviour {
                 if (nearbySoldiers[i].unit.playersUnit != playersUnit) {
                     Vector3 diagonalA = nearbySoldiers[i].unit.offsetPerTroop * nearbySoldiers[i].unit.CurrentWidth + nearbySoldiers[i].unit.offsetPerRow * (nearbySoldiers[i].unit.NumberOfSoldiers / nearbySoldiers[i].unit.CurrentWidth);
                     Vector3 diagonalB = nearbySoldiers[i].unit.offsetPerTroop * nearbySoldiers[i].unit.CurrentWidth - nearbySoldiers[i].unit.offsetPerRow * (nearbySoldiers[i].unit.NumberOfSoldiers / nearbySoldiers[i].unit.CurrentWidth);
-                    Debug.Log(diagonalA + ", " + (position - nearbySoldiers[i].unit.CenterPoint) + ", " + diagonalB);
-                    Debug.Log(Vector3.Dot(diagonalA, position - nearbySoldiers[i].unit.CenterPoint));
-                    Debug.Log(Vector3.Dot(diagonalB, position - nearbySoldiers[i].unit.CenterPoint));
 
                     //Vector3 startingPosition = localUnitStartPosition - currentlySelected.offsetPerTroop * currentlySelected.CurrentWidth / 2;
                     //int currentWidth = 0;
