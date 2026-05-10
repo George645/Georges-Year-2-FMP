@@ -14,6 +14,8 @@ public class Unit : MonoBehaviour {
     public bool playersUnit;
 
     int offsetDistance = 4;
+
+    public int potentialNextWidth;
     public int CurrentWidth {
         get { return currentWidth; }
     }
@@ -94,13 +96,13 @@ public class Unit : MonoBehaviour {
     }
 
     Vector3 GetForwardRightDiagonal() {
+        Debug.Log(UnitFront + ", " + offsetPerRow + ", " + UnitRight + ", " + offsetPerTroop);
         return UnitFront + UnitRight;
     }
     Vector3 GetForwardLeftDiagonal() {
         return UnitFront - UnitRight;
     }
     string QuadrantOfPoint(Vector3 point) {
-        Debug.Log(Vector3.Dot(GetForwardRightDiagonal(), point - CenterPoint) + ", " + Vector3.Dot(GetForwardLeftDiagonal(), point - CenterPoint));
         if (Vector3.Dot(Rotate90Degrees(GetForwardRightDiagonal()), point - CenterPoint) < 0) {
             if (Vector3.Dot(Rotate90Degrees(GetForwardLeftDiagonal()), point - CenterPoint) < 0) {
                 return "left";
@@ -120,7 +122,7 @@ public class Unit : MonoBehaviour {
     }
     Vector3 Rotate90Degrees(Vector3 startVector) {
         return new Vector3(startVector.z, startVector.y, startVector.x);
-    } 
+    }
     Vector3 UnRotate90Degrees(Vector3 startVector) {
         return new Vector3(startVector.z, startVector.y, startVector.x);
     }
@@ -166,8 +168,21 @@ public class Unit : MonoBehaviour {
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
                 if (nearbySoldiers[i].unit.playersUnit != playersUnit) {
-                    Vector3 diagonalA = nearbySoldiers[i].unit.offsetPerTroop * nearbySoldiers[i].unit.CurrentWidth + nearbySoldiers[i].unit.offsetPerRow * (nearbySoldiers[i].unit.NumberOfSoldiers / nearbySoldiers[i].unit.CurrentWidth);
-                    Vector3 diagonalB = nearbySoldiers[i].unit.offsetPerTroop * nearbySoldiers[i].unit.CurrentWidth - nearbySoldiers[i].unit.offsetPerRow * (nearbySoldiers[i].unit.NumberOfSoldiers / nearbySoldiers[i].unit.CurrentWidth);
+                    Unit collidedUnit = nearbySoldiers[i].unit;
+                    string quadrant = collidedUnit.QuadrantOfPoint(position);
+
+                    if (quadrant == "left") {
+                        
+                    }
+                    else if (quadrant == "right") {
+
+                    }
+                    else if (quadrant == "front") {
+
+                    }
+                    else if (quadrant == "back") {
+
+                    }
 
                     //Vector3 startingPosition = localUnitStartPosition - currentlySelected.offsetPerTroop * currentlySelected.CurrentWidth / 2;
                     //int currentWidth = 0;
@@ -231,6 +246,11 @@ public class Unit : MonoBehaviour {
     #endregion
 
     #region Move unit
+    public void ApplyPotentials() { // change this to be when all the soldiers are reported as in position.
+        currentWidth = potentialNextWidth;
+        offsetPerRow = potentialOffsetPerRow;
+        offsetPerTroop = potentialOffsetPerTroop;
+    }
     internal void NewPositions(List<Vector3> listOfPositions) {
         StartCoroutine(nameof(UpdatePosition), listOfPositions);
     }
@@ -249,17 +269,12 @@ public class Unit : MonoBehaviour {
 
             for (int i = 0; i < listOfPositions.Count; i++) {
                 for (int j = 0; j < oldSoldierPositions.Count; j++) {
-                    float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldSoldierPositions[i]);
+                    float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[i] - oldSoldierPositions[j]);
                     if (sqrMagnitude > maxDistance) {
                         indexOfNewPosition = i;
                         maxDistance = sqrMagnitude;
                     }
                 }
-                //count++;
-                //if (count > 30) {
-                //    yield return null;
-                //    count = 0;
-                //}
             }
 
             int indexOfOldPosition = -1;
@@ -289,11 +304,14 @@ public class Unit : MonoBehaviour {
     #region Set up unit
     [SerializeField, HideInInspector]
     int startingSoldierTotal;
+
+    [HideInInspector]
+    public Vector3 potentialOffsetPerTroop;
+    [HideInInspector]
+    public Vector3 potentialOffsetPerRow;
+
     [SerializeField]
-    public Vector3 offsetPerTroop; // Make a thing in the unit editor like with starting soldier total
-    //public Vector3 OffsetPerRow {
-    //    get { return offsetPerRow; }
-    //}// Make a thing in the unit editor like with starting soldier total
+    public Vector3 offsetPerTroop;
     [SerializeField]
     public Vector3 offsetPerRow;
 
@@ -388,7 +406,6 @@ public class Unit : MonoBehaviour {
     }
 
     void DisplayDiagonal() {
-        //Debug.Log(CenterPoint + ", " + (CenterPoint + GetForwardLeftDiagonal()) + ", " + GetForwardLeftDiagonal() + ", " + UnitFront + ", ");
         GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardRightDiagonal()), Color.black);
         Vector3 rotatedDiagonal = new Vector3(GetForwardRightDiagonal().z, GetForwardRightDiagonal().y, GetForwardRightDiagonal().x);
         Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));

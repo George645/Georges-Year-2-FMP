@@ -31,7 +31,6 @@ public class CustomGrid : MonoBehaviour {
         SetInstance();
         CreateUnitList();
         CreateSoldierList();
-        Debug.Log("Lists created");
     }
     #endregion
 
@@ -315,7 +314,6 @@ public class CustomGrid : MonoBehaviour {
             soldierReferences[i].indexInArrays = i;
             soldierSquareIndex[i] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(tempList[i].transform.position));
         }
-        Debug.Log("hi");
         SoldierSort();
     }
     public Soldier[] RetrieveNearbySoldiers(Vector3 position) {

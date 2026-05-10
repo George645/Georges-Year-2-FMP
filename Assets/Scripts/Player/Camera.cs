@@ -44,15 +44,17 @@ public class CameraScript : MonoBehaviour {
         if (currentlySelectedUnits.Count != 0) {
             if (Input.GetMouseButtonDown(1)) {
                 SetStartPosition();
+                SetMovementLine();
             }
             if (Input.GetMouseButton(1)) {
                 SetEndPosition();
+                SetMovementLine();
             }
             if (Input.GetMouseButtonUp(1)) {
                 SetEndPosition();
+                SetMovementLine();
                 SendPositionalDataToUnit();
             }
-            SetMovementLine();
         }
 
         //Rotation
@@ -68,7 +70,6 @@ public class CameraScript : MonoBehaviour {
 
     #region moving units
     void DisableLastSelection() {
-        Debug.Log("hi");
         if (currentlySelectedUnits.Count != 0) {
             currentlySelectedUnits.ForEach(x => x.selected = false);
             currentlySelectedUnits = new();
@@ -78,7 +79,6 @@ public class CameraScript : MonoBehaviour {
     }
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
-            Debug.Log(currentlySelectedUnits.Count());
             if (currentlySelectedUnits.Contains(hitInfo.collider.transform.parent.GetComponent<Unit>())) throw new NotImplementedException("Not implemented removing a unit from the lists");
             if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
                 currentlySelectedUnits.Add(hitInfo.collider.transform.parent.GetComponent<Unit>());
@@ -138,20 +138,24 @@ public class CameraScript : MonoBehaviour {
             Vector3 startingPosition = unitStartPosition;
 
             Vector3 distanceBetweenStartAndEnd = unitEndPosition - startingPosition;
-            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized / 2;
+            //Something needs to be added in here to make it so that the distance between start and end can't scale up infinitely
+            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized  * 5;
             Vector3 distancePerUnit = distanceBetweenStartAndEndWithoutInBetweenGap / currentlySelectedUnits.Count;
             int currentWidth = 0;
             int currentRow = 0;
             for (int index = 0; index < currentlySelectedUnits.Count; index++) {
                 Vector3 soldierOffsetPerTroop = distanceBetweenStartAndEnd.normalized * currentlySelectedUnits[index].offsetPerTroop.magnitude;
                 Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
+                currentlySelectedUnits[index].potentialOffsetPerRow = soldierOffsetPerRow;
+                currentlySelectedUnits[index].potentialOffsetPerTroop = soldierOffsetPerTroop;
+
                 currentWidth = 0;
                 currentRow = 0;
-                Debug.Log(distanceBetweenStartAndEnd.normalized);
                 for (int j = 0; j < currentlyManipulatedTargetPositions[index].Count; j++) {
-                    currentlyManipulatedTargetPositions[index][j].transform.position = startingPosition + (distancePerUnit + distanceBetweenStartAndEnd.normalized * 3) * index + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
+                    currentlyManipulatedTargetPositions[index][j].transform.position = startingPosition + (distancePerUnit + distanceBetweenStartAndEnd.normalized * 5) * index + currentWidth * soldierOffsetPerTroop + currentRow * soldierOffsetPerRow;
                     currentWidth++;
                     if ((currentWidth * soldierOffsetPerTroop).sqrMagnitude > (startingPosition - (startingPosition + distancePerUnit + distanceBetweenStartAndEnd.normalized / 2)).sqrMagnitude) {
+                        currentlySelectedUnits[index].potentialNextWidth = currentWidth - 1;
                         currentRow++;
                         currentWidth = 0;
                     }
@@ -169,6 +173,7 @@ public class CameraScript : MonoBehaviour {
             ToggleMeshRenderers(false, innerList);
         }
         for (int i = 0; i < currentlySelectedUnits.Count(); i++) {
+            currentlySelectedUnits[i].ApplyPotentials();
             List<Vector3> ListOfPositions = new();
             foreach (GameObject thing in currentlyManipulatedTargetPositions[i]) {
                 ListOfPositions.Add(thing.transform.position);
