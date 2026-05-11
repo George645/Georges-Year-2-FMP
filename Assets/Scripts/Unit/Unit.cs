@@ -266,6 +266,7 @@ public class Unit : MonoBehaviour {
         offsetPerTroop = potentialOffsetPerTroop;
     }
     internal void NewPositions(List<Vector3> listOfPositions) {
+        throw new error here is the stuff to work on
         if (!isRunning)
             StartCoroutine(nameof(UpdatePosition), listOfPositions);
         else {
