@@ -96,7 +96,6 @@ public class Unit : MonoBehaviour {
     }
 
     Vector3 GetForwardRightDiagonal() {
-        Debug.Log(UnitFront + ", " + offsetPerRow + ", " + UnitRight + ", " + offsetPerTroop);
         return UnitFront + UnitRight;
     }
     Vector3 GetForwardLeftDiagonal() {
@@ -170,31 +169,45 @@ public class Unit : MonoBehaviour {
                 if (nearbySoldiers[i].unit.playersUnit != playersUnit) {
                     Unit collidedUnit = nearbySoldiers[i].unit;
                     string quadrant = collidedUnit.QuadrantOfPoint(position);
-
+                    Vector3 localUnitStartPosition = Vector3.zero;
+                    Debug.Log("hi");
                     if (quadrant == "left") {
-                        
+                        localUnitStartPosition = collidedUnit.CenterPoint - collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 - collidedUnit.offsetPerRow * CurrentWidth / 2;
+                        offsetPerTroop = collidedUnit.offsetPerRow;
+                        offsetPerRow = -collidedUnit.offsetPerTroop;
                     }
                     else if (quadrant == "right") {
-
+                        localUnitStartPosition = collidedUnit.CenterPoint + collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 + collidedUnit.offsetPerRow * CurrentWidth / 2;
+                        offsetPerTroop = -collidedUnit.offsetPerRow;
+                        offsetPerRow = collidedUnit.offsetPerTroop;
                     }
                     else if (quadrant == "front") {
-
+                        localUnitStartPosition = collidedUnit.CenterPoint + collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 - collidedUnit.offsetPerRow * CurrentWidth / 2;
+                        offsetPerTroop = -collidedUnit.offsetPerTroop;
+                        offsetPerRow = -collidedUnit.offsetPerRow;
                     }
                     else if (quadrant == "back") {
-
+                        localUnitStartPosition = collidedUnit.CenterPoint - collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 + collidedUnit.offsetPerRow * CurrentWidth / 2;
+                        offsetPerTroop = collidedUnit.offsetPerTroop;
+                        offsetPerRow = collidedUnit.offsetPerRow;
+                    }
+                    else {
+                        throw new System.Exception("quadrant not found" + quadrant); //<- if this ever gets run, I will eat a hat, like I do not believe it.
                     }
 
-                    //Vector3 startingPosition = localUnitStartPosition - currentlySelected.offsetPerTroop * currentlySelected.CurrentWidth / 2;
-                    //int currentWidth = 0;
-                    //int currentRow = 0;
-                    //for (int i = 0; i < localCurrentlyManipulatedPositions.Count; i++) {
-                    //    localCurrentlyManipulatedPositions[i].transform.position = startingPosition + currentWidth * currentlySelected.offsetPerTroop + currentRow * currentlySelected.offsetPerRow;
-                    //    currentWidth++;
-                    //    if (currentWidth == currentlySelected.CurrentWidth) {
-                    //        currentRow++;
-                    //        currentWidth = 0;
-                    //    }
-                    //}
+                    List<Vector3> soldierPositions = new(NumberOfSoldiers);
+                    int internalCurrentWidth = 0;
+                    int internalCurrentRow = 0;
+                    for (int j = 0; j < soldierPositions.Count; j++) {
+                        soldierPositions[j] = localUnitStartPosition + internalCurrentWidth * offsetPerTroop + internalCurrentRow * offsetPerRow;
+                        internalCurrentWidth++;
+                        if (internalCurrentWidth == CurrentWidth) {
+                            internalCurrentRow++;
+                            internalCurrentWidth = 0;
+                        }
+                    }
+                    Debug.Log("Positional data sent");
+                    NewPositions(soldierPositions);
                 }
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
@@ -202,6 +215,7 @@ public class Unit : MonoBehaviour {
         }
         return true;
     }
+
     List<Soldier> GetSoldiersInPosition(Vector3 position, int excludeIndex) {
         List<Soldier> returningList = new();
         Vector3 excludedPosition = soldierPositions[ChildIndexToListIndex(excludeIndex)];
@@ -252,9 +266,21 @@ public class Unit : MonoBehaviour {
         offsetPerTroop = potentialOffsetPerTroop;
     }
     internal void NewPositions(List<Vector3> listOfPositions) {
-        StartCoroutine(nameof(UpdatePosition), listOfPositions);
+        if (!isRunning)
+            StartCoroutine(nameof(UpdatePosition), listOfPositions);
+        else {
+            WaitForUpdatePosition(listOfPositions);
+        }
     }
+    IEnumerator WaitForUpdatePosition(List<Vector3> list) {
+        while (isRunning) {
+            yield return null;
+        }
+        UpdatePosition(list);
+    }
+    bool isRunning;
     IEnumerator UpdatePosition(List<Vector3> listOfPositions) {
+        isRunning = true;
         SetNewTargetSolderPositions(listOfPositions);
         List<Vector3> oldSoldierPositions = new(soldierPositions);
         List<TargetPosition> oldTargetPositions2 = new(targetPositions);
@@ -298,6 +324,7 @@ public class Unit : MonoBehaviour {
             }
         }
         yield return null;
+        isRunning = false;
     }
     #endregion
 
