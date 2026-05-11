@@ -55,10 +55,10 @@ public class Unit : MonoBehaviour {
 
 
     #region Unity functions
-    private void Awake() {
-    }
     private void Start() {
         InitializePositions();
+        AssigndirectionMagnitudes();
+        currentlyFighting = new();
         if (playersUnit)
             foreach (Soldier soldier in childSoldiers)
                 FindFirstObjectByType<Highlightedtargetpositions>().CreateHighlightedPosition();
@@ -84,6 +84,9 @@ public class Unit : MonoBehaviour {
     #endregion
 
     #region Unit functions
+    float forwardsMagnitude;
+    float rightMagnitude;
+
     public Vector3 UnitFront {
         get {
             return -offsetPerRow * ((float)NumberOfSoldiers / (float)CurrentWidth) / 2;
@@ -125,9 +128,14 @@ public class Unit : MonoBehaviour {
     Vector3 UnRotate90Degrees(Vector3 startVector) {
         return new Vector3(startVector.z, startVector.y, startVector.x);
     }
+
+    void AssigndirectionMagnitudes() {
+        forwardsMagnitude = offsetPerRow.magnitude;
+        rightMagnitude = offsetPerTroop.magnitude;
+    }
     #endregion
 
-    #region General unit questions
+    #region Soldier questions
     void InitializePositions() {
         soldierPositions = new();
         BoundingBox = new();
@@ -150,6 +158,8 @@ public class Unit : MonoBehaviour {
         BoundingBox.ChangePoint(ListIndex, position);
     }
 
+
+
     /// <summary>
     /// Checks if there is a soldier from this unit in a given position
     /// </summary>
@@ -166,39 +176,39 @@ public class Unit : MonoBehaviour {
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
-                if (nearbySoldiers[i].unit.playersUnit != playersUnit) {
+                if (!inCombat && nearbySoldiers[i].unit.playersUnit != playersUnit) {
                     Unit collidedUnit = nearbySoldiers[i].unit;
-                    string quadrant = collidedUnit.QuadrantOfPoint(position);
+                    string quadrant = collidedUnit.QuadrantOfPoint(CenterPoint);
                     Vector3 localUnitStartPosition = Vector3.zero;
-                    Debug.Log("hi");
+                    Debug.Log(quadrant);
                     if (quadrant == "left") {
-                        localUnitStartPosition = collidedUnit.CenterPoint - collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 - collidedUnit.offsetPerRow * CurrentWidth / 2;
-                        offsetPerTroop = collidedUnit.offsetPerRow;
-                        offsetPerRow = -collidedUnit.offsetPerTroop;
+                        offsetPerTroop = collidedUnit.offsetPerRow.normalized * rightMagnitude;
+                        offsetPerRow = collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
+                        localUnitStartPosition = collidedUnit.CenterPoint + (collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth) / 2 - offsetPerTroop * CurrentWidth / 2;
                     }
                     else if (quadrant == "right") {
-                        localUnitStartPosition = collidedUnit.CenterPoint + collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 + collidedUnit.offsetPerRow * CurrentWidth / 2;
-                        offsetPerTroop = -collidedUnit.offsetPerRow;
-                        offsetPerRow = collidedUnit.offsetPerTroop;
+                        offsetPerTroop = -collidedUnit.offsetPerRow.normalized * rightMagnitude;
+                        offsetPerRow = -collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
+                        localUnitStartPosition = collidedUnit.CenterPoint - (collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth) / 2 - offsetPerTroop * CurrentWidth / 2;
                     }
                     else if (quadrant == "front") {
-                        localUnitStartPosition = collidedUnit.CenterPoint + collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 - collidedUnit.offsetPerRow * CurrentWidth / 2;
-                        offsetPerTroop = -collidedUnit.offsetPerTroop;
-                        offsetPerRow = -collidedUnit.offsetPerRow;
+                        offsetPerTroop = -collidedUnit.offsetPerTroop.normalized * rightMagnitude;
+                        offsetPerRow = -collidedUnit.offsetPerRow.normalized * forwardsMagnitude;
+                        localUnitStartPosition = collidedUnit.CenterPoint - (collidedUnit.offsetPerRow * (collidedUnit.NumberOfSoldiers / collidedUnit.CurrentWidth)) / 2 - offsetPerTroop * CurrentWidth / 2;
                     }
                     else if (quadrant == "back") {
-                        localUnitStartPosition = collidedUnit.CenterPoint - collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth / 2 + collidedUnit.offsetPerRow * CurrentWidth / 2;
-                        offsetPerTroop = collidedUnit.offsetPerTroop;
-                        offsetPerRow = collidedUnit.offsetPerRow;
+                        offsetPerTroop = collidedUnit.offsetPerTroop.normalized * rightMagnitude;
+                        offsetPerRow = collidedUnit.offsetPerRow.normalized * forwardsMagnitude;
+                        localUnitStartPosition = collidedUnit.CenterPoint + (collidedUnit.offsetPerRow * (collidedUnit.NumberOfSoldiers / collidedUnit.CurrentWidth)) / 2 - offsetPerTroop * CurrentWidth / 2;
                     }
                     else {
                         throw new System.Exception("quadrant not found" + quadrant); //<- if this ever gets run, I will eat a hat, like I do not believe it.
                     }
 
-                    List<Vector3> soldierPositions = new(NumberOfSoldiers);
+                    Vector3[] soldierPositions = new Vector3[NumberOfSoldiers];
                     int internalCurrentWidth = 0;
                     int internalCurrentRow = 0;
-                    for (int j = 0; j < soldierPositions.Count; j++) {
+                    for (int j = 0; j < soldierPositions.Count(); j++) {
                         soldierPositions[j] = localUnitStartPosition + internalCurrentWidth * offsetPerTroop + internalCurrentRow * offsetPerRow;
                         internalCurrentWidth++;
                         if (internalCurrentWidth == CurrentWidth) {
@@ -206,8 +216,8 @@ public class Unit : MonoBehaviour {
                             internalCurrentWidth = 0;
                         }
                     }
-                    Debug.Log("Positional data sent");
-                    NewPositions(soldierPositions);
+                    EngageInCombat(collidedUnit);
+                    NewPositions(soldierPositions.ToList());
                 }
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
@@ -259,6 +269,30 @@ public class Unit : MonoBehaviour {
     }
     #endregion
 
+    #region combat
+    bool inCombat = false;
+    List<Unit> currentlyFighting;
+    public void BreakCombat(Unit engagingUnit) {
+        currentlyFighting.Remove(engagingUnit);
+        if (currentlyFighting.Count() < 0) inCombat = false;
+    }
+    public void BreakCombat() {
+        while (currentlyFighting.Count() != 0) {
+            currentlyFighting[0].BreakCombat(this);
+            currentlyFighting.Remove(currentlyFighting[0]);
+        }
+    }
+
+    public void EngageInCombat(Unit engagingUnit) {
+        if (!currentlyFighting.Contains(engagingUnit)) {
+            currentlyFighting.Add(engagingUnit);
+            inCombat = true;
+            engagingUnit.EngageInCombat(this);
+        }
+    }
+
+    #endregion
+
     #region Move unit
     public void ApplyPotentials() { // change this to be when all the soldiers are reported as in position.
         currentWidth = potentialNextWidth;
@@ -266,7 +300,6 @@ public class Unit : MonoBehaviour {
         offsetPerTroop = potentialOffsetPerTroop;
     }
     internal void NewPositions(List<Vector3> listOfPositions) {
-        throw new error here is the stuff to work on
         if (!isRunning)
             StartCoroutine(nameof(UpdatePosition), listOfPositions);
         else {
@@ -281,6 +314,7 @@ public class Unit : MonoBehaviour {
     }
     bool isRunning;
     IEnumerator UpdatePosition(List<Vector3> listOfPositions) {
+
         isRunning = true;
         SetNewTargetSolderPositions(listOfPositions);
         List<Vector3> oldSoldierPositions = new(soldierPositions);
@@ -313,7 +347,6 @@ public class Unit : MonoBehaviour {
                     indexOfOldPosition = i;
                 }
             }
-
             oldTargetPositions2[indexOfOldPosition].NewPosition(listOfPositions[indexOfNewPosition]);
             oldTargetPositions2.RemoveAt(indexOfOldPosition);
             oldSoldierPositions.RemoveAt(indexOfOldPosition);
@@ -326,6 +359,7 @@ public class Unit : MonoBehaviour {
         }
         yield return null;
         isRunning = false;
+        StopCoroutine(nameof(UpdatePosition));
     }
     #endregion
 

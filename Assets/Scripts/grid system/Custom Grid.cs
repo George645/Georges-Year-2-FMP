@@ -477,12 +477,13 @@ public class CustomGrid : MonoBehaviour {
         int squareIndex = soldierSquareIndex[startingIndexInSquareIndexArray];
         Soldier soldier = soldierReferences[startingIndexInSquareIndexArray];
         try {
-            soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex.Length < (startingIndexInSquareIndexArray) ? soldierSquareIndex[startingIndexInSquareIndexArray] : soldierSquareIndex[startingIndexInSquareIndexArray + 1];
+            soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex.Length - 1 <= (startingIndexInSquareIndexArray) ? soldierSquareIndex[startingIndexInSquareIndexArray - 1] : soldierSquareIndex[startingIndexInSquareIndexArray + 1];
         }
-        catch {
+        catch (Exception e) {
             Debug.Log(startingIndexInSquareIndexArray);
-            Debug.Log(soldierSquareIndex.Length < (startingIndexInSquareIndexArray));
-            throw new IndexOutOfRangeException();
+            Debug.Log(soldierSquareIndex.Length);
+            Debug.Log(soldierSquareIndex.Length <= (startingIndexInSquareIndexArray));
+            throw e;
         }
         int arrayPositionOfCorrectPosition = SoldierBinarySearchForSquare(squareIndex);
 

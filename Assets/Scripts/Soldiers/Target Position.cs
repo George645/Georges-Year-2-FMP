@@ -12,21 +12,21 @@ public class TargetPosition : MonoBehaviour {
     #endregion
 
     #region toggleVisibility
-    bool enabled = false;
+    bool visible = false;
     MeshRenderer meshRenderer;
     private void Start() {
         meshRenderer = transform.GetComponent<MeshRenderer>();
         meshRenderer.enabled = false;
     }
     public void Enable() {
-        if (enabled) return;
+        if (visible) return;
         meshRenderer.enabled = true;
-        enabled = true;
+        visible = true;
     }
     public void Disable() {
-        if (!enabled) return;
+        if (!visible) return;
         meshRenderer.enabled = false;
-        enabled = false;
+        visible = false;
     }
     #endregion
 
