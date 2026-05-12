@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 public class Unit : MonoBehaviour {
     List<Soldier> childSoldiers = new();
@@ -15,6 +16,7 @@ public class Unit : MonoBehaviour {
 
     int offsetDistance = 4;
 
+    [HideInInspector]
     public int potentialNextWidth;
     public int CurrentWidth {
         get { return currentWidth; }
@@ -146,10 +148,19 @@ public class Unit : MonoBehaviour {
         SetNewTargetSolderPositions(soldierPositions);
 
     }
-    void SoldierDeath(int UnitIndex) {
+    public void SoldierDeath(int UnitIndex) {
+        int indexInList = ChildIndexToListIndex(UnitIndex);
+        BoundingBox.RemovePoint(indexInList);
+        TargetPositionBoundingBox.RemovePoint(indexInList);
+        childSoldiers.RemoveAt(indexInList);
+        targetPositions.RemoveAt(indexInList);
+        soldierPositions.RemoveAt(indexInList);
+        TargetSoldierPositions.RemoveAt(indexInList);
+        throw new System.Exception("make it so this actually removes from all lists");
         //remove from all lists and the bounds.
         //remove from the grid system
         //remove from highlighted target positions (in the camera)
+        //remove from that unit's opponent's currently fighting
     }
     public void UpdateSoldierPosition(Vector3 position, int siblingIndex, Soldier soldier) {
         CustomGrid.instance.UpdateSoldierPosition(soldier);
@@ -176,48 +187,12 @@ public class Unit : MonoBehaviour {
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
-                if (!inCombat && nearbySoldiers[i].unit.playersUnit != playersUnit) {
-                    Unit collidedUnit = nearbySoldiers[i].unit;
-                    string quadrant = collidedUnit.QuadrantOfPoint(CenterPoint);
-                    Vector3 localUnitStartPosition = Vector3.zero;
-                    Debug.Log(quadrant);
-                    if (quadrant == "left") {
-                        offsetPerTroop = collidedUnit.offsetPerRow.normalized * rightMagnitude;
-                        offsetPerRow = collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
-                        localUnitStartPosition = collidedUnit.CenterPoint + (collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth) / 2 - offsetPerTroop * CurrentWidth / 2;
-                    }
-                    else if (quadrant == "right") {
-                        offsetPerTroop = -collidedUnit.offsetPerRow.normalized * rightMagnitude;
-                        offsetPerRow = -collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
-                        localUnitStartPosition = collidedUnit.CenterPoint - (collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth) / 2 - offsetPerTroop * CurrentWidth / 2;
-                    }
-                    else if (quadrant == "front") {
-                        offsetPerTroop = -collidedUnit.offsetPerTroop.normalized * rightMagnitude;
-                        offsetPerRow = -collidedUnit.offsetPerRow.normalized * forwardsMagnitude;
-                        localUnitStartPosition = collidedUnit.CenterPoint - (collidedUnit.offsetPerRow * (collidedUnit.NumberOfSoldiers / collidedUnit.CurrentWidth)) / 2 - offsetPerTroop * CurrentWidth / 2;
-                    }
-                    else if (quadrant == "back") {
-                        offsetPerTroop = collidedUnit.offsetPerTroop.normalized * rightMagnitude;
-                        offsetPerRow = collidedUnit.offsetPerRow.normalized * forwardsMagnitude;
-                        localUnitStartPosition = collidedUnit.CenterPoint + (collidedUnit.offsetPerRow * (collidedUnit.NumberOfSoldiers / collidedUnit.CurrentWidth)) / 2 - offsetPerTroop * CurrentWidth / 2;
-                    }
-                    else {
-                        throw new System.Exception("quadrant not found" + quadrant); //<- if this ever gets run, I will eat a hat, like I do not believe it.
-                    }
-
-                    Vector3[] soldierPositions = new Vector3[NumberOfSoldiers];
-                    int internalCurrentWidth = 0;
-                    int internalCurrentRow = 0;
-                    for (int j = 0; j < soldierPositions.Count(); j++) {
-                        soldierPositions[j] = localUnitStartPosition + internalCurrentWidth * offsetPerTroop + internalCurrentRow * offsetPerRow;
-                        internalCurrentWidth++;
-                        if (internalCurrentWidth == CurrentWidth) {
-                            internalCurrentRow++;
-                            internalCurrentWidth = 0;
-                        }
-                    }
-                    EngageInCombat(collidedUnit);
-                    NewPositions(soldierPositions.ToList());
+                if (nearbySoldiers[i].unit.playersUnit != playersUnit && doNotEngageTimer > 0) {
+                    Soldier checkingChild = transform.GetChild(excludedIndex).GetComponent<Soldier>();
+                    if (!inCombat)
+                        CollidedWithOpponent(nearbySoldiers[i]);
+                    if (!checkingChild.isFighting)
+                        new SoldierLevelCombat(checkingChild, nearbySoldiers[i]);
                 }
                 soldierRelativeDirection = directionAndDistanceBetweenSoldiers;
                 return false;
@@ -258,11 +233,6 @@ public class Unit : MonoBehaviour {
         return true;
     }
 
-    public void Push(int siblingIndex, Vector3 position) {
-        //foreach (Soldier inTheWay in GetSoldiersInPosition(position, ChildIndexToListIndex(siblingIndex))) {
-        //    inTheWay.Pushed(2 * inTheWay.transform.position - position);
-        //}
-    }
 
     int ChildIndexToListIndex(int siblingIndex) {
         return siblingIndex / 2;
@@ -270,11 +240,74 @@ public class Unit : MonoBehaviour {
     #endregion
 
     #region combat
-    bool inCombat = false;
+    #region combatStatistics
+    [SerializeField, Tooltip("value between 0 and 50")]
+    public int attack = 25;
+    [SerializeField, Tooltip("value between 0 and 10")]
+    public int defense = 5;
+    [SerializeField, Tooltip("value between 0 and 10")]
+    public int armour = 5;
+    #endregion
+    public void MovedByPlayer() {
+        BreakCombat();
+        doNotEngageTimerStart = Time.time + timeWithoutCombatCollision;
+    }
+
+    [SerializeField]
+    float timeWithoutCombatCollision = 5;
+    float doNotEngageTimerStart;
+    float doNotEngageTimer {
+        get { return Time.time - doNotEngageTimerStart; }
+    }
+    void CollidedWithOpponent(Soldier soldier) {
+        Unit collidedUnit = soldier.unit;
+        string quadrant = collidedUnit.QuadrantOfPoint(CenterPoint);
+        Vector3 localUnitStartPosition = Vector3.zero;
+        if (quadrant == "left") {
+            offsetPerTroop = collidedUnit.offsetPerRow.normalized * rightMagnitude;
+            offsetPerRow = collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
+            localUnitStartPosition = collidedUnit.CenterPoint + (collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth) / 2 - offsetPerTroop * CurrentWidth / 2;
+        }
+        else if (quadrant == "right") {
+            offsetPerTroop = -collidedUnit.offsetPerRow.normalized * rightMagnitude;
+            offsetPerRow = -collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
+            localUnitStartPosition = collidedUnit.CenterPoint - (collidedUnit.offsetPerTroop * collidedUnit.CurrentWidth) / 2 - offsetPerTroop * CurrentWidth / 2;
+        }
+        else if (quadrant == "front") {
+            offsetPerTroop = -collidedUnit.offsetPerTroop.normalized * rightMagnitude;
+            offsetPerRow = -collidedUnit.offsetPerRow.normalized * forwardsMagnitude;
+            localUnitStartPosition = collidedUnit.CenterPoint - (collidedUnit.offsetPerRow * (collidedUnit.NumberOfSoldiers / collidedUnit.CurrentWidth)) / 2 - offsetPerTroop * CurrentWidth / 2;
+        }
+        else if (quadrant == "back") {
+            offsetPerTroop = collidedUnit.offsetPerTroop.normalized * rightMagnitude;
+            offsetPerRow = collidedUnit.offsetPerRow.normalized * forwardsMagnitude;
+            localUnitStartPosition = collidedUnit.CenterPoint + (collidedUnit.offsetPerRow * (collidedUnit.NumberOfSoldiers / collidedUnit.CurrentWidth)) / 2 - offsetPerTroop * CurrentWidth / 2;
+        }
+        else {
+            throw new System.Exception("quadrant not found" + quadrant); //<- if this ever gets run, I will eat a hat, like I do not believe it.
+        }
+
+        Vector3[] soldierPositions = new Vector3[NumberOfSoldiers];
+        int internalCurrentWidth = 0;
+        int internalCurrentRow = 0;
+        for (int j = 0; j < soldierPositions.Count(); j++) {
+            soldierPositions[j] = localUnitStartPosition + internalCurrentWidth * offsetPerTroop + internalCurrentRow * offsetPerRow;
+            internalCurrentWidth++;
+            if (internalCurrentWidth == CurrentWidth) {
+                internalCurrentRow++;
+                internalCurrentWidth = 0;
+            }
+        }
+        EngageInCombat(collidedUnit);
+        NewPositions(soldierPositions.ToList());
+    }
+
+    bool inCombat {
+        get { return !childSoldiers.TrueForAll(x => !x.isFighting); }
+    }
     List<Unit> currentlyFighting;
     public void BreakCombat(Unit engagingUnit) {
         currentlyFighting.Remove(engagingUnit);
-        if (currentlyFighting.Count() < 0) inCombat = false;
     }
     public void BreakCombat() {
         while (currentlyFighting.Count() != 0) {
@@ -286,7 +319,6 @@ public class Unit : MonoBehaviour {
     public void EngageInCombat(Unit engagingUnit) {
         if (!currentlyFighting.Contains(engagingUnit)) {
             currentlyFighting.Add(engagingUnit);
-            inCombat = true;
             engagingUnit.EngageInCombat(this);
         }
     }

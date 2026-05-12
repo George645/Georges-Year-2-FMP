@@ -69,4 +69,7 @@ public class BoundingBox { //Potentially make this a monobehaviour script one da
         //    Debug.Log(point);
         //}
     }
+    public void RemovePoint(int index) {
+        pointsInsideBox.RemoveAt(index);
+    }
 }

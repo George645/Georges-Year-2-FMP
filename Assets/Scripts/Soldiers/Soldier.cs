@@ -6,17 +6,7 @@ using UnityEngine;
 
 public class Soldier : MonoBehaviour {
     public Unit unit;
-
-    #region movement
-    bool moving = false;
-    internal Vector3 targetPosition;
-    Vector3 directionOfMovement;
-    [SerializeField]
-    int speed = 15;
-    [SerializeField]
-    int speedOfRotation = 4;
     int siblingIndex = -1;
-    public int indexInArrays = -1;
     int SiblingIndex {
         get {
             if (siblingIndex != -1) {
@@ -28,9 +18,8 @@ public class Soldier : MonoBehaviour {
             }
         }
     }
-    Vector3 rightDirection;
-    Vector3 currentPosition;
-    Vector3 facingDirection;
+    Animator animator;
+    #region Unity functions
     public void SetTarget(Vector3 targetPosition) {
         this.targetPosition = targetPosition;
         moving = true;
@@ -39,11 +28,34 @@ public class Soldier : MonoBehaviour {
         rightDirection = transform.right;
         currentPosition = transform.position;
         facingDirection = transform.forward;
+        animator = GetComponent<Animator>();
     }
     private void Update() {
-        Movement(targetPosition);
-        
+        if (isFighting)
+            RunCombatLoop();
+        else
+            Movement(targetPosition);
     }
+
+    #endregion
+
+
+    #region movement
+    bool moving = false;
+    internal Vector3 targetPosition;
+    Vector3 directionOfMovement;
+    [SerializeField]
+    int speed = 15;
+    [SerializeField]
+    int speedOfRotation = 4;
+    public int indexInArrays = -1;
+
+    Vector3 rightDirection;
+    Vector3 currentPosition;
+    Vector3 facingDirection;
+    [SerializeField]
+    int reach = 5;
+
     public void Pushed(Vector3 inDirection) {
         transform.position += inDirection / 25 * speed;
         if (moving == false) {
@@ -62,6 +74,7 @@ public class Soldier : MonoBehaviour {
     bool rightStuck = false;
     bool leftStuck = false;
     void Movement(Vector3 targetPos) {
+        animator.SetBool("hitting", false);
 
         if (!moving) return;
 
@@ -70,10 +83,8 @@ public class Soldier : MonoBehaviour {
             transform.position = targetPos;
             currentPosition = targetPos;
             unit.UpdateSoldierPosition(currentPosition, siblingIndex, this);
-            if (!RotateTowards(-unit.offsetPerRow.normalized)) {
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, -unit.offsetPerRow.normalized, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
-                rightDirection = transform.right;
-                facingDirection = transform.forward;
+            if (!IsFacing(-unit.offsetPerRow.normalized)) {
+                RotateTowards(-unit.offsetPerRow.normalized);
                 return;
             }
             else {
@@ -85,10 +96,8 @@ public class Soldier : MonoBehaviour {
         if (targetPos != currentPosition) {
             directionOfMovement = (targetPos - currentPosition).normalized;
 
-            if (!RotateTowards(directionOfMovement)) {
-                transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
-                rightDirection = transform.right;
-                facingDirection = transform.forward;
+            if (!IsFacing(directionOfMovement)) {
+                RotateTowards(directionOfMovement);
                 return;
             }
             if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, SiblingIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
@@ -133,12 +142,60 @@ public class Soldier : MonoBehaviour {
     /// </summary>
     /// <param name="direction">The direction to end facing</param>
     /// <returns>Whether or not the soldier is facing the direction</returns>
-    bool RotateTowards(Vector3 direction) {
+    bool IsFacing(Vector3 direction) {
         //transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
         if (transform.forward == direction) {
             return true;
         }
         return false;
+    }
+    void RotateTowards(Vector3 direction) {
+        transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(facingDirection, direction, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
+        rightDirection = transform.right;
+        facingDirection = transform.forward;
+    }
+    #endregion
+
+    #region Combat
+    #region Combat stats
+    public int attack => unit.attack;
+    public int defense => unit.defense;
+    public int armour => unit.armour;
+
+    #endregion
+    int health = 100;
+    public SoldierLevelCombat thisCombat;
+    public void Damage(int damageQuantity) {
+        health -= damageQuantity * armour / 100;
+        if (health < 0) {
+            SoldierDeath();
+        }
+    }
+    void SoldierDeath() {
+        unit.SoldierDeath(transform.GetSiblingIndex());
+        Destroy(this);
+    }
+    public bool isFighting = false;
+    Soldier currentOpponent = null;
+
+    public void EngageInCombat(Soldier currentOpponent) {
+        if (currentOpponent != null) return;
+        currentOpponent.EngageInCombat(this);
+
+    }
+    void RunCombatLoop() {
+        animator.SetBool("hitting", false);
+        if ((currentOpponent.transform.position - transform.position).sqrMagnitude < reach * reach) {
+            Movement(currentOpponent.transform.position);
+            return;
+        }
+        if (!IsFacing(currentOpponent.transform.position - transform.position)) {
+            RotateTowards(currentOpponent.transform.position - transform.position);
+            return;
+        }
+        animator.SetBool("hitting", true);
+
+
     }
     #endregion
 

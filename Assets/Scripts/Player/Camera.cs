@@ -180,6 +180,7 @@ public class CameraScript : MonoBehaviour {
             }
             Debug.Log("positional data sent");
             currentlySelectedUnits[i].NewPositions(ListOfPositions);
+            currentlySelectedUnits[i].MovedByPlayer();
         }
 
     }

@@ -1156,6 +1156,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2994172
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3429,6 +3431,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &11840408
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3867,6 +3871,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &14248930
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4734,6 +4740,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &17571877
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4928,6 +4936,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &18171501
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5577,6 +5587,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &20477023
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7442,6 +7454,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &29512339
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -8616,6 +8630,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &32361670
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9924,6 +9940,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &36207956
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -10930,6 +10948,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &40418476
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -11698,6 +11718,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &42125949
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -13141,6 +13163,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &48671514
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -13941,6 +13965,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &52531654
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -14902,6 +14928,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &55254316
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -16840,6 +16868,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &62298747
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -19524,6 +19554,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &70643252
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -19622,6 +19654,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &70862327
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -20874,6 +20908,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &75721631
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -23582,6 +23618,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &90716783
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -25815,6 +25853,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &98041582
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -26419,6 +26459,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &100957305
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -26676,6 +26718,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &102374358
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -26774,6 +26818,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &102407930
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -28397,6 +28443,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &108202628
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -29124,6 +29172,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &110793013
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -31637,6 +31687,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &119569511
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -32473,6 +32525,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &124240932
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -35807,6 +35861,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &136217850
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -36478,6 +36534,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &137630463
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -37236,6 +37294,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &139854735
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -37399,6 +37459,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &139892399
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -38331,6 +38393,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &143567137
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -40293,6 +40357,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &149986561
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -40813,6 +40879,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &150927338
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -41238,6 +41306,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &152856606
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -43624,6 +43694,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &163963513
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -44008,6 +44080,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &165577346
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -45507,6 +45581,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &171782236
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -46068,6 +46144,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &173039595
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -46579,6 +46657,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &175579703
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -48215,6 +48295,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &182401536
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -48610,6 +48692,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &184006992
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -50532,6 +50616,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &191605795
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -52729,6 +52815,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &200187297
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -57364,6 +57452,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &218402637
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -57621,6 +57711,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &219980584
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -57784,6 +57876,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &220165576
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -58583,6 +58677,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &223523712
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -58866,6 +58962,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &223979984
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -59321,6 +59419,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &226197042
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -60318,6 +60418,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &229336902
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -61686,6 +61788,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &236448646
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -63466,6 +63570,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &243960429
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -67252,6 +67358,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &258939314
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -67382,6 +67490,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &259305266
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -74122,6 +74232,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &286984493
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -75070,6 +75182,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &290242815
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -75543,6 +75657,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &291667646
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -76479,6 +76595,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &295818201
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -77471,6 +77589,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &300699103
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -83296,6 +83416,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &323505096
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -84701,6 +84823,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &330556830
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -86547,6 +86671,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &335383170
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -87798,6 +87924,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &339556211
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -89562,6 +89690,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &347437540
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -89660,6 +89790,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &347455809
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -90578,6 +90710,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &350570459
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -93126,6 +93260,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &362370294
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -93257,6 +93393,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &362576188
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -93547,6 +93685,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &363630251
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -93742,6 +93882,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &364388101
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -94484,6 +94626,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &367309277
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -94646,6 +94790,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &368033446
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -95392,6 +95538,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &371977448
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -95871,6 +96019,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &375253332
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -97083,6 +97233,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &381565642
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -97212,6 +97364,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &381882305
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -99045,6 +99199,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &389444513
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -99661,6 +99817,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &390578184
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -101917,6 +102075,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &399718326
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -104006,6 +104166,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &408067176
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -106751,6 +106913,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &422508470
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -107007,6 +107171,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &423636911
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -107766,6 +107932,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &425073635
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -108998,6 +109166,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &431245503
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -112422,6 +112592,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &445098904
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -114737,6 +114909,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &452753451
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -115407,6 +115581,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &455605853
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -117532,6 +117708,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &463149974
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -117729,6 +117907,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &463440958
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -118220,6 +118400,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &464289477
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -119054,6 +119236,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &468017107
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -120851,6 +121035,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &474663698
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -122902,6 +123088,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &483879610
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -123923,6 +124111,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &486848393
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -125323,6 +125513,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &493056551
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -125813,6 +126005,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &494972110
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -127133,6 +127327,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &501125051
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -130270,6 +130466,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &513088134
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -130774,6 +130972,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &514413006
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -133825,6 +134025,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &527264529
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -134212,6 +134414,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &528162912
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -136191,6 +136395,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &535474763
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -137362,6 +137568,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &538892981
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -138064,6 +138272,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &541238252
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -139103,6 +139313,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &544768773
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -139384,6 +139596,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &546481848
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -140348,6 +140562,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &550131077
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -141569,6 +141785,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &553907500
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -141891,6 +142109,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &554985726
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -143714,6 +143934,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &563311677
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -146469,6 +146691,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &576624943
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -147910,6 +148134,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &581125434
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -149245,6 +149471,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &586390031
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -150007,6 +150235,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &590585309
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -150205,6 +150435,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &591448859
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -150864,6 +151096,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &593305404
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -153570,6 +153804,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &603441216
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -153954,6 +154190,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &604975805
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -154597,6 +154835,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &608776802
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -155913,6 +156153,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &615091247
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -159208,6 +159450,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &626871435
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -162375,6 +162619,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &638304260
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -163953,6 +164199,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &642260106
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -164402,6 +164650,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &644546014
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -164532,6 +164782,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &644763904
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -165046,6 +165298,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &647411193
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -165496,6 +165750,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &648446880
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -172184,6 +172440,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &675109113
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -172923,6 +173181,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &679296338
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -173086,6 +173346,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &679798569
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -174754,6 +175016,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &686242581
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -175526,6 +175790,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &689865572
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -176358,6 +176624,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &693171554
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -178471,6 +178739,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &702088403
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -179555,6 +179825,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &705808221
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -180432,6 +180704,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &709824137
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -180561,6 +180835,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &710524563
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -180990,6 +181266,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &711627027
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -185231,6 +185509,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &731949535
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -185998,6 +186278,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &734558827
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -186716,6 +186998,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &736716252
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -189868,6 +190152,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &748453049
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -189966,6 +190252,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &748476343
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -191142,6 +191430,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &752175289
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -191432,6 +191722,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &753284679
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -193622,6 +193914,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &760628787
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -194683,6 +194977,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &764509272
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -195414,6 +195710,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &766579024
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -197624,6 +197922,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &774076828
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -199257,6 +199557,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &779652630
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -199863,6 +200165,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &783246031
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -200124,6 +200428,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &784300335
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -203321,6 +203627,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &798153162
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -206910,6 +207218,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &811071500
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -211387,6 +211697,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &829182566
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -212198,6 +212510,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &831184570
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -215229,6 +215543,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &843009821
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -217871,6 +218187,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &853505120
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -218097,6 +218415,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &854460855
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -219289,6 +219609,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &857837710
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -219547,6 +219869,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &858240237
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -222100,6 +222424,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &868671718
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -222580,6 +222906,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &870906684
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -223577,6 +223905,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &874645792
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -223706,6 +224036,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &874848204
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -224048,6 +224380,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &875214404
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -224209,6 +224543,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &875659240
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -225020,6 +225356,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &879072700
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -225118,6 +225456,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &879114336
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -228472,6 +228812,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &892073018
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -231550,6 +231892,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &907868477
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -235158,6 +235502,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &921842639
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -235991,6 +236337,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &925614330
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -236211,6 +236559,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &925655996
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -238280,6 +238630,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &934415771
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -241041,6 +241393,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &945470669
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -241467,6 +241821,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &947651522
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -241781,6 +242137,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &948361778
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -242462,6 +242820,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &950825682
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -243003,6 +243363,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &952854137
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -245925,6 +246287,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &967264926
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -249632,6 +249996,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &981652246
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -251228,6 +251594,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &988446636
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -251843,6 +252211,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &990234967
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -253703,6 +254073,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &997206513
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -255110,6 +255482,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1002555915
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -257619,6 +257993,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1013406590
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -258035,6 +258411,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1015612991
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -258344,6 +258722,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1016261184
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -260369,6 +260749,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1024369904
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -261669,6 +262051,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1028981945
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -264278,6 +264662,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1037501575
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -265419,6 +265805,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1042125791
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -269899,6 +270287,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1062188115
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -271836,6 +272226,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1070113757
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -273061,6 +273453,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1076653923
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -274562,6 +274956,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1080570977
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -275011,6 +275407,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1081566033
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -275594,6 +275992,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1084082748
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -278101,6 +278501,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1094517936
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -279197,6 +279599,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1098507207
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -279700,6 +280104,10 @@ MonoBehaviour:
   playersUnit: 1
   potentialNextWidth: 0
   currentWidth: 36
+  attack: 50
+  defense: 50
+  armour: 5
+  timeWithoutCombatCollision: 7
   startingSoldierTotal: 180
   potentialOffsetPerTroop: {x: 0, y: 0, z: 0}
   potentialOffsetPerRow: {x: 0, y: 0, z: 0}
@@ -281886,6 +282294,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1108893112
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -285673,6 +286083,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1125090131
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -287749,6 +288161,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1132054541
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -288203,6 +288617,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1133637398
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -289436,6 +289852,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1139217344
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -290940,6 +291358,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1144463753
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -291293,6 +291713,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1146091452
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -294999,6 +295421,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1157739195
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -299353,6 +299777,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1172045618
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -299547,6 +299973,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1172521281
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -302482,6 +302910,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1181552125
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -307640,6 +308070,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1208092171
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -309080,6 +309512,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1213005442
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -309373,6 +309807,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1214095830
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -310004,6 +310440,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1216122099
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -310102,6 +310540,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1216172489
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -310232,6 +310672,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1216225123
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -311505,6 +311947,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1220943136
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -313966,6 +314410,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1230663830
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -314728,6 +315174,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1235581562
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -315464,6 +315912,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1238776823
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -318765,6 +319215,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1249536491
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -321070,6 +321522,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1260396009
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -321837,6 +322291,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1263574706
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -321967,6 +322423,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1263585311
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -322817,6 +323275,10 @@ MonoBehaviour:
   playersUnit: 0
   potentialNextWidth: 0
   currentWidth: 36
+  attack: 50
+  defense: 50
+  armour: 5
+  timeWithoutCombatCollision: 2
   startingSoldierTotal: 180
   potentialOffsetPerTroop: {x: 0, y: 0, z: 0}
   potentialOffsetPerRow: {x: 0, y: 0, z: 0}
@@ -325836,6 +326298,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1277278164
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -325998,6 +326462,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1277543577
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -326926,6 +327392,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1281885595
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -327792,6 +328260,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1286014347
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -330461,6 +330931,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1296141167
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -330559,6 +331031,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1296667313
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -334887,6 +335361,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1313616809
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -335664,6 +336140,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1316821852
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -335886,6 +336364,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1317090907
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -336389,6 +336869,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1318324934
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -339068,6 +339550,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1330456020
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -340484,6 +340968,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1334899637
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -343451,6 +343937,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1346546877
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -345163,6 +345651,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1351826154
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -346617,6 +347107,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1359601529
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -350051,6 +350543,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1376072654
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -350440,6 +350934,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1377487853
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -350925,6 +351421,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1377958637
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -354622,6 +355120,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1396870229
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -354879,6 +355379,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1397462647
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -356499,6 +357001,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1401599519
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -356818,6 +357322,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1402512795
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -357752,6 +358258,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1405969335
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -358428,6 +358936,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1408992842
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -360754,6 +361264,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1421005180
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -361475,6 +361987,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1423013466
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -363400,6 +363914,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1431667706
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -364495,6 +365011,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1436630334
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -365284,6 +365802,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1439349296
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -371063,6 +371583,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1460963147
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -372220,6 +372742,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1465788706
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -376563,6 +377087,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1482487579
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -378911,6 +379437,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1491813273
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -379169,6 +379697,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1492787735
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -379330,6 +379860,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1494192611
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -380422,6 +380954,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1496973262
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -380865,6 +381399,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1498363316
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -382428,6 +382964,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1502987167
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -382590,6 +383128,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1503661410
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -382721,6 +383261,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1504006689
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -383329,6 +383871,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1505892824
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -384069,6 +384613,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1508908947
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -384516,6 +385062,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1509820840
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -384744,6 +385292,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1510244905
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -385001,6 +385551,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1511892397
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -385859,6 +386411,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1514566905
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -386173,6 +386727,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1515109354
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -386619,6 +387175,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1516386514
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -388408,6 +388966,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1522396706
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -390822,6 +391382,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1532257844
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -397516,6 +398078,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1559328878
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -397614,6 +398178,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1559741018
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -398258,6 +398824,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1562449227
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -399409,6 +399977,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1567315637
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -404462,6 +405032,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1587389714
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -406450,6 +407022,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1595282492
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -409245,6 +409819,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1604715745
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -410842,6 +411418,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1610398757
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -411957,6 +412535,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1615245291
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -412370,6 +412950,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1616317426
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -413590,6 +414172,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1621139818
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -418550,6 +419134,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1639722898
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -419635,6 +420221,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1643527722
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -431511,6 +432099,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1693084808
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -431856,6 +432446,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1694113401
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -437604,6 +438196,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1720820582
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -438862,6 +439456,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1724981533
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -438960,6 +439556,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1725051852
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -439376,6 +439974,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1726155260
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -440519,6 +441119,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1730609389
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -441071,6 +441673,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1731949055
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -441362,6 +441966,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1733123532
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -448139,6 +448745,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1761396470
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -450191,6 +450799,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1769544944
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -450352,6 +450962,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1770149169
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -451743,6 +452355,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1775131080
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -452743,6 +453357,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1780109557
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -452907,6 +453523,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1780556857
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -454310,6 +454928,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1786755965
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -455921,6 +456541,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1792397992
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -456468,6 +457090,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1794836815
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -457175,6 +457799,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1796652373
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -459766,6 +460392,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1804877445
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -460883,6 +461511,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1810915358
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -461210,6 +461840,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1812043687
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -462302,6 +462934,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1816550125
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -463794,6 +464428,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1821920243
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -464174,6 +464810,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1823232112
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -464304,6 +464942,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1823757028
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -469055,6 +469695,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1845678882
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -470466,6 +471108,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1852702259
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -473275,6 +473919,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1863485083
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -475272,6 +475918,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1868849385
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -475825,6 +476473,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1870798668
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -483401,6 +484051,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1895767878
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -483838,6 +484490,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1897085746
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -486829,6 +487483,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1909930485
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -489028,6 +489684,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1918144392
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -490175,6 +490833,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1923482399
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -490655,6 +491315,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1925865617
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -491171,6 +491833,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1928031335
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -492223,6 +492887,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1931163358
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -494599,6 +495265,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1941939197
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -496147,6 +496815,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1946989666
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -498424,6 +499094,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1955967218
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -501349,6 +502021,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1968442068
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -501908,6 +502582,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1971284669
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -504577,6 +505253,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1981461175
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -507518,6 +508196,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1990695243
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -508677,6 +509357,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1997360505
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -508838,6 +509520,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &1997937074
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -509630,6 +510314,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2001930152
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -512377,6 +513063,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2016420999
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -513212,6 +513900,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2019971612
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -515863,6 +516553,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2029491918
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -516758,6 +517450,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2031982576
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -517300,6 +517994,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2033054590
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -517881,6 +518577,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2035870965
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -521013,6 +521711,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2047823255
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -524691,6 +525391,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2063373148
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -526804,6 +527506,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2072418408
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -527555,6 +528259,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2075220456
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -528252,6 +528958,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2077864836
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -528537,6 +529245,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2078388599
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -528930,6 +529640,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2079049481
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -529854,6 +530566,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2083040518
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -531508,6 +532222,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2088141966
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -532184,6 +532900,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2091086182
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -534981,6 +535699,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2103628729
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -535273,6 +535993,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2104509960
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -540732,6 +541454,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2130987803
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -541329,6 +542053,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2132548157
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -542290,6 +543016,8 @@ MonoBehaviour:
   speed: 15
   speedOfRotation: 4
   indexInArrays: -1
+  reach: 2
+  isFighting: 0
 --- !u!136 &2137393630
 CapsuleCollider:
   m_ObjectHideFlags: 0
