@@ -31,7 +31,6 @@ public class Soldier : MonoBehaviour {
         animator = GetComponent<Animator>();
     }
     private void Update() {
-        Debug.Log(isFighting);
         if (isFighting)
             RunCombatLoop();
         else
@@ -200,12 +199,13 @@ public class Soldier : MonoBehaviour {
     void RunCombatLoop() {
         Debug.Log("Attempting combat");
         animator.SetBool("hitting", false);
-        if ((currentOpponent.transform.position - transform.position).sqrMagnitude < reach * reach) {
-            Debug.Log((currentOpponent.transform.position - transform.position).sqrMagnitude + ", " + reach * reach);
+        if ((currentOpponent.transform.position - transform.position).sqrMagnitude > reach * reach) {
+            Debug.Log("Moving into position");
             Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
             return;
         }
         if (!IsFacing(currentOpponent.transform.position - transform.position)) {
+            Debug.Log("Turning to face");
             RotateTowards(currentOpponent.transform.position - transform.position);
             return;
         }
