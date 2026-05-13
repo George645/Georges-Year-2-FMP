@@ -1,5 +1,5 @@
+using Unity.Play.Publisher.Editor;
 using UnityEngine;
-using System;
 
 public class SoldierLevelCombat {
     /// <summary>
@@ -10,8 +10,10 @@ public class SoldierLevelCombat {
     public SoldierLevelCombat(Soldier aggressor, Soldier defender) {
         this.aggressor = aggressor;
         this.defender = defender;
-        throw new Exception("Make it so this sends a reference to both units");
+        defender.EngageInCombat(aggressor, this);
+        aggressor.EngageInCombat(defender, this);
     }
+
     Soldier aggressor;
     Soldier defender;
     float lastDamage;
@@ -25,10 +27,16 @@ public class SoldierLevelCombat {
             aggressor = tempSoldier;
         }
     }
+
+    public void DeathOf(Soldier soldier) {
+        Soldier victor = soldier == aggressor ? defender : aggressor;
+        victor.Won();
+    }
+
     public void RunDamageNumbers() {
         if (Time.time < lastDamage + delayBeforeDamage)
             return;
-
+        Debug.Log("dealt damage" + aggressor + ", " + defender);
         LaunchAttack(aggressor);
         
         lastDamage = Time.time;

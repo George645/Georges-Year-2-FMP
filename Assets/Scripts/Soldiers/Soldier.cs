@@ -31,14 +31,18 @@ public class Soldier : MonoBehaviour {
         animator = GetComponent<Animator>();
     }
     private void Update() {
+        Debug.Log(isFighting);
         if (isFighting)
             RunCombatLoop();
         else
             Movement(targetPosition);
     }
-
+    //Technically a battle function, but also unity function
+    private void OnDestroy() {
+        thisCombat.DeathOf(this);
+        unit.SoldierDeath(transform.GetSiblingIndex());
+    }
     #endregion
-
 
     #region movement
     bool moving = false;
@@ -157,36 +161,48 @@ public class Soldier : MonoBehaviour {
     #endregion
 
     #region Combat
+
     #region Combat stats
     public int attack => unit.attack;
     public int defense => unit.defense;
     public int armour => unit.armour;
 
     #endregion
+    
     int health = 100;
     public SoldierLevelCombat thisCombat;
     public void Damage(int damageQuantity) {
         health -= damageQuantity * armour / 100;
         if (health < 0) {
-            SoldierDeath();
+            Destroy(this);
         }
     }
-    void SoldierDeath() {
-        unit.SoldierDeath(transform.GetSiblingIndex());
-        Destroy(this);
+
+    public void Won() {
+        unit.numberOfKills++;
+        currentCombat = null;
+        currentOpponent = null;
+        isFighting = false;
     }
+
+    SoldierLevelCombat currentCombat;
     public bool isFighting = false;
     Soldier currentOpponent = null;
 
-    public void EngageInCombat(Soldier currentOpponent) {
-        if (currentOpponent != null) return;
-        currentOpponent.EngageInCombat(this);
+    public void EngageInCombat(Soldier currentOpponent, SoldierLevelCombat currentCombat) {
+        if (this.currentOpponent != null) return;
+
+        this.currentCombat = currentCombat;
+        this.currentOpponent = currentOpponent;
+        isFighting = true;
 
     }
     void RunCombatLoop() {
+        Debug.Log("Attempting combat");
         animator.SetBool("hitting", false);
         if ((currentOpponent.transform.position - transform.position).sqrMagnitude < reach * reach) {
-            Movement(currentOpponent.transform.position);
+            Debug.Log((currentOpponent.transform.position - transform.position).sqrMagnitude + ", " + reach * reach);
+            Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
             return;
         }
         if (!IsFacing(currentOpponent.transform.position - transform.position)) {
@@ -194,7 +210,8 @@ public class Soldier : MonoBehaviour {
             return;
         }
         animator.SetBool("hitting", true);
-
+        thisCombat.RunDamageNumbers();
+        Debug.Log("hi");
 
     }
     #endregion

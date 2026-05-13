@@ -148,19 +148,26 @@ public class Unit : MonoBehaviour {
         SetNewTargetSolderPositions(soldierPositions);
 
     }
+
+    public int numberOfKills;
     public void SoldierDeath(int UnitIndex) {
         int indexInList = ChildIndexToListIndex(UnitIndex);
+        Soldier removingSoldier = childSoldiers[UnitIndex];
+        
+        //remove from the grid system
+        CustomGrid.instance.RemoveSoldier(removingSoldier);
+
+        //remove from highlighted target positions (in the camera)
+        if (selected)
+            CameraScript.instance.RemoveSoldier(this);
+
+        //Removal from lists and others in script
         BoundingBox.RemovePoint(indexInList);
         TargetPositionBoundingBox.RemovePoint(indexInList);
         childSoldiers.RemoveAt(indexInList);
         targetPositions.RemoveAt(indexInList);
         soldierPositions.RemoveAt(indexInList);
         TargetSoldierPositions.RemoveAt(indexInList);
-        throw new System.Exception("make it so this actually removes from all lists");
-        //remove from all lists and the bounds.
-        //remove from the grid system
-        //remove from highlighted target positions (in the camera)
-        //remove from that unit's opponent's currently fighting
     }
     public void UpdateSoldierPosition(Vector3 position, int siblingIndex, Soldier soldier) {
         CustomGrid.instance.UpdateSoldierPosition(soldier);

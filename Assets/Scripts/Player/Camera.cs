@@ -24,7 +24,7 @@ public class CameraScript : MonoBehaviour {
         }
         set { }
     }
-
+    #region Unity functions
     private void Start() {
         if (instance == null)
             DontDestroyOnLoad(this.gameObject);
@@ -67,6 +67,7 @@ public class CameraScript : MonoBehaviour {
         AddOrSubtractScrollAmount();
         AddScrollingDelta();
     }
+    #endregion
 
     #region moving units
     void DisableLastSelection() {
@@ -97,7 +98,6 @@ public class CameraScript : MonoBehaviour {
         }
         return returningList;
     }
-    // crazy?
     void SetStartPosition() {
         unitStartPosition = ScreenPointToGroundPoint(Input.mousePosition);
     }
@@ -182,8 +182,13 @@ public class CameraScript : MonoBehaviour {
             currentlySelectedUnits[i].NewPositions(ListOfPositions);
             currentlySelectedUnits[i].MovedByPlayer();
         }
-
     }
+
+    public void RemoveSoldier(Unit unit) {
+        int indexOfUnit = currentlySelectedUnits.FindIndex(x => x == unit);
+        currentlyManipulatedTargetPositions[indexOfUnit].RemoveAt(0);
+    }
+
     /// <summary>
     /// returns zero if there is no collision with the floor
     /// </summary>

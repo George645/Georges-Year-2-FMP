@@ -277,7 +277,6 @@ public class CustomGrid : MonoBehaviour {
 
     #endregion
 
-
     #region Soldier
 
     #region Soldier variables
@@ -428,6 +427,15 @@ public class CustomGrid : MonoBehaviour {
         return returningArray;
     }
 
+    public void RemoveSoldier(Soldier soldier) {
+        int indexOfSoldier = soldier.indexInArrays;
+        soldierSquareIndex.RemoveAt(indexOfSoldier);
+        soldierReferences.RemoveAt(indexOfSoldier);
+        for (int i = indexOfSoldier; i < soldierReferences.Length; i++) {
+            soldierReferences[i].indexInArrays--;
+        }
+    }
+
     #region Soldier sort
     Soldier[] duplicateSoldierReferenceArray;
     int[] duplicateSoldierSquareIndexArray;
@@ -556,6 +564,7 @@ public class CustomGrid : MonoBehaviour {
     #endregion
 
     #endregion
+
     const int offsetForMinorMisalignment = 500;
 
 #if UNITY_EDITOR
