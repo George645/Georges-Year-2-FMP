@@ -10,8 +10,12 @@ public class SoldierLevelCombat {
     public SoldierLevelCombat(Soldier aggressor, Soldier defender) {
         this.aggressor = aggressor;
         this.defender = defender;
-        defender.EngageInCombat(aggressor, this);
-        aggressor.EngageInCombat(defender, this);
+        if (!defender.EngageInCombat(aggressor, this)) {
+            return;
+        }
+        if (!aggressor.EngageInCombat(defender, this)) {
+            defender.DisEngage();
+        }
     }
 
     Soldier aggressor;
@@ -30,15 +34,15 @@ public class SoldierLevelCombat {
 
     public void DeathOf(Soldier soldier) {
         Soldier victor = soldier == aggressor ? defender : aggressor;
+        Debug.Log("victor informed " + victor + ", loser defeater " + soldier);
         victor.Won();
     }
 
     public void RunDamageNumbers() {
         if (Time.time < lastDamage + delayBeforeDamage)
             return;
-        Debug.Log("dealt damage" + aggressor + ", " + defender);
         LaunchAttack(aggressor);
-        
+
         lastDamage = Time.time;
         delayBeforeDamage = Random.Range(shortestTimeBetweenCombats, longestTimeBetweenCombats);
     }
@@ -48,6 +52,7 @@ public class SoldierLevelCombat {
         if (randomValue < defenseStat + .5)
             LaunchAttack(soldierAttacking == aggressor ? defender : aggressor);
         int attackStrength = randomValue - defenseStat;
-        (soldierAttacking == aggressor ? defender : aggressor).Damage(attackStrength);
+        Debug.Log("dealt damage " + attackStrength + " vy " + aggressor + " to " + defender);
+        (soldierAttacking == aggressor ? defender : aggressor).Damage(Mathf.Max(attackStrength, 0));
     }
 }

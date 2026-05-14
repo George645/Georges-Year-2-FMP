@@ -322,6 +322,9 @@ public class CustomGrid : MonoBehaviour {
         for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
             soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
         }
+        for (int i = 0; i < soldiersNearby.Where(x => x == null).Count(); i++) {
+            Debug.Log(soldiersNearby.Where(x => x == null).ToArray()[i] + ", " + neighbourPositionsToCheck[i]);
+        }
         return soldiersNearby;
     }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
@@ -429,11 +432,16 @@ public class CustomGrid : MonoBehaviour {
 
     public void RemoveSoldier(Soldier soldier) {
         int indexOfSoldier = soldier.indexInArrays;
-        soldierSquareIndex.RemoveAt(indexOfSoldier);
-        soldierReferences.RemoveAt(indexOfSoldier);
+        int square = soldierSquareIndex[indexOfSoldier];
+        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + "," + soldierReferences[indexOfSoldier - 1] + "," + soldierReferences[indexOfSoldier + 1]);
+        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + "," + soldierSquareIndex[indexOfSoldier - 1] + "," + soldierSquareIndex[indexOfSoldier + 1]);
+        soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier);
+        soldierReferences = soldierReferences.RemoveAt(indexOfSoldier);
         for (int i = indexOfSoldier; i < soldierReferences.Length; i++) {
             soldierReferences[i].indexInArrays--;
         }
+        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + "," + soldierReferences[indexOfSoldier - 1] + "," + soldierReferences[indexOfSoldier + 1]);
+        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + "," + soldierSquareIndex[indexOfSoldier - 1] + "," + soldierSquareIndex[indexOfSoldier + 1]);
     }
 
     #region Soldier sort

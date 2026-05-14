@@ -35,10 +35,12 @@ public class Soldier : MonoBehaviour {
             RunCombatLoop();
         else
             Movement(targetPosition);
+            Movement(targetPosition);
     }
     //Technically a battle function, but also unity function
     private void OnDestroy() {
-        thisCombat.DeathOf(this);
+        if (currentCombat != null)
+            currentCombat.DeathOf(this);
         unit.SoldierDeath(transform.GetSiblingIndex());
     }
     #endregion
@@ -147,7 +149,7 @@ public class Soldier : MonoBehaviour {
     /// <returns>Whether or not the soldier is facing the direction</returns>
     bool IsFacing(Vector3 direction) {
         //transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
-        if (transform.forward == direction) {
+        if (transform.forward == direction.normalized) {
             return true;
         }
         return false;
@@ -167,13 +169,14 @@ public class Soldier : MonoBehaviour {
     public int armour => unit.armour;
 
     #endregion
-    
+
     int health = 100;
-    public SoldierLevelCombat thisCombat;
     public void Damage(int damageQuantity) {
-        health -= damageQuantity * armour / 100;
+        int scaledDamage = damageQuantity - damageQuantity * armour / 100;
+        Debug.Log(scaledDamage);
+        health -= scaledDamage;
         if (health < 0) {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -182,36 +185,50 @@ public class Soldier : MonoBehaviour {
         currentCombat = null;
         currentOpponent = null;
         isFighting = false;
+        Debug.Log(currentCombat + ", " + currentOpponent + ", " + isFighting + ", " + name);
     }
 
     SoldierLevelCombat currentCombat;
     public bool isFighting = false;
     Soldier currentOpponent = null;
 
-    public void EngageInCombat(Soldier currentOpponent, SoldierLevelCombat currentCombat) {
-        if (this.currentOpponent != null) return;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentOpponent"></param>
+    /// <param name="currentCombat"></param>
+    /// <returns> returns true if can be engaged in combat </returns>
+    public bool EngageInCombat(Soldier currentOpponent, SoldierLevelCombat currentCombat) {
+        if (this.currentOpponent != null) return false;
 
         this.currentCombat = currentCombat;
         this.currentOpponent = currentOpponent;
         isFighting = true;
-
+        return true;
+    }
+    public void DisEngage() {
+        currentCombat = null;
+        currentOpponent = null;
+        isFighting = false;
     }
     void RunCombatLoop() {
-        Debug.Log("Attempting combat");
         animator.SetBool("hitting", false);
-        if ((currentOpponent.transform.position - transform.position).sqrMagnitude > reach * reach) {
-            Debug.Log("Moving into position");
-            Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
-            return;
+        try {
+            if ((currentOpponent.transform.position - transform.position).sqrMagnitude > reach * reach) {
+                Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
+                return;
+            }
+        }
+        catch (System.Exception e){
+            Debug.Log(currentCombat + ", " + currentOpponent + ", " + isFighting + ", " + name);
+            throw e;
         }
         if (!IsFacing(currentOpponent.transform.position - transform.position)) {
-            Debug.Log("Turning to face");
             RotateTowards(currentOpponent.transform.position - transform.position);
             return;
         }
         animator.SetBool("hitting", true);
-        thisCombat.RunDamageNumbers();
-        Debug.Log("hi");
+        currentCombat.RunDamageNumbers();
 
     }
     #endregion

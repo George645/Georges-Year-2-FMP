@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
-using System.Runtime.CompilerServices;
 
 public class Unit : MonoBehaviour {
     List<Soldier> childSoldiers = new();
@@ -152,8 +151,8 @@ public class Unit : MonoBehaviour {
     public int numberOfKills;
     public void SoldierDeath(int UnitIndex) {
         int indexInList = ChildIndexToListIndex(UnitIndex);
-        Soldier removingSoldier = childSoldiers[UnitIndex];
-        
+        Soldier removingSoldier = childSoldiers[indexInList];
+
         //remove from the grid system
         CustomGrid.instance.RemoveSoldier(removingSoldier);
 
@@ -162,12 +161,19 @@ public class Unit : MonoBehaviour {
             CameraScript.instance.RemoveSoldier(this);
 
         //Removal from lists and others in script
-        BoundingBox.RemovePoint(indexInList);
-        TargetPositionBoundingBox.RemovePoint(indexInList);
-        childSoldiers.RemoveAt(indexInList);
-        targetPositions.RemoveAt(indexInList);
-        soldierPositions.RemoveAt(indexInList);
-        TargetSoldierPositions.RemoveAt(indexInList);
+        try {
+            BoundingBox.RemovePoint(indexInList);
+            TargetPositionBoundingBox.RemovePoint(indexInList);
+            childSoldiers.RemoveAt(indexInList);
+            targetPositions.RemoveAt(indexInList);
+            soldierPositions.RemoveAt(indexInList);
+            if (targetSoldierPositions != null && targetSoldierPositions.Count != 0)
+                targetSoldierPositions.RemoveAt(indexInList);
+        }
+        catch (System.Exception e) {
+            Debug.Log(indexInList);
+            throw e;
+        }
     }
     public void UpdateSoldierPosition(Vector3 position, int siblingIndex, Soldier soldier) {
         CustomGrid.instance.UpdateSoldierPosition(soldier);
@@ -188,8 +194,16 @@ public class Unit : MonoBehaviour {
         soldierRelativeDirection = Vector3.zero;
         if (nearbySoldiers == null) return false;
         Vector3 excludedPosition = soldierPositions[ChildIndexToListIndex(excludedIndex)];
+        Vector3 childPosition;
         for (int i = 0; i < nearbySoldiers.Length; i++) {
-            Vector3 childPosition = nearbySoldiers[i].transform.position;
+            try {
+                childPosition = nearbySoldiers[i].transform.position;
+            }
+            catch (System.Exception e) {
+                childPosition = Vector3.zero;
+                Debug.Log(nearbySoldiers[i]);
+                throw e;
+            }
             if (excludedPosition == childPosition) continue;
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
