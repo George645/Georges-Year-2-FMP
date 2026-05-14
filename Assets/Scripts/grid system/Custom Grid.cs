@@ -433,15 +433,23 @@ public class CustomGrid : MonoBehaviour {
     public void RemoveSoldier(Soldier soldier) {
         int indexOfSoldier = soldier.indexInArrays;
         int square = soldierSquareIndex[indexOfSoldier];
-        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + "," + soldierReferences[indexOfSoldier - 1] + "," + soldierReferences[indexOfSoldier + 1]);
-        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + "," + soldierSquareIndex[indexOfSoldier - 1] + "," + soldierSquareIndex[indexOfSoldier + 1]);
-        soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier);
+        Debug.Log(indexOfSoldier);
+        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + ", " + soldierReferences[indexOfSoldier - 1] + ", " + soldierReferences[indexOfSoldier + 1]);
+        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + ", " + soldierSquareIndex[indexOfSoldier - 1] + ", " + soldierSquareIndex[indexOfSoldier + 1]);
+        Debug.Break();
+        soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier); 
         soldierReferences = soldierReferences.RemoveAt(indexOfSoldier);
-        for (int i = indexOfSoldier; i < soldierReferences.Length; i++) {
-            soldierReferences[i].indexInArrays--;
+        foreach (Soldier soldier1 in soldierReferences.Where(soldier => soldier.indexInArrays > indexOfSoldier)) {
+            soldier1.indexInArrays -= 1;
         }
-        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + "," + soldierReferences[indexOfSoldier - 1] + "," + soldierReferences[indexOfSoldier + 1]);
-        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + "," + soldierSquareIndex[indexOfSoldier - 1] + "," + soldierSquareIndex[indexOfSoldier + 1]);
+        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + ", " + soldierReferences[indexOfSoldier - 1] + ", " + soldierReferences[indexOfSoldier + 1]);
+        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + ", " + soldierSquareIndex[indexOfSoldier - 1] + ", " + soldierSquareIndex[indexOfSoldier + 1]);
+        if (soldierReferences.Contains(soldier)) {
+            Debug.Log(soldierReferences.ToList().IndexOf(soldier));
+        }
+        if (soldierReferences.Contains(null)) {
+            Debug.Log(soldierReferences.ToList().FindIndex(x => x == null) + ", " + soldierSquareIndex[soldierReferences.ToList().FindIndex(x => x == null)]);
+        }
     }
 
     #region Soldier sort
