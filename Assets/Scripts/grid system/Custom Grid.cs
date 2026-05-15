@@ -325,6 +325,9 @@ public class CustomGrid : MonoBehaviour {
         for (int i = 0; i < soldiersNearby.Where(x => x == null).Count(); i++) {
             Debug.Log(soldiersNearby.Where(x => x == null).ToArray()[i] + ", " + neighbourPositionsToCheck[i]);
         }
+        string debuggingString = "";
+        Debug.Log(debuggingString);
+        
         return soldiersNearby;
     }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
@@ -444,6 +447,10 @@ public class CustomGrid : MonoBehaviour {
         }
         Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + ", " + soldierReferences[indexOfSoldier - 1] + ", " + soldierReferences[indexOfSoldier + 1]);
         Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + ", " + soldierSquareIndex[indexOfSoldier - 1] + ", " + soldierSquareIndex[indexOfSoldier + 1]);
+        Debug.Log(string.Join(", ", soldierReferences.VariableFromClasses(x => x.indexInArrays)));
+        foreach (Soldier soldier1 in soldierReferences.Where(x => soldierSquareIndex[x.indexInArrays] != SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(x.transform.position)))) {
+            Debug.Log(soldier);
+        }
         if (soldierReferences.Contains(soldier)) {
             Debug.Log(soldierReferences.ToList().IndexOf(soldier));
         }

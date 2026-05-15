@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System;
 using UnityEngine;
 
@@ -18,5 +19,13 @@ public static class ArrayExtensionScripts {
             Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
 
         return dest;
+        
+    }
+    public static object[] VariableFromClasses<T>(this T[] source, Func<T, object> predicate) {
+        object[] returningList = new object[source.Length];
+        for (int i = 0; i < source.Length; i++) {
+            returningList[i] = predicate(source[i]);
+        }
+        return returningList;
     }
 }

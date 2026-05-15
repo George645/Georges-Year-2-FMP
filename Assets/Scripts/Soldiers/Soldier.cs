@@ -35,12 +35,14 @@ public class Soldier : MonoBehaviour {
             RunCombatLoop();
         else
             Movement(targetPosition);
-            Movement(targetPosition);
+        Movement(targetPosition);
     }
     //Technically a battle function, but also unity function
     private void OnDestroy() {
         if (currentCombat != null)
             currentCombat.DeathOf(this);
+        else
+            Debug.Log("Not in combat");
         unit.SoldierDeath(transform.GetSiblingIndex());
     }
     #endregion
@@ -219,7 +221,7 @@ public class Soldier : MonoBehaviour {
                 return;
             }
         }
-        catch (System.Exception e){
+        catch (System.Exception e) {
             Debug.Log(currentCombat + ", " + currentOpponent + ", " + isFighting + ", " + name);
             throw e;
         }
