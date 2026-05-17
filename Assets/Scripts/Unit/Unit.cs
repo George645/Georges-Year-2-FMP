@@ -460,10 +460,9 @@ public class Unit : MonoBehaviour {
                 yield return null;
                 count = 0;
             }
-            if (oldTargetPositions2[indexOfOldPosition] == null) {
-                continue;
+            if (oldTargetPositions2[indexOfOldPosition] != null) {
+                oldTargetPositions2[indexOfOldPosition].NewPosition(listOfPositions[indexOfNewPosition]);
             }
-            oldTargetPositions2[indexOfOldPosition].NewPosition(listOfPositions[indexOfNewPosition]);
             oldTargetPositions2.RemoveAt(indexOfOldPosition);
             oldSoldierPositions.RemoveAt(indexOfOldPosition);
             listOfPositions.RemoveAt(indexOfNewPosition);

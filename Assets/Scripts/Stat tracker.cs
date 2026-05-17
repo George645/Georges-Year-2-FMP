@@ -6,6 +6,13 @@ public class StatTracker : MonoBehaviour {
     public static StatTracker instance;
     int[] unitKills;
     Unit[] unitReferences;
+
+    public int Slkdfugheu {
+        init { slkdfugheu = value; }
+        get { return slkdfugheu; }
+    }
+    int slkdfugheu = 5;
+
     void Start() {
         if (instance == null)
             instance = this;
