@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AssignNumberOfUnits : MonoBehaviour {
     [SerializeField]
@@ -35,6 +36,14 @@ public class AssignNumberOfUnits : MonoBehaviour {
                 a.transform.position = startPosition + i * transform.GetChild(0).GetComponent<Unit>().CurrentWidth * transform.GetChild(0).GetComponent<Unit>().offsetPerTroop;
                 a.GetComponent<Unit>().playersUnit = false;
             }
+        }
+    }
+    [SerializeField]
+    string battleFinished;
+    private void Update() {
+        if (transform.childCount == 0) {
+            if (PlayersArmy)
+                SceneManager.LoadScene(battleFinished);
         }
     }
 }

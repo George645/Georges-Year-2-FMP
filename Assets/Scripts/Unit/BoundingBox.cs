@@ -42,6 +42,10 @@ public class BoundingBox { //Potentially make this a monobehaviour script one da
         center += newPos;
         center /= pointsInsideBox.Count();
     }
+
+    public void LogInfo() {
+        Debug.Log("Upper bound: " + upperBound + ", lower bound: " + lowerBound + ", list size " + pointsInsideBox.Count());
+    }
     void checkIfSizeChanged(Vector3 point) {
         if (upperBound == Vector3.zero && lowerBound == Vector3.zero) {
             upperBound = point;
@@ -70,6 +74,9 @@ public class BoundingBox { //Potentially make this a monobehaviour script one da
         //}
     }
     public void RemovePoint(int index) {
+        center *= pointsInsideBox.Count();
+        center -= pointsInsideBox[index];
         pointsInsideBox.RemoveAt(index);
+        center /= pointsInsideBox.Count();
     }
 }

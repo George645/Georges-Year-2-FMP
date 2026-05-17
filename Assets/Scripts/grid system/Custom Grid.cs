@@ -325,9 +325,8 @@ public class CustomGrid : MonoBehaviour {
         for (int i = 0; i < soldiersNearby.Where(x => x == null).Count(); i++) {
             Debug.Log(soldiersNearby.Where(x => x == null).ToArray()[i] + ", " + neighbourPositionsToCheck[i]);
         }
-        string debuggingString = "";
-        Debug.Log(debuggingString);
-        
+
+
         return soldiersNearby;
     }
     int SoldierBinarySearchForSquare(int squareIndex) { // get sub array is very slow in this, see if you can speed it up.
@@ -373,6 +372,7 @@ public class CustomGrid : MonoBehaviour {
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 if (index + 3 * (i + 1) + j + 1 > soldierGridWidthCount * soldierGridWidthCount * unitGridWidthCount * unitGridWidthCount) continue;
+
                 if (i == 0 && j == 0) {
                     count++; continue;
                 }
@@ -436,26 +436,12 @@ public class CustomGrid : MonoBehaviour {
     public void RemoveSoldier(Soldier soldier) {
         int indexOfSoldier = soldier.indexInArrays;
         int square = soldierSquareIndex[indexOfSoldier];
-        Debug.Log(indexOfSoldier);
-        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + ", " + soldierReferences[indexOfSoldier - 1] + ", " + soldierReferences[indexOfSoldier + 1]);
-        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + ", " + soldierSquareIndex[indexOfSoldier - 1] + ", " + soldierSquareIndex[indexOfSoldier + 1]);
-        Debug.Break();
         soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier); 
         soldierReferences = soldierReferences.RemoveAt(indexOfSoldier);
+        duplicateSoldierSquareIndexArray = duplicateSoldierSquareIndexArray.RemoveAt(indexOfSoldier);
+        duplicateSoldierReferenceArray = duplicateSoldierReferenceArray.RemoveAt(indexOfSoldier);
         foreach (Soldier soldier1 in soldierReferences.Where(soldier => soldier.indexInArrays > indexOfSoldier)) {
             soldier1.indexInArrays -= 1;
-        }
-        Debug.Log(soldier + ", " + soldierReferences[indexOfSoldier] + ", " + soldierReferences[indexOfSoldier - 1] + ", " + soldierReferences[indexOfSoldier + 1]);
-        Debug.Log(square + ", " + soldierSquareIndex[indexOfSoldier] + ", " + soldierSquareIndex[indexOfSoldier - 1] + ", " + soldierSquareIndex[indexOfSoldier + 1]);
-        Debug.Log(string.Join(", ", soldierReferences.VariableFromClasses(x => x.indexInArrays)));
-        foreach (Soldier soldier1 in soldierReferences.Where(x => soldierSquareIndex[x.indexInArrays] != SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(x.transform.position)))) {
-            Debug.Log(soldier);
-        }
-        if (soldierReferences.Contains(soldier)) {
-            Debug.Log(soldierReferences.ToList().IndexOf(soldier));
-        }
-        if (soldierReferences.Contains(null)) {
-            Debug.Log(soldierReferences.ToList().FindIndex(x => x == null) + ", " + soldierSquareIndex[soldierReferences.ToList().FindIndex(x => x == null)]);
         }
     }
 
@@ -537,10 +523,22 @@ public class CustomGrid : MonoBehaviour {
         soldierSquareIndex[arrayPositionOfCorrectPosition] = squareIndex;
         soldierReferences[arrayPositionOfCorrectPosition] = soldier;
         soldierReferences[arrayPositionOfCorrectPosition].indexInArrays = arrayPositionOfCorrectPosition;
+        
     }
     #endregion
 
     #region Conversions
+    public void LogSoldierInfo(Vector3 position, int arrayPosition, Soldier name) {
+        int actualPosition = SoldierBinarySearchForSquare(WorldSpaceToArrayIndex(position));
+        Debug.Log("Supposed position: " + arrayPosition + ", actual position " + actualPosition);
+        Debug.Log("Supposed soldier: " + name.gameObject.name + ", actual soldier in that position: " + soldierReferences[arrayPosition]);
+        Debug.Log("Supposed neighbours: " + soldierReferences[arrayPosition - 1] + ", and index higher: " + soldierReferences[arrayPosition + 1]);
+        Debug.Log("actual neighbours: " + soldierReferences[actualPosition - 1] + ", and index higher: " + soldierReferences[actualPosition + 1]);
+    }
+    int WorldSpaceToArrayIndex(Vector3 worldSpace) {
+        return SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(worldSpace));
+    }
+
     Vector3 SoldierSpaceToWorldSpace((int, int) soldierSpace) {
         return new Vector3(soldierSpace.Item1 * soldierGridSquareWidth - borderCoordinateOfMap + offsetForMinorMisalignment, 21, soldierSpace.Item2 * soldierGridSquareWidth - borderCoordinateOfMap + offsetForMinorMisalignment);
     }

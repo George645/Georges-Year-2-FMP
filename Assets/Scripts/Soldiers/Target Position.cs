@@ -38,7 +38,7 @@ public class TargetPosition : MonoBehaviour {
         transform.localPosition = position;
         thisSoldier.transform.position = transform.position + Vector3.up;
         thisSoldier.targetPosition = transform.position + Vector3.up;
-        transform.parent.GetComponent<Unit>().SetNewPositionOfSoldier(transform.GetSiblingIndex(), transform.position + Vector3.up);
+        transform.parent.GetComponent<Unit>().SetNewPositionOfSoldier(transform.GetSiblingIndex() - 1, transform.position + Vector3.up);
     }
     #endregion
 }

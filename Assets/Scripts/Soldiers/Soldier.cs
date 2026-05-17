@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Xml.Serialization;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -6,16 +8,9 @@ using UnityEngine;
 
 public class Soldier : MonoBehaviour {
     public Unit unit;
-    int siblingIndex = -1;
-    int SiblingIndex {
+    int siblingIndex {
         get {
-            if (siblingIndex != -1) {
-                return siblingIndex;
-            }
-            else {
-                siblingIndex = transform.GetSiblingIndex();
-                return siblingIndex;
-            }
+            return transform.GetSiblingIndex();
         }
     }
     Animator animator;
@@ -29,21 +24,14 @@ public class Soldier : MonoBehaviour {
         currentPosition = transform.position;
         facingDirection = transform.forward;
         animator = GetComponent<Animator>();
+        targetPosition = transform.position;
     }
     private void Update() {
+        animator.SetBool("hitting", false);
         if (isFighting)
             RunCombatLoop();
         else
             Movement(targetPosition);
-        Movement(targetPosition);
-    }
-    //Technically a battle function, but also unity function
-    private void OnDestroy() {
-        if (currentCombat != null)
-            currentCombat.DeathOf(this);
-        else
-            Debug.Log("Not in combat");
-        unit.SoldierDeath(transform.GetSiblingIndex());
     }
     #endregion
 
@@ -81,7 +69,6 @@ public class Soldier : MonoBehaviour {
     bool rightStuck = false;
     bool leftStuck = false;
     void Movement(Vector3 targetPos) {
-        animator.SetBool("hitting", false);
 
         if (!moving) return;
 
@@ -107,7 +94,7 @@ public class Soldier : MonoBehaviour {
                 RotateTowards(directionOfMovement);
                 return;
             }
-            if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, SiblingIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
+            if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, siblingIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
                 float dotProduct = Vector3.Dot(rightDirection, soldierInPosition);
                 if (dotProduct < 0) {
                     if (rightStuck) {
@@ -172,22 +159,32 @@ public class Soldier : MonoBehaviour {
 
     #endregion
 
+    private void TheDestruction() {
+        if (currentCombat != null)
+            currentCombat.DeathOf(this);
+        else
+            Debug.Log("Not in combat");
+        unit.SoldierDeath(transform.GetSiblingIndex());
+        transform.GetChild(0).gameObject.SetActive(false);
+        transform.GetChild(1).gameObject.SetActive(false);
+        Destroy(transform.parent.GetChild(transform.GetSiblingIndex() + 1).gameObject);
+        Destroy(gameObject);
+    }
+
     int health = 100;
     public void Damage(int damageQuantity) {
         int scaledDamage = damageQuantity - damageQuantity * armour / 100;
-        Debug.Log(scaledDamage);
         health -= scaledDamage;
         if (health < 0) {
-            Destroy(gameObject);
+            TheDestruction();
         }
     }
 
     public void Won() {
-        unit.numberOfKills++;
+        unit.NumberOfKills++;
         currentCombat = null;
         currentOpponent = null;
         isFighting = false;
-        Debug.Log(currentCombat + ", " + currentOpponent + ", " + isFighting + ", " + name);
     }
 
     SoldierLevelCombat currentCombat;
@@ -214,16 +211,9 @@ public class Soldier : MonoBehaviour {
         isFighting = false;
     }
     void RunCombatLoop() {
-        animator.SetBool("hitting", false);
-        try {
-            if ((currentOpponent.transform.position - transform.position).sqrMagnitude > reach * reach) {
-                Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
-                return;
-            }
-        }
-        catch (System.Exception e) {
-            Debug.Log(currentCombat + ", " + currentOpponent + ", " + isFighting + ", " + name);
-            throw e;
+        if ((currentOpponent.transform.position - transform.position).sqrMagnitude > reach * reach) {
+            Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
+            return;
         }
         if (!IsFacing(currentOpponent.transform.position - transform.position)) {
             RotateTowards(currentOpponent.transform.position - transform.position);

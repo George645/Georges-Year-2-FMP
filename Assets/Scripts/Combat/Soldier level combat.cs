@@ -23,7 +23,7 @@ public class SoldierLevelCombat {
     float lastDamage;
     float delayBeforeDamage;
     const float shortestTimeBetweenCombats = .5f;
-    const float longestTimeBetweenCombats = 10;
+    const float longestTimeBetweenCombats = 3;
     public void NewAggressor(Soldier soldier) {
         if (defender == soldier) {
             Soldier tempSoldier = defender;
@@ -34,13 +34,18 @@ public class SoldierLevelCombat {
 
     public void DeathOf(Soldier soldier) {
         Soldier victor = soldier == aggressor ? defender : aggressor;
-        Debug.Log("victor informed " + victor + ", loser defeater " + soldier);
+
         victor.Won();
+        lastDamage = Time.time;
+        delayBeforeDamage = 1000000;
     }
 
     public void RunDamageNumbers() {
+        if (defender == null || aggressor == null)
+            (defender == null ? aggressor : defender).Won();
         if (Time.time < lastDamage + delayBeforeDamage)
             return;
+        
         LaunchAttack(aggressor);
 
         lastDamage = Time.time;
@@ -51,8 +56,9 @@ public class SoldierLevelCombat {
         int randomValue = Random.Range(0, soldierAttacking.attack + defenseStat);
         if (randomValue < defenseStat + .5)
             LaunchAttack(soldierAttacking == aggressor ? defender : aggressor);
-        int attackStrength = randomValue - defenseStat;
-        Debug.Log("dealt damage " + attackStrength + " vy " + aggressor + " to " + defender);
-        (soldierAttacking == aggressor ? defender : aggressor).Damage(Mathf.Max(attackStrength, 0));
+        else {
+            int attackStrength = randomValue - defenseStat;
+            (soldierAttacking == aggressor ? defender : aggressor).Damage(Mathf.Max(attackStrength, 0));
+        }
     }
 }
