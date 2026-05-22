@@ -16,6 +16,7 @@ public class StatTracker : MonoBehaviour {
     void Start() {
         if (instance == null)
             instance = this;
+        Debug.Log(instance);
         DontDestroyOnLoad(gameObject);
         unitReferences = FindObjectsByType<Unit>(FindObjectsSortMode.None).ToArray();
         unitKills = new int[unitReferences.Length];

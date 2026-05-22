@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour {
@@ -80,13 +81,18 @@ public class CameraScript : MonoBehaviour {
     }
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
-            if (currentlySelectedUnits.Contains(hitInfo.collider.transform.parent.GetComponent<Unit>())) throw new NotImplementedException("Not implemented removing a unit from the lists");
             if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
-                currentlySelectedUnits.Add(hitInfo.collider.transform.parent.GetComponent<Unit>());
-                currentlySelectedUnits[^1].selected = true;
-                currentlyManipulatedTargetPositions.Add(GetPotentialPositionDiskForUnit(currentlySelectedUnits[^1]));
+                Select(hitInfo.collider.transform.parent.GetComponent<Unit>());
             }
         }
+    }
+
+    public void Select(Unit unit) {
+        if (currentlySelectedUnits.Contains(unit)) throw new NotImplementedException("Not implemented removing a unit from the lists");
+
+        currentlySelectedUnits.Add(unit);
+        currentlySelectedUnits[^1].selected = true;
+        currentlyManipulatedTargetPositions.Add(GetPotentialPositionDiskForUnit(currentlySelectedUnits[^1]));
     }
 
     List<GameObject> GetPotentialPositionDiskForUnit(Unit unit) {
@@ -139,7 +145,7 @@ public class CameraScript : MonoBehaviour {
 
             Vector3 distanceBetweenStartAndEnd = unitEndPosition - startingPosition;
             //Something needs to be added in here to make it so that the distance between start and end can't scale up infinitely
-            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized  * 5;
+            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized * 5;
             Vector3 distancePerUnit = distanceBetweenStartAndEndWithoutInBetweenGap / currentlySelectedUnits.Count;
             int currentWidth = 0;
             int currentRow = 0;

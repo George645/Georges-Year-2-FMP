@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 
-public class ButtonScript : MonoBehaviour{
+public class MyCustomButtonScript : MonoBehaviour{
     public void ResumeGame() {
         Time.timeScale = 1;
         transform.parent.parent.GetComponent<Canvas>().enabled = false;

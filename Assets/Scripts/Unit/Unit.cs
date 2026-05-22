@@ -165,7 +165,7 @@ public class Unit : MonoBehaviour {
     }
 
     public int NumberOfKills {
-        get { return NumberOfKills; }
+        get { return numberOfKills; }
         set {
             numberOfKills = value;
             StatTracker.instance.AddKill(this);
