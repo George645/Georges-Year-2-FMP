@@ -71,7 +71,7 @@ public class CameraScript : MonoBehaviour {
     #endregion
 
     #region moving units
-    void DisableLastSelection() {
+    public void DisableLastSelection() {
         if (currentlySelectedUnits.Count != 0) {
             currentlySelectedUnits.ForEach(x => x.selected = false);
             currentlySelectedUnits = new();

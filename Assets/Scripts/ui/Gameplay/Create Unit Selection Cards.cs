@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -38,6 +39,8 @@ public class CreateUnitSelectionCards : MonoBehaviour {
         newChild.GetComponent<PurpleCustomButtonScript>().Unit = unit;
         newChild.AddComponent<Image>();
         newChild.AddComponent<Button>();
+        newChild.GetComponent<Button>().onClick.AddListener(newChild.GetComponent<PurpleCustomButtonScript>().OnButtonClicked);
+
     }
 
     public void ReplaceUnitCards() {
@@ -52,22 +55,21 @@ public class CreateUnitSelectionCards : MonoBehaviour {
         //Debug.Log(units.Where(x => x.playersUnit).Count());
         int maxWidth = Mathf.Min((int)(maxWidthOfCard + cardBorderSize) * units.Count() + (int)borderSize, 1920);
         float widthOfCard = (maxWidth - units.Count() * cardBorderSize) / units.Count();
-        widthOfCard *= units.Count() > 10 ? 0.5f : 1;
+        widthOfCard = units.Count() > 10 ? (float)widthOfCard / ((int)(units.Count() + 1) / 2) * ((int)units.Count() / 2) * 2 : widthOfCard;
 
         int horizontalPosition = 0;
         int verticalPosition = 0;
         for (int i = 0; i < units.Count(); i++) {
-            Vector2 positionOfCard = new Vector2((-1920 / 2 + borderSize + widthOfCard / 2 + (widthOfCard + cardBorderSize) * horizontalPosition), units.Count() > 10 ? -270 + verticalPosition * 540 : 0);
+            Vector2 positionOfCard = new Vector2((-1920 / 2 + borderSize + widthOfCard / 2 + (widthOfCard + cardBorderSize) * horizontalPosition), units.Count() > 10 ? 270 - verticalPosition * 540 : 0);
 
             MakeNewCard(positionOfCard, widthOfCard / 2 - borderSize, units.Count() > 10, units[i]);
 
             horizontalPosition++;
 
-            if (horizontalPosition > units.Count() / 2 && units.Count() > 10) {
+            if (horizontalPosition >= (float)units.Count() / 2 && units.Count() > 10) {
                 verticalPosition++;
                 horizontalPosition = 0;
             }
         }
-
     }
 }

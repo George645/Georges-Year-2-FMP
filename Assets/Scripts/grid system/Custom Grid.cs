@@ -324,6 +324,7 @@ public class CustomGrid : MonoBehaviour {
         }
         for (int i = 0; i < soldiersNearby.Where(x => x == null).Count(); i++) {
             Debug.Log(soldiersNearby.Where(x => x == null).ToArray()[i] + ", " + neighbourPositionsToCheck[i]);
+            soldiersNearby = soldiersNearby.RemoveAt(soldiersNearby.ToList().IndexOf(soldiersNearby.Where(x => x == null).ToArray()[i]));
         }
 
 
