@@ -10,7 +10,7 @@ public class PurpleCustomButtonScript : MonoBehaviour {
     }
 
     public void OnButtonClicked() {
-        if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+        if (!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
             CameraScript.instance.DisableLastSelection();
         CameraScript.instance.Select(unit);
     }

@@ -6,8 +6,8 @@ public class TargetPosition : MonoBehaviour {
 
     #region Set position
     public void NewPosition(Vector3 position) {
-        transform.position = new Vector3(position.x, 19, position.z); 
-        thisSoldier.SetTarget(new Vector3(position.x, 20, position.z) + Vector3.up); // if height is implemented, this will need changing
+        transform.position = new Vector3(position.x, 20, position.z); 
+        thisSoldier.SetTarget(new Vector3(position.x, 22, position.z) + Vector3.up); // if height is implemented, this will need changing
     }
     #endregion
 
@@ -36,9 +36,9 @@ public class TargetPosition : MonoBehaviour {
     }
     public void InstantSetPosition(Vector3 position) {
         transform.localPosition = position;
-        thisSoldier.transform.position = transform.position + Vector3.up;
-        thisSoldier.targetPosition = transform.position + Vector3.up;
-        transform.parent.GetComponent<Unit>().SetNewPositionOfSoldier(transform.GetSiblingIndex() - 1, transform.position + Vector3.up);
+        thisSoldier.transform.position = transform.position + Vector3.up * 2;
+        thisSoldier.targetPosition = transform.position + Vector3.up * 2;
+        transform.parent.GetComponent<Unit>().SetNewPositionOfSoldier(thisSoldier.unitIndex, transform.position + Vector3.up);
     }
     #endregion
 }

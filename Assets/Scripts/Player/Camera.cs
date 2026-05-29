@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour {
@@ -17,6 +16,8 @@ public class CameraScript : MonoBehaviour {
     public static CameraScript instance;
     public static List<GameObject> startingPositions;
 
+    public Vector3 position;
+
     [SerializeField, Range(0, 200)]
     int backupSensitivity;
     int Sensitivity {
@@ -27,6 +28,7 @@ public class CameraScript : MonoBehaviour {
     }
     #region Unity functions
     private void Start() {
+        position = transform.position;
         if (instance == null)
             DontDestroyOnLoad(this.gameObject);
         else
@@ -37,6 +39,7 @@ public class CameraScript : MonoBehaviour {
         DisableLastSelection();
     }
     void Update() {
+        if (Time.timeScale == 0) return;
         if (Input.GetMouseButtonDown(0)) {
             if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
                 DisableLastSelection();
@@ -263,6 +266,7 @@ public class CameraScript : MonoBehaviour {
         if (Input.GetKey(KeyCode.LeftShift)) movement *= 3;
 
         transform.parent.position += movement / 100;
+        position += movement / 100;
     }
     #endregion
 

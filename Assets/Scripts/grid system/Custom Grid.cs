@@ -300,8 +300,8 @@ public class CustomGrid : MonoBehaviour {
             CreateSoldierList();
             CreateUnitList();
         }
-        int index = soldier.indexInArrays;
-        soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(soldier.transform.position));
+        int index = soldier.customGridIndex;
+        soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(soldier.currentPosition));
         SoldierSort(index);
     }
     void CreateSoldierList() {
@@ -310,7 +310,7 @@ public class CustomGrid : MonoBehaviour {
         soldierSquareIndex = new int[tempList.Length];
         for (int i = 0; i < tempList.Length; i++) {
             soldierReferences[i] = tempList[i];
-            soldierReferences[i].indexInArrays = i;
+            soldierReferences[i].customGridIndex = i;
             soldierSquareIndex[i] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(tempList[i].transform.position));
         }
         SoldierSort();
@@ -322,10 +322,10 @@ public class CustomGrid : MonoBehaviour {
         for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
             soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
         }
-        for (int i = 0; i < soldiersNearby.Where(x => x == null).Count(); i++) {
-            Debug.Log(soldiersNearby.Where(x => x == null).ToArray()[i] + ", " + neighbourPositionsToCheck[i]);
-            soldiersNearby = soldiersNearby.RemoveAt(soldiersNearby.ToList().IndexOf(soldiersNearby.Where(x => x == null).ToArray()[i]));
-        }
+        //for (int i = 0; i < soldiersNearby.Where(x => x == null).Count(); i++) {
+        //    Debug.Log(soldiersNearby.Where(x => x == null).ToArray()[i] + ", " + neighbourPositionsToCheck[i]);
+        //    soldiersNearby = soldiersNearby.RemoveAt(soldiersNearby.ToList().IndexOf(soldiersNearby.Where(x => x == null).ToArray()[i]));
+        //}
 
 
         return soldiersNearby;
@@ -391,7 +391,7 @@ public class CustomGrid : MonoBehaviour {
                 }
             }
         }
-        returningArray = returningArray.Where(x => x != 0).ToArray();
+        //returningArray = returningArray.Where(x => x != 0).ToArray();
         return returningArray;
     }
 
@@ -431,18 +431,18 @@ public class CustomGrid : MonoBehaviour {
         for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
             returningArray[i - firstIndexOfSquareIndex] = soldierReferences[i];
         }
-        return returningArray;
+        return returningArray.Where(x => x != null).ToArray();
     }
 
     public void RemoveSoldier(Soldier soldier) {
-        int indexOfSoldier = soldier.indexInArrays;
+        int indexOfSoldier = soldier.customGridIndex;
         int square = soldierSquareIndex[indexOfSoldier];
         soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier); 
         soldierReferences = soldierReferences.RemoveAt(indexOfSoldier);
         duplicateSoldierSquareIndexArray = duplicateSoldierSquareIndexArray.RemoveAt(indexOfSoldier);
         duplicateSoldierReferenceArray = duplicateSoldierReferenceArray.RemoveAt(indexOfSoldier);
-        foreach (Soldier soldier1 in soldierReferences.Where(soldier => soldier.indexInArrays > indexOfSoldier)) {
-            soldier1.indexInArrays -= 1;
+        foreach (Soldier soldier1 in soldierReferences.Where(soldier => soldier.customGridIndex > indexOfSoldier)) {
+            soldier1.customGridIndex -= 1;
         }
     }
 
@@ -477,13 +477,13 @@ public class CustomGrid : MonoBehaviour {
             //Debug.Log(intArray1[begin] + ", " + intArray1[middle] + ", " + (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])));
             if (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])) {
                 soldierArray2[i] = soldierArray1[begin];
-                soldierArray2[i].indexInArrays = i;
+                soldierArray2[i].customGridIndex = i;
                 intArray2[i] = intArray1[begin];
                 begin++;
             }
             else {
                 soldierArray2[i] = soldierArray1[middle];
-                soldierArray2[i].indexInArrays = i;
+                soldierArray2[i].customGridIndex = i;
                 intArray2[i] = intArray1[middle];
                 middle++;
             }
@@ -510,7 +510,7 @@ public class CustomGrid : MonoBehaviour {
             for (int i = startingIndexInSquareIndexArray; i < arrayPositionOfCorrectPosition; i++) {
                 soldierSquareIndex[i] = soldierSquareIndex[i + 1];
                 soldierReferences[i] = soldierReferences[i + 1];
-                soldierReferences[i].indexInArrays = i;
+                soldierReferences[i].customGridIndex = i;
             }
         else if (startingIndexInSquareIndexArray > arrayPositionOfCorrectPosition) {
             if (soldierSquareIndex[0] < squareIndex)
@@ -518,12 +518,12 @@ public class CustomGrid : MonoBehaviour {
             for (int i = startingIndexInSquareIndexArray; i > arrayPositionOfCorrectPosition; i--) {
                 soldierSquareIndex[i] = soldierSquareIndex[i - 1];
                 soldierReferences[i] = soldierReferences[i - 1];
-                soldierReferences[i].indexInArrays = i;
+                soldierReferences[i].customGridIndex = i;
             }
         }
         soldierSquareIndex[arrayPositionOfCorrectPosition] = squareIndex;
         soldierReferences[arrayPositionOfCorrectPosition] = soldier;
-        soldierReferences[arrayPositionOfCorrectPosition].indexInArrays = arrayPositionOfCorrectPosition;
+        soldierReferences[arrayPositionOfCorrectPosition].customGridIndex = arrayPositionOfCorrectPosition;
         
     }
     #endregion
@@ -565,7 +565,7 @@ public class CustomGrid : MonoBehaviour {
         if (soldierReferences == null || soldierSquareIndex == null || soldierReferences.Length == 0 || soldierSquareIndex.Length == 0) CreateSoldierList();
         UpdateSoldierPosition(soldier);
 
-        int index = soldier.indexInArrays;
+        int index = soldier.customGridIndex;
         FillInSoldierSquare(soldierSquareIndex[index], new Color(0, 0, 1, .2f));
 
         int[] neighbouringSquares = SoldierNeighbours(soldierSquareIndex[index]);

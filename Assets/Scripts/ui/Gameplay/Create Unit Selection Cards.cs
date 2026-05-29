@@ -1,5 +1,5 @@
+using System;
 using System.Linq;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -14,6 +14,12 @@ public class CreateUnitSelectionCards : MonoBehaviour {
     float borderSize;
     [SerializeField]
     float cardBorderSize;
+    [SerializeField]
+    int widthOfUnitCardBackground;
+    [SerializeField]
+    int thicknessHeightOfUnitCardBackground;
+    [SerializeField]
+    int positionHeightOfUnitCardBackground;
 
     CameraScript camera;
 
@@ -26,6 +32,7 @@ public class CreateUnitSelectionCards : MonoBehaviour {
 
     void MakeUnitsArray() {
         units = FindObjectsByType<Unit>(FindObjectsSortMode.None).Where(x => x.playersUnit).ToArray();
+        Debug.Log(string.Join<Unit>(", ", FindObjectsByType<Unit>(FindObjectsSortMode.None).ToArray()));
     }
 
     void MakeNewCard(Vector2 pos, float width, bool halved, Unit unit) {
@@ -34,7 +41,8 @@ public class CreateUnitSelectionCards : MonoBehaviour {
         newChild.transform.parent = transform;
         newChild.AddComponent<RectTransform>();
         newChild.GetComponent<RectTransform>().anchoredPosition = pos;
-        newChild.GetComponent<RectTransform>().sizeDelta = new Vector2(width, halved ? (197.28f - borderSize * 2) / 2 : 197.28f - borderSize * 2);
+        newChild.GetComponent<RectTransform>().localScale = Vector3.one;
+        newChild.GetComponent<RectTransform>().sizeDelta = new Vector2(width, halved ? (thicknessHeightOfUnitCardBackground - borderSize * 4) / 2 : thicknessHeightOfUnitCardBackground - borderSize * 4);
         newChild.AddComponent<PurpleCustomButtonScript>();
         newChild.GetComponent<PurpleCustomButtonScript>().Unit = unit;
         newChild.AddComponent<Image>();
@@ -48,21 +56,33 @@ public class CreateUnitSelectionCards : MonoBehaviour {
             DestroyImmediate(transform.GetChild(0).gameObject);
         }
 
-        if (units == null) MakeUnitsArray();
+        if (units == null || units.Count() == 0 || !Array.TrueForAll(units, x => x == null)) MakeUnitsArray();
 
         int numberOfSoldiersPerRow = units.Count() > 10 ? units.Count() / 2 : units.Count();
 
         //Debug.Log(units.Where(x => x.playersUnit).Count());
-        int maxWidth = Mathf.Min((int)(maxWidthOfCard + cardBorderSize) * units.Count() + (int)borderSize, 1920);
-        float widthOfCard = (maxWidth - units.Count() * cardBorderSize) / units.Count();
-        widthOfCard = units.Count() > 10 ? (float)widthOfCard / ((int)(units.Count() + 1) / 2) * ((int)units.Count() / 2) * 2 : widthOfCard;
+        float scaledCardBorderSize = cardBorderSize / (units.Count() > 10 ? 2 : 1);
+        Debug.Log(cardBorderSize + ", " + scaledCardBorderSize);
+
+        int maxWidth = Mathf.Min((int)(maxWidthOfCard + scaledCardBorderSize) * units.Count(), widthOfUnitCardBackground - (int)borderSize * 2);
+        float widthOfCard = (maxWidth - units.Count() * scaledCardBorderSize) / units.Count();
+
+        float scalingQuantity = 1 / ((((float)((units.Count() + 1) / 2) / (units.Count() / 2)) - 1) / 2 + 1);
+
+        widthOfCard = units.Count() > 10 ? (float)widthOfCard * scalingQuantity * 2 : widthOfCard;
+        Debug.Log((float)((int)(units.Count() + 1) / 2));
+        Debug.Log((float)((int)units.Count() / 2));
+        Debug.Log((float)((units.Count() + 1) / 2) / (units.Count() / 2));
+        Debug.Log(1f / (float)((units.Count() + 1) / 2) * (units.Count() / 2) * 2);
 
         int horizontalPosition = 0;
         int verticalPosition = 0;
         for (int i = 0; i < units.Count(); i++) {
-            Vector2 positionOfCard = new Vector2((-1920 / 2 + borderSize + widthOfCard / 2 + (widthOfCard + cardBorderSize) * horizontalPosition), units.Count() > 10 ? 270 - verticalPosition * 540 : 0);
+            Vector2 positionOfCard = new Vector2((float)(-(float)widthOfUnitCardBackground / 2 + borderSize + widthOfCard / 2 + (widthOfCard + scaledCardBorderSize) * horizontalPosition), units.Count() > 10 ? positionHeightOfUnitCardBackground / 2 - verticalPosition * positionHeightOfUnitCardBackground : 0);
 
-            MakeNewCard(positionOfCard, widthOfCard / 2 - borderSize, units.Count() > 10, units[i]);
+            Debug.Log(positionOfCard);
+
+            MakeNewCard(positionOfCard, widthOfCard - borderSize / 2, units.Count() > 10, units[i]);
 
             horizontalPosition++;
 

@@ -17,24 +17,24 @@ public class AssignNumberOfUnits : MonoBehaviour {
 
         int currentUsedUnitQuantity = PlayersArmy ? usedPlayerCount : usedEnemyCount;
 
-        Vector3 startPosition = transform.GetChild(0).position - currentUsedUnitQuantity / 2 * transform.GetChild(0).GetComponent<Unit>().CurrentWidth * transform.GetChild(0).GetComponent<Unit>().offsetPerTroop;
+        Vector3 startPosition = transform.GetChild(0).position - ((currentUsedUnitQuantity < 5) ? currentUsedUnitQuantity : 5) / 2 * transform.GetChild(0).GetComponent<Unit>().CurrentWidth * transform.GetChild(0).GetComponent<Unit>().offsetPerTroop;
 
         transform.GetChild(0).position = startPosition;
+        Unit unit = transform.GetChild(0).GetComponent<Unit>().GetComponent<Unit>();
 
-        if (PlayersArmy) {
-            for (int i = 1; i < currentUsedUnitQuantity; i++) {
-                GameObject a = Instantiate(transform.GetChild(0).gameObject);
-                a.transform.parent = transform;
-                a.transform.position = startPosition + i * transform.GetChild(0).GetComponent<Unit>().CurrentWidth * transform.GetChild(0).GetComponent<Unit>().offsetPerTroop;
-                a.GetComponent<Unit>().playersUnit = true;
-            }
-        }
-        else {
-            for (int i = 1; i < currentUsedUnitQuantity; i++) {
-                GameObject a = Instantiate(transform.GetChild(0).gameObject);
-                a.transform.parent = transform;
-                a.transform.position = startPosition + i * transform.GetChild(0).GetComponent<Unit>().CurrentWidth * transform.GetChild(0).GetComponent<Unit>().offsetPerTroop;
-                a.GetComponent<Unit>().playersUnit = false;
+        int width = 1;
+        int depth = 0;
+
+        for (int i = 1; i < currentUsedUnitQuantity; i++) {
+            GameObject a = Instantiate(transform.GetChild(0).gameObject);
+            a.transform.parent = transform;
+            a.transform.position = startPosition + width * unit.CurrentWidth * unit.offsetPerTroop - depth * unit.NumberOfSoldiers / unit.CurrentWidth * unit.offsetPerRow * 3;
+            a.GetComponent<Unit>().playersUnit = PlayersArmy;
+
+            width++;
+            if (width == 5) {
+                width = 0;
+                depth++;
             }
         }
     }

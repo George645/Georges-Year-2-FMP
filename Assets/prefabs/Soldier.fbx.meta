@@ -66,8 +66,8 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armature.002|died
-      takeName: Armature.002|died
+      name: Armature.002|Armature.002|died
+      takeName: Armature.002|Armature.002|died
       internalID: -6786192241954180998
       firstFrame: 0
       lastFrame: 117
@@ -95,8 +95,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|hilt attack
-      takeName: Armature.002|hilt attack
+      name: Armature.002|Armature.002|hilt attack
+      takeName: Armature.002|Armature.002|hilt attack
       internalID: -1771454810497001440
       firstFrame: 0
       lastFrame: 30
@@ -124,8 +124,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|hit
-      takeName: Armature.002|hit
+      name: Armature.002|Armature.002|hit
+      takeName: Armature.002|Armature.002|hit
       internalID: 7954724061113815230
       firstFrame: 0
       lastFrame: 29
@@ -153,8 +153,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|hit v2
-      takeName: Armature.002|hit v2
+      name: Armature.002|Armature.002|hit v2
+      takeName: Armature.002|Armature.002|hit v2
       internalID: 3027116415968589726
       firstFrame: 0
       lastFrame: 21
@@ -182,8 +182,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|idle
-      takeName: Armature.002|idle
+      name: Armature.002|Armature.002|Armature.002|idle
+      takeName: Armature.002|Armature.002|Armature.002|idle
       internalID: -152156108709224479
       firstFrame: 0
       lastFrame: 76
@@ -211,8 +211,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|running
-      takeName: Armature.002|running
+      name: Armature.002|Armature.002|running
+      takeName: Armature.002|Armature.002|running
       internalID: -2253911915678798211
       firstFrame: 0
       lastFrame: 21
@@ -240,8 +240,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|shield hit
-      takeName: Armature.002|shield hit
+      name: Armature.002|Armature.002|shield hit
+      takeName: Armature.002|Armature.002|shield hit
       internalID: -533298055912757544
       firstFrame: 0
       lastFrame: 23
@@ -269,8 +269,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature.002|slash 1
-      takeName: Armature.002|slash 1
+      name: Armature.002|Armature.002|slash 1
+      takeName: Armature.002|Armature.002|slash 1
       internalID: -2256614040947915887
       firstFrame: 0
       lastFrame: 45

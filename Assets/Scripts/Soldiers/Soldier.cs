@@ -13,13 +13,19 @@ public class Soldier : MonoBehaviour {
             return transform.GetSiblingIndex();
         }
     }
+    int positionInList;
     Animator animator;
+    SkinnedMeshRenderer meshRenderer;
+    LODGroup lodGroup;
+
     #region Unity functions
     public void SetTarget(Vector3 targetPosition) {
         this.targetPosition = targetPosition;
         moving = true;
     }
     private void Start() {
+        lodGroup = GetComponent<LODGroup>();
+        meshRenderer = transform.GetChild(2).GetComponent<SkinnedMeshRenderer>();
         rightDirection = transform.right;
         currentPosition = transform.position;
         facingDirection = transform.forward;
@@ -27,6 +33,9 @@ public class Soldier : MonoBehaviour {
         targetPosition = transform.position;
     }
     private void Update() {
+
+        animator.enabled = meshRenderer.isVisible;
+        if (Time.timeScale == 0) return;
         animator.SetBool("hitting", false);
         if (isFighting)
             RunCombatLoop();
@@ -43,16 +52,19 @@ public class Soldier : MonoBehaviour {
     int speed = 15;
     [SerializeField]
     int speedOfRotation = 4;
-    public int indexInArrays = -1;
+    public int customGridIndex = -1;
+    public int unitIndex;
 
     Vector3 rightDirection;
-    Vector3 currentPosition;
+    public Vector3 currentPosition;
     Vector3 facingDirection;
     [SerializeField]
     int reach = 5;
 
     public void Pushed(Vector3 inDirection) {
         transform.position += inDirection / 25 * speed;
+        currentPosition += inDirection / 25 * speed;
+
         if (moving == false) {
             moving = true;
         }
@@ -76,7 +88,7 @@ public class Soldier : MonoBehaviour {
         if (Vector3.SqrMagnitude(currentPosition - targetPos) < .01f) {
             transform.position = targetPos;
             currentPosition = targetPos;
-            unit.UpdateSoldierPosition(currentPosition, siblingIndex, this);
+            unit.UpdateSoldierPosition(currentPosition, unitIndex, this);
             if (!IsFacing(-unit.offsetPerRow.normalized)) {
                 RotateTowards(-unit.offsetPerRow.normalized);
                 return;
@@ -94,7 +106,7 @@ public class Soldier : MonoBehaviour {
                 RotateTowards(directionOfMovement);
                 return;
             }
-            if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, siblingIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
+            if (!unit.SoldierInPosition(currentPosition + directionOfMovement / 100 * speed, unitIndex, out Vector3 soldierInPosition) && !ignoreColliders) {
                 float dotProduct = Vector3.Dot(rightDirection, soldierInPosition);
                 if (dotProduct < 0) {
                     if (rightStuck) {
@@ -120,7 +132,7 @@ public class Soldier : MonoBehaviour {
             }
             transform.position += directionOfMovement / 100 * speed;
             currentPosition += directionOfMovement / 100 * speed;
-            unit.UpdateSoldierPosition(currentPosition, siblingIndex, this);
+            unit.UpdateSoldierPosition(currentPosition, unitIndex, this);
         }
 
         if (directionOfMovement.y != 0) Debug.LogWarning("movement direction y should be 0");
@@ -164,7 +176,7 @@ public class Soldier : MonoBehaviour {
             currentCombat.DeathOf(this);
         else
             Debug.Log("Not in combat");
-        unit.SoldierDeath(transform.GetSiblingIndex());
+        unit.SoldierDeath(unitIndex);
         transform.GetChild(0).gameObject.SetActive(false);
         transform.GetChild(1).gameObject.SetActive(false);
         Destroy(transform.parent.GetChild(transform.GetSiblingIndex() + 1).gameObject);
@@ -211,12 +223,12 @@ public class Soldier : MonoBehaviour {
         isFighting = false;
     }
     void RunCombatLoop() {
-        if ((currentOpponent.transform.position - transform.position).sqrMagnitude > reach * reach) {
-            Movement(currentOpponent.transform.position + (currentOpponent.transform.position - transform.position).normalized * 2);
+        if ((currentOpponent.currentPosition - currentPosition).sqrMagnitude > reach * reach) {
+            Movement(currentOpponent.currentPosition + (currentOpponent.currentPosition - currentPosition).normalized * 2);
             return;
         }
-        if (!IsFacing(currentOpponent.transform.position - transform.position)) {
-            RotateTowards(currentOpponent.transform.position - transform.position);
+        if (!IsFacing(currentOpponent.currentPosition - currentPosition)) {
+            RotateTowards(currentOpponent.currentPosition - currentPosition);
             return;
         }
         animator.SetBool("hitting", true);
@@ -236,7 +248,7 @@ public class Soldier : MonoBehaviour {
     public void DrawCubeAroundThis(Color color) {
         color.a = 0.3f;
         Gizmos.color = color;
-        Gizmos.DrawCube(transform.position + Vector3.up * 2, Vector3.one * 3);
+        Gizmos.DrawCube(currentPosition + Vector3.up * 2, Vector3.one * 3);
     }
 #endif
     #endregion
