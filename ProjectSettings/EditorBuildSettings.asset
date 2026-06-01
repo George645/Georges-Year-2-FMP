@@ -17,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Set up battle.unity
     guid: a4511b7279e6acd4cb9fd8a1990e4c92
+  - enabled: 1
+    path: Assets/Scenes/Results scene.unity
+    guid: b8cc97cbf1e4471438788db2270ddf69
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

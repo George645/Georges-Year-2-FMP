@@ -7,7 +7,7 @@ using UnityEngine;
 public class CustomGrid : MonoBehaviour {
     [SerializeField]
     int totalSizeOfMap = 3000;
-    int borderCoordinateOfMap { get { return totalSizeOfMap / 2; } }
+    int BorderCoordinateOfMap { get { return totalSizeOfMap / 2; } }
 
     #region Unity functions
     private void OnValidate() {
@@ -18,8 +18,8 @@ public class CustomGrid : MonoBehaviour {
         MakeArrays();
     }
     void MakeArrays() {
-        unitReferences = new Unit[] { };
-        unitSquareIndex = new int[] { };
+        //unitReferences = new Unit[] { };
+        //unitSquareIndex = new int[] { };
         soldierReferences = new Soldier[] { };
         soldierSquareIndex = new int[] { };
     }
@@ -29,7 +29,7 @@ public class CustomGrid : MonoBehaviour {
     IEnumerator WaitOneFrame() {
         yield return null;
         SetInstance();
-        CreateUnitList();
+        //CreateUnitList();
         CreateSoldierList();
     }
     #endregion
@@ -46,234 +46,243 @@ public class CustomGrid : MonoBehaviour {
 
     #region Unit
 
-    #region variables
+    //#region variables
     [SerializeField]
     int unitGridWidthCount = 10;
-    int unitGridSquareWidth {
-        get { return totalSizeOfMap / unitGridWidthCount; }
-    }
-    [SerializeField]
-    bool displayUnitGrid;
-    [SerializeField]
-    Unit[] unitReferences; // 1 variable for the unit, one number for the box it is in - split this into two arrays at some point
-    [SerializeField]
-    int[] unitSquareIndex;
+    //int unitGridSquareWidth {
+    //    get { return totalSizeOfMap / unitGridWidthCount; }
+    //}
+    //[SerializeField]
+    //bool displayUnitGrid;
+    //[SerializeField]
+    //Unit[] unitReferences; // 1 variable for the unit, one number for the box it is in - split this into two arrays at some point
+    //[SerializeField]
+    //int[] unitSquareIndex;
 
-    #endregion
+    //#endregion
 
-    public void UpdateUnitPosition(Unit unit) {
-        int index = Array.FindIndex(unitReferences, x => x == unit);
-        unitSquareIndex[index] = UnitSpaceToArrayIndex(WorldSpaceToUnitSpace(unit.CenterPoint));
-        UnitSort(index);
-    }
-    void CreateUnitList() {
-        Unit[] tempList = FindObjectsByType<Unit>(FindObjectsSortMode.None);
-        unitReferences = new Unit[tempList.Length];
-        unitSquareIndex = new int[tempList.Length];
-        for (int i = 0; i < tempList.Length; i++) {
-            unitReferences[i] = tempList[i];
-            unitSquareIndex[i] = UnitSpaceToArrayIndex(WorldSpaceToUnitSpace(tempList[i].transform.position));
-        }
-        UnitSort();
-    }
+    //public void RemoveUnit(Unit unit) {
+    //    int indexOfUnit = unitReferences.ToList().IndexOf(unit);
+    //    int square = unitSquareIndex[indexOfUnit];
+    //    unitSquareIndex = unitSquareIndex.RemoveAt(indexOfUnit);
+    //    unitReferences = unitReferences.RemoveAt(indexOfUnit);
+    //    duplicateUnitSquareIndexArray = duplicateUnitSquareIndexArray.RemoveAt(indexOfUnit);
+    //    duplicateUnitReferenceArray = duplicateUnitReferenceArray.RemoveAt(indexOfUnit);
+    //}
 
-    public Unit[] RetrieveNearbyUnits(Vector3 position) {
-        int arrayPositionOfPosition = UnitSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
-        int[] neighbourPositionsToCheck = UnitNeighbours(arrayPositionOfPosition);
-        List<Unit> unitsNearby = RetrieveUnitsInSquare(arrayPositionOfPosition).ToList();
-        for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
-            unitsNearby.AddRange(RetrieveUnitsInSquare(neighbourPositionsToCheck[i]));
-        }
-        return unitsNearby.ToArray();
-    }
-    public Unit[] RetrieveUnitsInSquare(int squareIndex) {
-        int indexOfSquareIndex = UnitBinarySearchForSquare(squareIndex);
-        int firstIndexOfSquareIndex = indexOfSquareIndex;
-        int lastIndexOfSquareIndex = indexOfSquareIndex;
-        while (unitSquareIndex[indexOfSquareIndex - 1] == squareIndex)
-            firstIndexOfSquareIndex--;
-        while (unitSquareIndex[indexOfSquareIndex + 1] == squareIndex)
-            lastIndexOfSquareIndex++;
-        Unit[] returningArray = new Unit[lastIndexOfSquareIndex - firstIndexOfSquareIndex];
-        for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
-            returningArray[i - firstIndexOfSquareIndex] = unitReferences[firstIndexOfSquareIndex];
-        }
-        return returningArray;
-    }
+    //public void UpdateUnitPosition(Unit unit) {
+    //    int index = Array.FindIndex(unitReferences, x => x == unit);
+    //    unitSquareIndex[index] = UnitSpaceToArrayIndex(WorldSpaceToUnitSpace(unit.CenterPoint));
+    //    UnitSort(index);
+    //}
+    //void CreateUnitList() {
+    //    Unit[] tempList = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+    //    unitReferences = new Unit[tempList.Length];
+    //    unitSquareIndex = new int[tempList.Length];
+    //    for (int i = 0; i < tempList.Length; i++) {
+    //        unitReferences[i] = tempList[i];
+    //        unitSquareIndex[i] = UnitSpaceToArrayIndex(WorldSpaceToUnitSpace(tempList[i].transform.position));
+    //    }
+    //    UnitSort();
+    //}
 
-    int UnitBinarySearchForSquare(int squareIndex) {
-        int[] tempCheckingArrayIndexes = unitSquareIndex; // <- this is so gonna store a reference and not a copy
-        int indexOfSquareIndex = -1;
-        int addingToIndex = 0;
-        while (indexOfSquareIndex == -1) {
-            if (tempCheckingArrayIndexes.Length == 1) {
-                if (tempCheckingArrayIndexes[0] < squareIndex) {
-                    return addingToIndex;
-                }
-                else if (tempCheckingArrayIndexes[0] > squareIndex) {
-                    return addingToIndex;
-                }
-            }
-            if (tempCheckingArrayIndexes[tempCheckingArrayIndexes.Length / 2] == squareIndex) {
-                indexOfSquareIndex = tempCheckingArrayIndexes.Length / 2 + addingToIndex;
-            }
-            else if (tempCheckingArrayIndexes[tempCheckingArrayIndexes.Length / 2] > squareIndex) {
-                tempCheckingArrayIndexes = tempCheckingArrayIndexes[..(tempCheckingArrayIndexes.Length / 2)];
-                continue;
-            }
-            else {
-                addingToIndex += tempCheckingArrayIndexes.Length / 2;
-                tempCheckingArrayIndexes = tempCheckingArrayIndexes[(tempCheckingArrayIndexes.Length / 2)..];
-                continue;
-            }
-        }
-        return indexOfSquareIndex;
-    }
+    //public Unit[] RetrieveNearbyUnits(Vector3 position) {
+    //    int arrayPositionOfPosition = UnitSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
+    //    int[] neighbourPositionsToCheck = UnitNeighbours(arrayPositionOfPosition);
+    //    List<Unit> unitsNearby = RetrieveUnitsInSquare(arrayPositionOfPosition).ToList();
+    //    for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
+    //        unitsNearby.AddRange(RetrieveUnitsInSquare(neighbourPositionsToCheck[i]));
+    //    }
+    //    return unitsNearby.ToArray();
+    //}
+    //public Unit[] RetrieveUnitsInSquare(int squareIndex) {
+    //    int indexOfSquareIndex = UnitBinarySearchForSquare(squareIndex);
+    //    int firstIndexOfSquareIndex = indexOfSquareIndex;
+    //    int lastIndexOfSquareIndex = indexOfSquareIndex;
+    //    while (unitSquareIndex[indexOfSquareIndex - 1] == squareIndex)
+    //        firstIndexOfSquareIndex--;
+    //    while (unitSquareIndex[indexOfSquareIndex + 1] == squareIndex)
+    //        lastIndexOfSquareIndex++;
+    //    Unit[] returningArray = new Unit[lastIndexOfSquareIndex - firstIndexOfSquareIndex];
+    //    for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
+    //        returningArray[i - firstIndexOfSquareIndex] = unitReferences[firstIndexOfSquareIndex];
+    //    }
+    //    return returningArray;
+    //}
 
-    int[] UnitNeighbours(int index) {
-        List<int> returningArray = new();
-        (int, int) unitSpace = ArrayIndexToUnitSpace(index);
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (i == j && j == 0) continue;
-                try {
-                    returningArray.Add(UnitSpaceToArrayIndex((unitSpace.Item1 + i, unitSpace.Item2 + j)));
-                }
-                catch (Exception e) {
-                    if (e.Message.Contains("out of range")) {
-                        continue;
-                    }
-                    else {
-                        Debug.Log(e.Message);
-                        throw e;
-                    }
-                }
-            }
-        }
-        returningArray = returningArray.Where(x => x != 0).ToList();
-        return returningArray.ToArray();
-    }
+    //int UnitBinarySearchForSquare(int squareIndex) {
+    //    int[] tempCheckingArrayIndexes = unitSquareIndex; // <- this is so gonna store a reference and not a copy
+    //    int indexOfSquareIndex = -1;
+    //    int addingToIndex = 0;
+    //    while (indexOfSquareIndex == -1) {
+    //        if (tempCheckingArrayIndexes.Length == 1) {
+    //            if (tempCheckingArrayIndexes[0] < squareIndex) {
+    //                return addingToIndex;
+    //            }
+    //            else if (tempCheckingArrayIndexes[0] > squareIndex) {
+    //                return addingToIndex;
+    //            }
+    //        }
+    //        if (tempCheckingArrayIndexes[tempCheckingArrayIndexes.Length / 2] == squareIndex) {
+    //            indexOfSquareIndex = tempCheckingArrayIndexes.Length / 2 + addingToIndex;
+    //        }
+    //        else if (tempCheckingArrayIndexes[tempCheckingArrayIndexes.Length / 2] > squareIndex) {
+    //            tempCheckingArrayIndexes = tempCheckingArrayIndexes[..(tempCheckingArrayIndexes.Length / 2)];
+    //            continue;
+    //        }
+    //        else {
+    //            addingToIndex += tempCheckingArrayIndexes.Length / 2;
+    //            tempCheckingArrayIndexes = tempCheckingArrayIndexes[(tempCheckingArrayIndexes.Length / 2)..];
+    //            continue;
+    //        }
+    //    }
+    //    return indexOfSquareIndex;
+    //}
 
-    #region Unit sort
-    Unit[] duplicateUnitReferenceArray;
-    int[] duplicateUnitSquareIndexArray;
-    void UnitSort() {
-        duplicateUnitSquareIndexArray = new int[unitSquareIndex.Length];
-        duplicateUnitReferenceArray = new Unit[unitReferences.Length];
+    //int[] UnitNeighbours(int index) {
+    //    List<int> returningArray = new();
+    //    (int, int) unitSpace = ArrayIndexToUnitSpace(index);
+    //    for (int i = -1; i <= 1; i++) {
+    //        for (int j = -1; j <= 1; j++) {
+    //            if (i == j && j == 0) continue;
+    //            try {
+    //                returningArray.Add(UnitSpaceToArrayIndex((unitSpace.Item1 + i, unitSpace.Item2 + j)));
+    //            }
+    //            catch (Exception e) {
+    //                if (e.Message.Contains("out of range")) {
+    //                    continue;
+    //                }
+    //                else {
+    //                    Debug.Log(e.Message);
+    //                    throw e;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    returningArray = returningArray.Where(x => x != 0).ToList();
+    //    return returningArray.ToArray();
+    //}
 
-        Array.Copy(unitSquareIndex, duplicateUnitSquareIndexArray, unitSquareIndex.Length);
-        Array.Copy(unitReferences, duplicateUnitReferenceArray, unitSquareIndex.Length);
+    //#region Unit sort
+    //Unit[] duplicateUnitReferenceArray;
+    //int[] duplicateUnitSquareIndexArray;
+    //void UnitSort() {
+    //    duplicateUnitSquareIndexArray = new int[unitSquareIndex.Length];
+    //    duplicateUnitReferenceArray = new Unit[unitReferences.Length];
 
-        UnitSort(0, unitSquareIndex.Length - 1, ref unitReferences, ref duplicateUnitReferenceArray, ref unitSquareIndex, ref duplicateUnitSquareIndexArray);
-    }
+    //    Array.Copy(unitSquareIndex, duplicateUnitSquareIndexArray, unitSquareIndex.Length);
+    //    Array.Copy(unitReferences, duplicateUnitReferenceArray, unitSquareIndex.Length);
 
-    void UnitSort(int begin, int end, ref Unit[] unitArray1, ref Unit[] unitArray2, ref int[] intArray1, ref int[] intArray2) {
-        if (end - begin <= 1) return;
+    //    UnitSort(0, unitSquareIndex.Length - 1, ref unitReferences, ref duplicateUnitReferenceArray, ref unitSquareIndex, ref duplicateUnitSquareIndexArray);
+    //}
 
-        int middle = (end + begin) / 2;
+    //void UnitSort(int begin, int end, ref Unit[] unitArray1, ref Unit[] unitArray2, ref int[] intArray1, ref int[] intArray2) {
+    //    if (end - begin <= 1) return;
 
-        UnitSort(begin, middle, ref unitArray2, ref unitArray1, ref intArray2, ref intArray1);
-        UnitSort(middle, end, ref unitArray2, ref unitArray1, ref intArray2, ref intArray1);
+    //    int middle = (end + begin) / 2;
 
-        UnitMerge(begin, end, ref unitArray2, ref unitArray1, ref intArray2, ref intArray1);
-    }
+    //    UnitSort(begin, middle, ref unitArray2, ref unitArray1, ref intArray2, ref intArray1);
+    //    UnitSort(middle, end, ref unitArray2, ref unitArray1, ref intArray2, ref intArray1);
 
-    void UnitMerge(int begin, int end, ref Unit[] unitArray1, ref Unit[] unitArray2, ref int[] intArray1, ref int[] intArray2) {
-        int middleConst = (begin + end) / 2;
-        int middle = middleConst;
+    //    UnitMerge(begin, end, ref unitArray2, ref unitArray1, ref intArray2, ref intArray1);
+    //}
 
-        for (int i = begin; i < end; i++) {
-            if (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])) {
-                unitArray2[i] = unitArray1[begin];
-                intArray2[i] = intArray1[begin];
-                begin++;
-            }
-            else {
-                unitArray2[i] = unitArray1[middle];
-                intArray2[i] = intArray1[middle];
-                middle++;
-            }
-        }
-        for (int i = begin; i < end; i++) {
-            unitArray1[i] = unitArray2[i];
-            intArray1[i] = intArray1[i];
-        }
-    }
+    //void UnitMerge(int begin, int end, ref Unit[] unitArray1, ref Unit[] unitArray2, ref int[] intArray1, ref int[] intArray2) {
+    //    int middleConst = (begin + end) / 2;
+    //    int middle = middleConst;
 
-    void UnitSort(int startingIndexInSquareIndexArray) {
-        int squareIndex = unitSquareIndex[startingIndexInSquareIndexArray];
-        Unit unit = unitReferences[startingIndexInSquareIndexArray];
-        if (startingIndexInSquareIndexArray != 0)
-            unitSquareIndex[startingIndexInSquareIndexArray] = unitSquareIndex[startingIndexInSquareIndexArray - 1];
-        else
-            unitSquareIndex[0] = unitSquareIndex[0] - 1;
-        int arrayPositionOfCorrectPosition = UnitBinarySearchForSquare(squareIndex);
-        if (startingIndexInSquareIndexArray < arrayPositionOfCorrectPosition) {
-            for (int i = startingIndexInSquareIndexArray; i < arrayPositionOfCorrectPosition; i++) {
-                unitSquareIndex[i] = unitSquareIndex[i + 1];
-                unitReferences[i] = unitReferences[i + 1];
-            }
-        }
-        else if (startingIndexInSquareIndexArray > arrayPositionOfCorrectPosition) {
-            if (unitSquareIndex[0] < squareIndex)
-                arrayPositionOfCorrectPosition += 1;
-            for (int i = startingIndexInSquareIndexArray; i > arrayPositionOfCorrectPosition; i--) {
-                unitSquareIndex[i] = unitSquareIndex[i - 1];
-                unitReferences[i] = unitReferences[i - 1];
-            }
-        }
-        unitSquareIndex[arrayPositionOfCorrectPosition] = squareIndex;
-        unitReferences[arrayPositionOfCorrectPosition] = unit;
-    }
-    #endregion
+    //    for (int i = begin; i < end; i++) {
+    //        if (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])) {
+    //            unitArray2[i] = unitArray1[begin];
+    //            intArray2[i] = intArray1[begin];
+    //            begin++;
+    //        }
+    //        else {
+    //            unitArray2[i] = unitArray1[middle];
+    //            intArray2[i] = intArray1[middle];
+    //            middle++;
+    //        }
+    //    }
+    //    for (int i = begin; i < end; i++) {
+    //        unitArray1[i] = unitArray2[i];
+    //        intArray1[i] = intArray1[i];
+    //    }
+    //}
 
-    #region Conversions
-    Vector3 UnitSpaceToWorldSpace((int, int) unitSpace) {
-        return new Vector3(unitSpace.Item1 * unitGridSquareWidth - borderCoordinateOfMap + offsetForMinorMisalignment, 21, unitSpace.Item2 * unitGridSquareWidth - borderCoordinateOfMap + offsetForMinorMisalignment);
-    }
-    (int, int) WorldSpaceToUnitSpace(Vector3 worldSpace) {// convert to a coordinate system with the negative negative corner being 0, 0
-        if (worldSpace.x < -borderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.x > borderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z < -borderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z > borderCoordinateOfMap + offsetForMinorMisalignment) throw new Exception("Position out of bounds exception: position must be withing positive and negative" + borderCoordinateOfMap);
-        return (((int)worldSpace.x + borderCoordinateOfMap - offsetForMinorMisalignment) / unitGridSquareWidth, ((int)worldSpace.z + borderCoordinateOfMap - offsetForMinorMisalignment) / unitGridSquareWidth);
-    }
-    int UnitSpaceToArrayIndex((int, int) unitSpace) {
-        if (unitSpace.Item1 < 0 || unitSpace.Item1 >= unitGridWidthCount || unitSpace.Item2 < 0 || unitSpace.Item2 >= unitGridWidthCount) throw new Exception("Position out of range, the positions must be ints in the range 0, " + unitGridWidthCount * unitGridWidthCount);
-        return unitSpace.Item2 * unitGridWidthCount + unitSpace.Item1;
-    }
-    (int, int) ArrayIndexToUnitSpace(int index) {
-        if (index < 0 || index > unitGridWidthCount * unitGridWidthCount) throw new Exception("Array startingIndexInSquareIndexArray must be between 0 and " + unitGridWidthCount * unitGridWidthCount);
-        return (index % unitGridWidthCount, index / unitGridWidthCount);
-    }
+    //void UnitSort(int startingIndexInSquareIndexArray) {
+    //    int squareIndex = unitSquareIndex[startingIndexInSquareIndexArray];
+    //    Unit unit = unitReferences[startingIndexInSquareIndexArray];
+    //    if (startingIndexInSquareIndexArray != 0)
+    //        unitSquareIndex[startingIndexInSquareIndexArray] = unitSquareIndex[startingIndexInSquareIndexArray - 1];
+    //    else
+    //        unitSquareIndex[0] = unitSquareIndex[0] - 1;
+    //    int arrayPositionOfCorrectPosition = UnitBinarySearchForSquare(squareIndex);
+    //    if (startingIndexInSquareIndexArray < arrayPositionOfCorrectPosition) {
+    //        for (int i = startingIndexInSquareIndexArray; i < arrayPositionOfCorrectPosition; i++) {
+    //            unitSquareIndex[i] = unitSquareIndex[i + 1];
+    //            unitReferences[i] = unitReferences[i + 1];
+    //        }
+    //    }
+    //    else if (startingIndexInSquareIndexArray > arrayPositionOfCorrectPosition) {
+    //        if (unitSquareIndex[0] < squareIndex)
+    //            arrayPositionOfCorrectPosition += 1;
+    //        for (int i = startingIndexInSquareIndexArray; i > arrayPositionOfCorrectPosition; i--) {
+    //            unitSquareIndex[i] = unitSquareIndex[i - 1];
+    //            unitReferences[i] = unitReferences[i - 1];
+    //        }
+    //    }
+    //    unitSquareIndex[arrayPositionOfCorrectPosition] = squareIndex;
+    //    unitReferences[arrayPositionOfCorrectPosition] = unit;
+    //}
+    //#endregion
 
-    #endregion
+    //#region Conversions
+    //Vector3 UnitSpaceToWorldSpace((int, int) unitSpace) {
+    //    return new Vector3(unitSpace.Item1 * unitGridSquareWidth - BorderCoordinateOfMap + offsetForMinorMisalignment, 21, unitSpace.Item2 * unitGridSquareWidth - BorderCoordinateOfMap + offsetForMinorMisalignment);
+    //}
+    //(int, int) WorldSpaceToUnitSpace(Vector3 worldSpace) {// convert to a coordinate system with the negative negative corner being 0, 0
+    //    if (worldSpace.x < -BorderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.x > BorderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z < -BorderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z > BorderCoordinateOfMap + offsetForMinorMisalignment) throw new Exception("Position out of bounds exception: position must be withing positive and negative" + BorderCoordinateOfMap);
+    //    return (((int)worldSpace.x + BorderCoordinateOfMap - offsetForMinorMisalignment) / unitGridSquareWidth, ((int)worldSpace.z + BorderCoordinateOfMap - offsetForMinorMisalignment) / unitGridSquareWidth);
+    //}
+    //int UnitSpaceToArrayIndex((int, int) unitSpace) {
+    //    if (unitSpace.Item1 < 0 || unitSpace.Item1 >= unitGridWidthCount || unitSpace.Item2 < 0 || unitSpace.Item2 >= unitGridWidthCount) throw new Exception("Position out of range, the positions must be ints in the range 0, " + unitGridWidthCount * unitGridWidthCount);
+    //    return unitSpace.Item2 * unitGridWidthCount + unitSpace.Item1;
+    //}
+    //(int, int) ArrayIndexToUnitSpace(int index) {
+    //    if (index < 0 || index > unitGridWidthCount * unitGridWidthCount) throw new Exception("Array startingIndexInSquareIndexArray must be between 0 and " + unitGridWidthCount * unitGridWidthCount);
+    //    return (index % unitGridWidthCount, index / unitGridWidthCount);
+    //}
 
-    #region Draw debug squares
-    Color salmon = new Color(0.9803922f, 0.5019608f, 0.4470589f, 0.1f);
-    public void DisplayUnitCheckingSquares(Unit unit) {// <- make a variable to check if you would like this debugginng on or not
-        if (!displayUnitGrid) return;
-        if (unitReferences == null || unitSquareIndex == null || unitReferences.Length == 0 || unitSquareIndex.Length == 0) CreateUnitList();
-        UpdateUnitPosition(unit);
-        int index = Array.FindIndex(unitReferences, x => x == unit); // <- make a check when this is null, remake the unitgrid list
+    //#endregion
 
-        FillInUnitSquare(unitSquareIndex[index], new Color(1, 0, 0, .1f));
-        int[] indexes = UnitNeighbours(unitSquareIndex[index]);
-        foreach (int index2 in indexes) {
-            try {
-                FillInUnitSquare(index2, salmon);
-            }
-            catch { }
-        }
-    }
-    void FillInUnitSquare(int index, Color color) { // <- make a variable to check if you would like this debugginng on or not
-        (int, int) corner1 = ArrayIndexToUnitSpace(index);
-        (int, int) corner2 = (corner1.Item1 + 1, corner1.Item2 + 1);
-        Vector3 corner1Vector = UnitSpaceToWorldSpace(corner1);
-        Vector3 corner2Vector = UnitSpaceToWorldSpace(corner2);
-        Vector3 midpoint = (corner1Vector + corner2Vector) / 2;
-        //Debug.Log(corner1Vector + ", " + corner2Vector + ", " + midpoint);
-        Gizmos.color = color;
-        Gizmos.DrawCube(midpoint, new Vector3(corner2Vector.x - corner1Vector.x, 0, corner2Vector.z - corner1Vector.z));
-    }
-    #endregion
+    //#region Draw debug squares
+    //Color salmon = new Color(0.9803922f, 0.5019608f, 0.4470589f, 0.1f);
+    //public void DisplayUnitCheckingSquares(Unit unit) {// <- make a variable to check if you would like this debugginng on or not
+    //    if (!displayUnitGrid) return;
+    //    if (unitReferences == null || unitSquareIndex == null || unitReferences.Length == 0 || unitSquareIndex.Length == 0) CreateUnitList();
+    //    UpdateUnitPosition(unit);
+    //    int index = Array.FindIndex(unitReferences, x => x == unit); // <- make a check when this is null, remake the unitgrid list
+
+    //    FillInUnitSquare(unitSquareIndex[index], new Color(1, 0, 0, .1f));
+    //    int[] indexes = UnitNeighbours(unitSquareIndex[index]);
+    //    foreach (int index2 in indexes) {
+    //        try {
+    //            FillInUnitSquare(index2, salmon);
+    //        }
+    //        catch { }
+    //    }
+    //}
+    //void FillInUnitSquare(int index, Color color) { // <- make a variable to check if you would like this debugginng on or not
+    //    (int, int) corner1 = ArrayIndexToUnitSpace(index);
+    //    (int, int) corner2 = (corner1.Item1 + 1, corner1.Item2 + 1);
+    //    Vector3 corner1Vector = UnitSpaceToWorldSpace(corner1);
+    //    Vector3 corner2Vector = UnitSpaceToWorldSpace(corner2);
+    //    Vector3 midpoint = (corner1Vector + corner2Vector) / 2;
+    //    //Debug.Log(corner1Vector + ", " + corner2Vector + ", " + midpoint);
+    //    Gizmos.color = color;
+    //    Gizmos.DrawCube(midpoint, new Vector3(corner2Vector.x - corner1Vector.x, 0, corner2Vector.z - corner1Vector.z));
+    //}
+    //#endregion
 
     #endregion
 
@@ -288,7 +297,7 @@ public class CustomGrid : MonoBehaviour {
     int[] soldierSquareIndex;
     [SerializeField]
     Soldier[] soldierReferences;
-    int soldierGridSquareWidth {
+    int SoldierGridSquareWidth {
         get { return totalSizeOfMap / (soldierGridWidthCount * unitGridWidthCount); } // < one of these has to be unit
     }
 
@@ -298,7 +307,7 @@ public class CustomGrid : MonoBehaviour {
         if (!Application.isPlaying && soldierSquareIndex.Length == 0) {
             MakeArrays();
             CreateSoldierList();
-            CreateUnitList();
+            //CreateUnitList();
         }
         int index = soldier.customGridIndex;
         soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(soldier.currentPosition));
@@ -541,11 +550,11 @@ public class CustomGrid : MonoBehaviour {
     }
 
     Vector3 SoldierSpaceToWorldSpace((int, int) soldierSpace) {
-        return new Vector3(soldierSpace.Item1 * soldierGridSquareWidth - borderCoordinateOfMap + offsetForMinorMisalignment, 21, soldierSpace.Item2 * soldierGridSquareWidth - borderCoordinateOfMap + offsetForMinorMisalignment);
+        return new Vector3(soldierSpace.Item1 * SoldierGridSquareWidth - BorderCoordinateOfMap + offsetForMinorMisalignment, 21, soldierSpace.Item2 * SoldierGridSquareWidth - BorderCoordinateOfMap + offsetForMinorMisalignment);
     }
     (int, int) WorldSpaceToSoldierSpace(Vector3 worldSpace) {// convert to a coordinate system with the negative negative corner being 0, 0
-        if (worldSpace.x < -borderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.x > borderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z < -borderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z > borderCoordinateOfMap + offsetForMinorMisalignment) throw new Exception("Position out of bounds exception: position must be withing positive and negative" + borderCoordinateOfMap);
-        return (((int)worldSpace.x + borderCoordinateOfMap - offsetForMinorMisalignment) / soldierGridSquareWidth, ((int)worldSpace.z + borderCoordinateOfMap - offsetForMinorMisalignment) / soldierGridSquareWidth);
+        if (worldSpace.x < -BorderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.x > BorderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z < -BorderCoordinateOfMap + offsetForMinorMisalignment || worldSpace.z > BorderCoordinateOfMap + offsetForMinorMisalignment) throw new Exception("Position out of bounds exception: position must be withing positive and negative" + BorderCoordinateOfMap);
+        return (((int)worldSpace.x + BorderCoordinateOfMap - offsetForMinorMisalignment) / SoldierGridSquareWidth, ((int)worldSpace.z + BorderCoordinateOfMap - offsetForMinorMisalignment) / SoldierGridSquareWidth);
     }
     int SoldierSpaceToArrayIndex((int, int) soldierSpace) {
         if (soldierSpace.Item1 < 0 || soldierSpace.Item1 > (soldierGridWidthCount * unitGridWidthCount) || soldierSpace.Item2 < 0 || soldierSpace.Item2 > (soldierGridWidthCount * unitGridWidthCount)) throw new Exception("Position out of range, the positions must be ints in the range 0, " + (soldierGridWidthCount * unitGridWidthCount));
@@ -559,7 +568,7 @@ public class CustomGrid : MonoBehaviour {
 
     #region DrawDebugSquares
 
-    Color lightBlue = new Color(0.333324f, 0.4673822f, 0.9019608f, 0.1f);
+    Color lightBlue = new(0.333324f, 0.4673822f, 0.9019608f, 0.1f);
     public void DisplaySoldierCheckingSquares(Soldier soldier) {
         if (!displaySoldierGrid) return;
         if (soldierReferences == null || soldierSquareIndex == null || soldierReferences.Length == 0 || soldierSquareIndex.Length == 0) CreateSoldierList();
@@ -596,22 +605,22 @@ public class CustomGrid : MonoBehaviour {
     Material lineMaterial;
     const int yHeight = 21;
     public void DisplayGrids() {
-        if (displayUnitGrid) {
-            lineMaterial.SetPass(0);
-            GL.PushMatrix();
-            GL.Begin(GL.LINES);
-            for (int i = 0; i <= unitGridWidthCount; i++) {
-                //lines along one side
-                GL.Vertex3(-borderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -borderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment);
-                GL.Vertex3(borderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -borderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment);
+        //if (displayUnitGrid) {
+        //    lineMaterial.SetPass(0);
+        //    GL.PushMatrix();
+        //    GL.Begin(GL.LINES);
+        //    for (int i = 0; i <= unitGridWidthCount; i++) {
+        //        //lines along one side
+        //        GL.Vertex3(-BorderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -BorderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment);
+        //        GL.Vertex3(BorderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -BorderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment);
 
-                //lines along the other
-                GL.Vertex3(-borderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment, yHeight, -borderCoordinateOfMap + offsetForMinorMisalignment);
-                GL.Vertex3(-borderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment, yHeight, borderCoordinateOfMap + offsetForMinorMisalignment);
-            }
-            GL.End();
-            GL.PopMatrix();
-        }
+        //        //lines along the other
+        //        GL.Vertex3(-BorderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment, yHeight, -BorderCoordinateOfMap + offsetForMinorMisalignment);
+        //        GL.Vertex3(-BorderCoordinateOfMap + i * unitGridSquareWidth + offsetForMinorMisalignment, yHeight, BorderCoordinateOfMap + offsetForMinorMisalignment);
+        //    }
+        //    GL.End();
+        //    GL.PopMatrix();
+        //}
         if (displaySoldierGrid) {
 
             lineMaterial.SetPass(0);
@@ -619,12 +628,12 @@ public class CustomGrid : MonoBehaviour {
             GL.Begin(GL.LINES);
             for (int i = 0; i <= soldierGridWidthCount * unitGridWidthCount; i++) {
                 //lines along one side
-                GL.Vertex3(-borderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -borderCoordinateOfMap + i * soldierGridSquareWidth + offsetForMinorMisalignment);
-                GL.Vertex3(borderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -borderCoordinateOfMap + i * soldierGridSquareWidth + offsetForMinorMisalignment);
+                GL.Vertex3(-BorderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -BorderCoordinateOfMap + i * SoldierGridSquareWidth + offsetForMinorMisalignment);
+                GL.Vertex3(BorderCoordinateOfMap + offsetForMinorMisalignment, yHeight, -BorderCoordinateOfMap + i * SoldierGridSquareWidth + offsetForMinorMisalignment);
 
                 //lines along the other
-                GL.Vertex3(-borderCoordinateOfMap + i * soldierGridSquareWidth + offsetForMinorMisalignment, yHeight, -borderCoordinateOfMap + offsetForMinorMisalignment);
-                GL.Vertex3(-borderCoordinateOfMap + i * soldierGridSquareWidth + offsetForMinorMisalignment, yHeight, borderCoordinateOfMap + offsetForMinorMisalignment);
+                GL.Vertex3(-BorderCoordinateOfMap + i * SoldierGridSquareWidth + offsetForMinorMisalignment, yHeight, -BorderCoordinateOfMap + offsetForMinorMisalignment);
+                GL.Vertex3(-BorderCoordinateOfMap + i * SoldierGridSquareWidth + offsetForMinorMisalignment, yHeight, BorderCoordinateOfMap + offsetForMinorMisalignment);
             }
             GL.End();
             GL.PopMatrix();
@@ -633,7 +642,7 @@ public class CustomGrid : MonoBehaviour {
     #endregion
 
     public void ColourSoldiersExcluding(Soldier soldier) {
-        Soldier[] SoldiersNearby = new Soldier[] { };
+        Soldier[] SoldiersNearby;
         SoldiersNearby = RetrieveNearbySoldiers(soldier.transform.position);
         foreach (Soldier soldier1 in SoldiersNearby) {
             if (soldier1 == soldier) continue;

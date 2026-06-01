@@ -10,12 +10,11 @@ public class PurpleCustomButtonScript : MonoBehaviour {
     }
 
     public void OnButtonClicked() {
-        if (!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
-            CameraScript.instance.DisableLastSelection();
         CameraScript.instance.Select(unit);
     }
 
     private void Update() {
+        if (unit == null) Destroy(gameObject);
         if (unit.selected) {
             GetComponent<Image>().color = Color.orange;
         }

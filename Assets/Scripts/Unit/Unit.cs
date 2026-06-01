@@ -9,12 +9,13 @@ public class Unit : MonoBehaviour {
     List<TargetPosition> targetPositions = new();
     List<Vector3> soldierPositions;
 
+    public int AIIndex = -1;
 
     BoundingBox BoundingBox;
     public bool selected = false;
     public bool playersUnit;
 
-    int offsetDistance = 4;
+    const int offsetDistance = 4;
 
     [HideInInspector]
     public int potentialNextWidth;
@@ -36,7 +37,7 @@ public class Unit : MonoBehaviour {
     public Vector3 CenterPoint {
         get {
             if (Application.isEditor && !Application.isPlaying) {
-                Bounds bound = new Bounds(transform.GetChild(0).transform.position, Vector3.zero);
+                Bounds bound = new(transform.GetChild(0).transform.position, Vector3.zero);
                 for (int i = 2; i < transform.childCount; i += 2) {
                     bound.Encapsulate(transform.GetChild(i).position);
                 }
@@ -63,20 +64,29 @@ public class Unit : MonoBehaviour {
         AssignPositionInListIndexes();
         currentlyFighting = new();
         if (playersUnit)
-            foreach (Soldier soldier in childSoldiers)
+            for (int i = 0; i < childSoldiers.Count; i++) {
                 FindFirstObjectByType<Highlightedtargetpositions>().CreateHighlightedPosition();
+            }
     }
-    private void Update() {
-        if (transform.childCount == 0) {
-            Destroy(this);
+    private void FixedUpdate() {
+        if (transform.childCount == 0 || previousStartingPoint.magnitude > 5000) {
+            foreach (Unit unit in currentlyFighting) {
+                unit.Defeated(this);
+            }
+            Destroy(gameObject);
         }
         if (Input.GetKey(KeyCode.Space)) foreach (TargetPosition targetPosition in targetPositions) targetPosition.Enable();
         else foreach (TargetPosition targetPosition in targetPositions) targetPosition.Disable();
 
-        if (!inCombat && currentlyFighting.Count() != 0) {
-            if (IsFacingOpponent() && !isAssigningPositions) {
+        if (!InCombat && currentlyFighting.Count() != 0) {
+            if (IsFacingOpponent() && !isAssigningPositions && System.Array.TrueForAll(childSoldiers.ToArray(), x => !x.moving)) {
                 Vector3[] newArrayOfPositions = new Vector3[childSoldiers.Count()];
-                NewUnitFormation(battlePoint - 0.1f * offsetPerRow, offsetPerTroop, offsetPerRow, currentWidth);
+                Debug.Log(Vector3.Magnitude(currentlyFighting[0].CenterPoint - CenterPoint) / 5 * offsetPerRow);
+                Debug.Log(previousStartingPoint - Vector3.Magnitude(currentlyFighting[0].CenterPoint - CenterPoint) / 5 * offsetPerRow);
+                if (IsFacingOpponent())
+                    NewUnitFormation(previousStartingPoint - Vector3.Magnitude(currentlyFighting[0].previousStartingPoint + currentlyFighting[0].offsetPerTroop * currentlyFighting[0].currentWidth / 2 - (previousStartingPoint + offsetPerTroop * currentWidth)) / 5 * offsetPerRow, offsetPerTroop, offsetPerRow, currentWidth);
+                else
+                    NewUnitFormation(previousStartingPoint - 0.1f * offsetPerRow, offsetPerTroop, offsetPerRow, currentWidth);
             }
         }
     }
@@ -97,8 +107,8 @@ public class Unit : MonoBehaviour {
     #endregion
 
     #region Unit functions
-    float forwardsMagnitude;
-    float rightMagnitude;
+    public float forwardsMagnitude;
+    public float rightMagnitude;
 
     public Vector3 UnitFront {
         get {
@@ -165,7 +175,7 @@ public class Unit : MonoBehaviour {
     }
 
     void AssignPositionInListIndexes() {
-        for (int i = 0; i < childSoldiers.Count(); i ++) {
+        for (int i = 0; i < childSoldiers.Count(); i++) {
             childSoldiers[i].unitIndex = i;
         }
     }
@@ -179,8 +189,7 @@ public class Unit : MonoBehaviour {
     }
     int numberOfKills;
     public void SoldierDeath(int indexInList) {
-        Soldier removingSoldier = null;
-        removingSoldier = childSoldiers[indexInList];
+        Soldier removingSoldier = childSoldiers[indexInList];
         //remove from the grid system
         CustomGrid.instance.RemoveSoldier(removingSoldier);
 
@@ -202,15 +211,17 @@ public class Unit : MonoBehaviour {
         if (!IsFacingOpponent()) {
             TurnToFaceOpponent();
         }
-        if (!isAssigningPositions)
-            NewUnitFormation(battlePoint, offsetPerTroop, offsetPerRow, CurrentWidth);
-        //if (targetSoldierPositions != null && targetSoldierPositions.Count != 0)
+        if (!isAssigningPositions) {
+            Debug.Log("Soldier death");
+            NewUnitFormation(previousStartingPoint, offsetPerTroop, offsetPerRow, CurrentWidth);
+        }//if (targetSoldierPositions != null && targetSoldierPositions.Count != 0)
         //    targetSoldierPositions.RemoveAt(indexInList);
     }
     public void UpdateSoldierPosition(Vector3 position, int listIndex, Soldier soldier) {
         CustomGrid.instance.UpdateSoldierPosition(soldier);
         soldierPositions[listIndex] = position;
         BoundingBox.ChangePoint(listIndex, position);
+        OverallAI.instance.UpdateUnitPosition(BoundingBox.Center, AIIndex, playersUnit);
     }
 
 
@@ -232,10 +243,13 @@ public class Unit : MonoBehaviour {
             Vector3 directionAndDistanceBetweenSoldiers = childPosition - position;
             float magnitude = directionAndDistanceBetweenSoldiers.sqrMagnitude;
             if (magnitude < offsetDistance) {
-                if (nearbySoldiers[i].unit.playersUnit != playersUnit && doNotEngageTimer > 0) {
+                if (nearbySoldiers[i].unit.playersUnit != playersUnit && DoNotEngageTimer > 0) {
                     Soldier checkingChild = childSoldiers[excludedIndex];
-                    if (!inCombat)
+                    if (!InCombat)
                         CollidedWithOpponent(nearbySoldiers[i]);
+                    else if (!currentlyFighting.Contains(nearbySoldiers[i].unit))
+                        EngageInCombat(nearbySoldiers[i].unit);
+
                     if (!checkingChild.isFighting)
                         new SoldierLevelCombat(checkingChild, nearbySoldiers[i]);
                 }
@@ -294,13 +308,20 @@ public class Unit : MonoBehaviour {
 
     #region combat
     #region combatStatistics
-    [SerializeField, Tooltip("value between 0 and 50")]
+    [Tooltip("value between 0 and 50")]
     public int attack = 25;
-    [SerializeField, Tooltip("value between 0 and 10")]
+    [Tooltip("value between 0 and 10")]
     public int defense = 5;
-    [SerializeField, Tooltip("value between 0 and 10")]
+    [Tooltip("value between 0 and 10")]
     public int armour = 5;
     #endregion
+
+    public void Defeated(Unit unit) {
+        if (!currentlyFighting.Contains(unit)) return;
+        currentlyFighting.Remove(unit);
+        //CustomGrid.instance.RemoveUnit(unit);
+        //if (currentlyFighting.Count == 0) BreakCombat(unit);
+    }
 
     bool IsFacingOpponent() {
         return QuadrantOfPoint(currentlyFighting[0].targetPositionBoundingBox.Center) == "front";
@@ -309,17 +330,17 @@ public class Unit : MonoBehaviour {
         BreakCombat();
         doNotEngageTimerStart = Time.time + timeWithoutCombatCollision;
     }
-    Vector3 battlePoint;
+    public Vector3 previousStartingPoint;
     [SerializeField]
     float timeWithoutCombatCollision = 5;
     float doNotEngageTimerStart;
-    float doNotEngageTimer {
+    float DoNotEngageTimer {
         get { return Time.time - doNotEngageTimerStart; }
     }
     void CollidedWithOpponent(Soldier soldier) {
         Unit collidedUnit = soldier.unit;
         string quadrant = collidedUnit.QuadrantOfPoint(CenterPoint);
-        Vector3 localUnitStartPosition = Vector3.zero;
+        Vector3 localUnitStartPosition;
         if (quadrant == "left") {
             offsetPerTroop = collidedUnit.offsetPerRow.normalized * rightMagnitude;
             offsetPerRow = collidedUnit.offsetPerTroop.normalized * forwardsMagnitude;
@@ -344,14 +365,13 @@ public class Unit : MonoBehaviour {
             throw new System.Exception("quadrant not found" + quadrant); //<- if this ever gets run, I will eat a hat, like I do not believe it.
         }
 
+        Debug.Log("Collided With Opponent");
         NewUnitFormation(localUnitStartPosition, offsetPerTroop, offsetPerRow, currentWidth);
-
-        battlePoint = localUnitStartPosition;
 
         EngageInCombat(collidedUnit);
     }
 
-    bool inCombat {
+    public bool InCombat {
         get { return !childSoldiers.TrueForAll(x => !x.isFighting); }
     }
     List<Unit> currentlyFighting;
@@ -380,10 +400,13 @@ public class Unit : MonoBehaviour {
         offsetPerTroop = new Vector3(offsetPerRow.z, offsetPerRow.y, -offsetPerRow.x).normalized * offsetPerTroop.magnitude;
         Vector3 plannedOffsetPerRow = offsetPerRow;
         Vector3 plannedOffsetPerTroop = offsetPerTroop;
-        Vector3 startingPoint = currentlyFighting[0].targetPositionBoundingBox.Center - currentlyFighting[0].offsetPerRow * currentlyFighting[0].NumberOfSoldiers / currentlyFighting[0].currentWidth / 2 + currentlyFighting[0].offsetPerTroop * currentWidth / 2;
+        Vector3 startingPoint = currentlyFighting[0].previousStartingPoint + currentlyFighting[0].offsetPerTroop * currentWidth;
 
-        NewUnitFormation(startingPoint, plannedOffsetPerTroop, plannedOffsetPerRow, currentWidth);
-        battlePoint = startingPoint;
+        Debug.Log("Turn to face opponent");
+        if (Vector3.SqrMagnitude(CenterPoint - currentlyFighting[0].CenterPoint) < 36)
+            NewUnitFormation(startingPoint + offsetPerRow, offsetPerTroop, offsetPerRow, currentWidth);
+        else
+            NewUnitFormation(startingPoint, plannedOffsetPerTroop, plannedOffsetPerRow, currentWidth);
     }
 
     void NewUnitFormation(Vector3 startPosition, Vector3 offsetPerTroop, Vector3 offsetPerRow, int newWidth) {
@@ -402,7 +425,7 @@ public class Unit : MonoBehaviour {
         }
         NewPositions(nextPositions.ToList());
 
-
+        previousStartingPoint = startPosition;
 
         potentialOffsetPerRow = offsetPerRow;
         potentialOffsetPerTroop = offsetPerTroop;
@@ -418,14 +441,14 @@ public class Unit : MonoBehaviour {
         if (!isAssigningPositions)
             StartCoroutine(nameof(UpdatePosition), listOfPositions);
         else {
-            WaitForUpdatePosition(listOfPositions);
+            StartCoroutine(WaitForUpdatePosition(listOfPositions));
         }
     }
     IEnumerator WaitForUpdatePosition(List<Vector3> list) {
         while (isAssigningPositions) {
             yield return null;
         }
-        UpdatePosition(list);
+        StartCoroutine(UpdatePosition(list));
     }
     bool isAssigningPositions;
     IEnumerator UpdatePosition(List<Vector3> listOfPositions) {
@@ -488,9 +511,7 @@ public class Unit : MonoBehaviour {
     [HideInInspector]
     public Vector3 potentialOffsetPerRow;
 
-    [SerializeField]
     public Vector3 offsetPerTroop;
-    [SerializeField]
     public Vector3 offsetPerRow;
 
     public void InstantArrangeByWidth(int widthCount) {
@@ -511,13 +532,12 @@ public class Unit : MonoBehaviour {
             }
         }
     }
-    public void SetUnitCount(int quantity) {
+    public void SetSoldierCount(int quantity) {
         if (childSoldiers.Count == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
             childSoldiers = transform.GetComponentsInChildren<Soldier>().ToList();
         }
         if (targetPositions.Count == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
             targetPositions = transform.GetComponentsInChildren<TargetPosition>().ToList();
-            Debug.Log(targetPositions);
         }
         for (int i = childSoldiers.Count - 1; i >= 0; i--) {
             if (childSoldiers[i] == null) {
@@ -578,7 +598,7 @@ public class Unit : MonoBehaviour {
     [SerializeField]
     bool drawPlayerArrow;
     private void OnDrawGizmosSelected() {
-        CustomGrid.instance.DisplayUnitCheckingSquares(this);
+        //CustomGrid.instance.DisplayUnitCheckingSquares(this);
         if (Application.isPlaying)
             BoundingBox.DisplayBox();
         DisplayDiagonal();
@@ -590,10 +610,10 @@ public class Unit : MonoBehaviour {
 
     void DisplayDiagonal() {
         GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardRightDiagonal()), Color.black);
-        Vector3 rotatedDiagonal = new Vector3(GetForwardRightDiagonal().z, GetForwardRightDiagonal().y, GetForwardRightDiagonal().x);
+        Vector3 rotatedDiagonal = new (GetForwardRightDiagonal().z, GetForwardRightDiagonal().y, GetForwardRightDiagonal().x);
         Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));
         GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardLeftDiagonal()), Color.black, 1);
-        rotatedDiagonal = new Vector3(GetForwardLeftDiagonal().z, GetForwardLeftDiagonal().y, GetForwardLeftDiagonal().x);
+        rotatedDiagonal = new (GetForwardLeftDiagonal().z, GetForwardLeftDiagonal().y, GetForwardLeftDiagonal().x);
         Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));
         if (drawPlayerArrow) {
             GLFunctions.GLshapes.DrawArrow(CenterPoint, ScreenPointToGroundPoint(Event.current.mousePosition));

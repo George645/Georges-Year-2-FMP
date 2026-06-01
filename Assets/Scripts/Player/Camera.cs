@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class CameraScript : MonoBehaviour {
-    int distanceFromEdgeOfScreenDivider = 20;
+    const int distanceFromEdgeOfScreenDivider = 20;
     Vector3 unitStartPosition, unitEndPosition;
 
     List<Unit> currentlySelectedUnits;
@@ -41,7 +41,7 @@ public class CameraScript : MonoBehaviour {
     void Update() {
         if (Time.timeScale == 0) return;
         if (Input.GetMouseButtonDown(0)) {
-            if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+            if (!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
                 DisableLastSelection();
             CheckIfClickingOnUnit();
         }
@@ -84,7 +84,7 @@ public class CameraScript : MonoBehaviour {
     }
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
-            if (hitInfo.collider.gameObject.name.Contains("Soldier")) {
+            if (hitInfo.collider.gameObject.name.Contains("Soldier") && hitInfo.collider.gameObject.GetComponent<Soldier>().unit.playersUnit) {
                 Select(hitInfo.collider.transform.parent.GetComponent<Unit>());
             }
         }
@@ -118,7 +118,7 @@ public class CameraScript : MonoBehaviour {
             foreach (List<GameObject> innerList in currentlyManipulatedTargetPositions.Where(x => x[^1].GetComponent<MeshRenderer>().enabled)) {
                 ToggleMeshRenderers(false, innerList);
             }
-            Vector3 oldCenter = new Vector3(currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.x) / currentlySelectedUnits.Count(), 21, currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.z) / currentlySelectedUnits.Count());
+            Vector3 oldCenter = new(currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.x) / currentlySelectedUnits.Count(), 21, currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.z) / currentlySelectedUnits.Count());
             Vector3 newCenter = unitStartPosition;
             Vector3 offset = newCenter - oldCenter;
 
@@ -148,13 +148,13 @@ public class CameraScript : MonoBehaviour {
 
             Vector3 distanceBetweenStartAndEnd = unitEndPosition - startingPosition;
             //Something needs to be added in here to make it so that the distance between start and end can't scale up infinitely
-            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - (currentlySelectedUnits.Count - 1) * distanceBetweenStartAndEnd.normalized * 5;
+            Vector3 distanceBetweenStartAndEndWithoutInBetweenGap = distanceBetweenStartAndEnd - ((currentlySelectedUnits.Count - 1) * 5 * distanceBetweenStartAndEnd.normalized);
             Vector3 distancePerUnit = distanceBetweenStartAndEndWithoutInBetweenGap / currentlySelectedUnits.Count;
             int currentWidth = 0;
             int currentRow = 0;
             for (int index = 0; index < currentlySelectedUnits.Count; index++) {
                 Vector3 soldierOffsetPerTroop = distanceBetweenStartAndEnd.normalized * currentlySelectedUnits[index].offsetPerTroop.magnitude;
-                Vector3 soldierOffsetPerRow = new Vector3(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
+                Vector3 soldierOffsetPerRow = new (soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
                 currentlySelectedUnits[index].potentialOffsetPerRow = soldierOffsetPerRow;
                 currentlySelectedUnits[index].potentialOffsetPerTroop = soldierOffsetPerTroop;
 
@@ -279,8 +279,8 @@ public class CameraScript : MonoBehaviour {
         scrolledDelta += Input.mouseScrollDelta.y;
     }
 
-    float minValue = 0;
-    float maxValue = 90;
+    const float minValue = 0;
+    const float maxValue = 90;
     [SerializeField]
     float positionZMultiplier = 25;
     [SerializeField]
@@ -294,7 +294,7 @@ public class CameraScript : MonoBehaviour {
     [SerializeField]
     float multiplier = 3;
 
-    float degreesToRadians = 0.01745328f;
+    const float degreesToRadians = 0.01745328f;
     float time = 0;
     Vector3 priorPosition;
     Quaternion priorRotation;
@@ -313,9 +313,7 @@ public class CameraScript : MonoBehaviour {
         }
         scrolledPosition = Math.Clamp(scrolledPosition + scrolledDelta * PlayerPrefs.GetInt("Sensitivity", 50) * 0.2f, -maxValue, minValue);
         scrolledDelta = 0;
-        transform.localPosition = Vector3.Lerp(priorPosition, multiplier * new Vector3(0, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionYMultiplier + positionYAddition, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionZMultiplier + positionZAddition), Math.Clamp(Time.time - time, 0, 1));
-        transform.localRotation = Quaternion.Lerp(priorRotation, new Quaternion(0, 180, Mathf.Sin(scrolledPosition * degreesToRadians) * rotationMultiplier, priorRotation.w), Math.Clamp((Time.time - time) / 50, 0, 1));
-
+        transform.SetLocalPositionAndRotation(Vector3.Lerp(priorPosition, multiplier * new Vector3(0, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionYMultiplier + positionYAddition, -Mathf.Sin(scrolledPosition * degreesToRadians) * positionZMultiplier + positionZAddition), Math.Clamp(Time.time - time, 0, 1)), Quaternion.Lerp(priorRotation, new Quaternion(0, 180, Mathf.Sin(scrolledPosition * degreesToRadians) * rotationMultiplier, priorRotation.w), Math.Clamp((Time.time - time) / 50, 0, 1)));
     }
     #endregion
 }

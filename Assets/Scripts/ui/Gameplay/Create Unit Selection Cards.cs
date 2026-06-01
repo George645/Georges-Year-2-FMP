@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CreateUnitSelectionCards : MonoBehaviour {
@@ -21,23 +19,27 @@ public class CreateUnitSelectionCards : MonoBehaviour {
     [SerializeField]
     int positionHeightOfUnitCardBackground;
 
-    CameraScript camera;
+    CameraScript thisCamera;
 
     Unit[] units;
 
     void Start() {
-        camera = CameraScript.instance;
+        thisCamera = CameraScript.instance;
         ReplaceUnitCards();
+    }
+    private void Update() {
+        if (!Array.TrueForAll(units, x => x != null)) {
+            ReplaceUnitCards();
+        }
     }
 
     void MakeUnitsArray() {
-        units = FindObjectsByType<Unit>(FindObjectsSortMode.None).Where(x => x.playersUnit).ToArray();
-        Debug.Log(string.Join<Unit>(", ", FindObjectsByType<Unit>(FindObjectsSortMode.None).ToArray()));
+        units = FindObjectsByType<Unit>(FindObjectsSortMode.None).Where(x => x.playersUnit && x != null).ToArray();
     }
 
     void MakeNewCard(Vector2 pos, float width, bool halved, Unit unit) {
         //Debug.Log(pos + ", " + width + ", " + halved + ", " + unit);
-        GameObject newChild = new GameObject();
+        GameObject newChild = new();
         newChild.transform.parent = transform;
         newChild.AddComponent<RectTransform>();
         newChild.GetComponent<RectTransform>().anchoredPosition = pos;
@@ -60,9 +62,8 @@ public class CreateUnitSelectionCards : MonoBehaviour {
 
         int numberOfSoldiersPerRow = units.Count() > 10 ? units.Count() / 2 : units.Count();
 
-        //Debug.Log(units.Where(x => x.playersUnit).Count());
+        //Debug.Log(AIunits.Where(x => x.playersUnit).Count());
         float scaledCardBorderSize = cardBorderSize / (units.Count() > 10 ? 2 : 1);
-        Debug.Log(cardBorderSize + ", " + scaledCardBorderSize);
 
         int maxWidth = Mathf.Min((int)(maxWidthOfCard + scaledCardBorderSize) * units.Count(), widthOfUnitCardBackground - (int)borderSize * 2);
         float widthOfCard = (maxWidth - units.Count() * scaledCardBorderSize) / units.Count();
@@ -70,17 +71,12 @@ public class CreateUnitSelectionCards : MonoBehaviour {
         float scalingQuantity = 1 / ((((float)((units.Count() + 1) / 2) / (units.Count() / 2)) - 1) / 2 + 1);
 
         widthOfCard = units.Count() > 10 ? (float)widthOfCard * scalingQuantity * 2 : widthOfCard;
-        Debug.Log((float)((int)(units.Count() + 1) / 2));
-        Debug.Log((float)((int)units.Count() / 2));
-        Debug.Log((float)((units.Count() + 1) / 2) / (units.Count() / 2));
-        Debug.Log(1f / (float)((units.Count() + 1) / 2) * (units.Count() / 2) * 2);
 
         int horizontalPosition = 0;
         int verticalPosition = 0;
         for (int i = 0; i < units.Count(); i++) {
-            Vector2 positionOfCard = new Vector2((float)(-(float)widthOfUnitCardBackground / 2 + borderSize + widthOfCard / 2 + (widthOfCard + scaledCardBorderSize) * horizontalPosition), units.Count() > 10 ? positionHeightOfUnitCardBackground / 2 - verticalPosition * positionHeightOfUnitCardBackground : 0);
+            Vector2 positionOfCard = new ((float)(-(float)widthOfUnitCardBackground / 2 + borderSize + widthOfCard / 2 + (widthOfCard + scaledCardBorderSize) * horizontalPosition), units.Count() > 10 ? positionHeightOfUnitCardBackground / 2 - verticalPosition * positionHeightOfUnitCardBackground : 0);
 
-            Debug.Log(positionOfCard);
 
             MakeNewCard(positionOfCard, widthOfCard - borderSize / 2, units.Count() > 10, units[i]);
 

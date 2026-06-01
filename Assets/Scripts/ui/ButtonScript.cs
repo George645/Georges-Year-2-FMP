@@ -26,4 +26,8 @@ public class MyCustomButtonScript : MonoBehaviour{
             Application.Quit();
         #endif
     }
+    public void SwapPanel(GameObject altPanel){
+        altPanel.SetActive(true);
+        transform.parent.gameObject.SetActive(false);
+    }
 }

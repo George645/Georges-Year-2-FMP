@@ -18,7 +18,7 @@ public class Uniteditor : Editor {
         int priorSoldierCount = soldierCount.intValue;
         EditorGUILayout.IntSlider(soldierCount, 0, 180);
         if (priorSoldierCount != soldierCount.intValue) {
-            ((Unit)target).SetUnitCount(soldierCount.intValue);
+            ((Unit)target).SetSoldierCount(soldierCount.intValue);
             width.intValue = soldierCount.intValue / 5;
 
         }

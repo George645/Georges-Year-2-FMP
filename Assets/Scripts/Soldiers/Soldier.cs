@@ -8,12 +8,11 @@ using UnityEngine;
 
 public class Soldier : MonoBehaviour {
     public Unit unit;
-    int siblingIndex {
+    int SiblingIndex {
         get {
             return transform.GetSiblingIndex();
         }
     }
-    int positionInList;
     Animator animator;
     SkinnedMeshRenderer meshRenderer;
     LODGroup lodGroup;
@@ -32,7 +31,7 @@ public class Soldier : MonoBehaviour {
         animator = GetComponent<Animator>();
         targetPosition = transform.position;
     }
-    private void Update() {
+    private void FixedUpdate() {
 
         animator.enabled = meshRenderer.isVisible;
         if (Time.timeScale == 0) return;
@@ -45,7 +44,7 @@ public class Soldier : MonoBehaviour {
     #endregion
 
     #region movement
-    bool moving = false;
+    public bool moving = false;
     internal Vector3 targetPosition;
     Vector3 directionOfMovement;
     [SerializeField]
@@ -101,7 +100,7 @@ public class Soldier : MonoBehaviour {
         //moves towards the destination if possible, if not, tries to move around the unit in front
         if (targetPos != currentPosition) {
             directionOfMovement = (targetPos - currentPosition).normalized;
-
+            if (directionOfMovement.y != 0) Debug.Log(targetPos - currentPosition);
             if (!IsFacing(directionOfMovement)) {
                 RotateTowards(directionOfMovement);
                 return;
@@ -165,9 +164,9 @@ public class Soldier : MonoBehaviour {
     #region Combat
 
     #region Combat stats
-    public int attack => unit.attack;
-    public int defense => unit.defense;
-    public int armour => unit.armour;
+    public int Attack => unit.attack;
+    public int Defense => unit.defense;
+    public int Armour => unit.armour;
 
     #endregion
 
@@ -185,7 +184,7 @@ public class Soldier : MonoBehaviour {
 
     int health = 100;
     public void Damage(int damageQuantity) {
-        int scaledDamage = damageQuantity - damageQuantity * armour / 100;
+        int scaledDamage = damageQuantity - damageQuantity * Armour / 100;
         health -= scaledDamage;
         if (health < 0) {
             TheDestruction();

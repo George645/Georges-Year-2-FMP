@@ -25,9 +25,7 @@ public class SoldierLevelCombat {
     const float longestTimeBetweenCombats = 3;
     public void NewAggressor(Soldier soldier) {
         if (defender == soldier) {
-            Soldier tempSoldier = defender;
-            defender = aggressor;
-            aggressor = tempSoldier;
+            (aggressor, defender) = (defender, aggressor);
         }
     }
 
@@ -51,8 +49,8 @@ public class SoldierLevelCombat {
         delayBeforeDamage = Random.Range(shortestTimeBetweenCombats, longestTimeBetweenCombats);
     }
     void LaunchAttack(Soldier soldierAttacking) {
-        int defenseStat = soldierAttacking == aggressor ? defender.defense : aggressor.defense;
-        int randomValue = Random.Range(0, soldierAttacking.attack + defenseStat);
+        int defenseStat = soldierAttacking == aggressor ? defender.Defense : aggressor.Defense;
+        int randomValue = Random.Range(0, soldierAttacking.Attack + defenseStat);
         if (randomValue < defenseStat + .5)
             LaunchAttack(soldierAttacking == aggressor ? defender : aggressor);
         else {
