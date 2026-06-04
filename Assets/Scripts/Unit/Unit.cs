@@ -69,6 +69,11 @@ public class Unit : MonoBehaviour {
             }
     }
     private void FixedUpdate() {
+        MoveSoldiers();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            RenderAllTargetPositions();
+
         if (transform.childCount == 0 || previousStartingPoint.magnitude > 5000) {
             foreach (Unit unit in currentlyFighting) {
                 unit.Defeated(this);
@@ -90,6 +95,25 @@ public class Unit : MonoBehaviour {
             }
         }
     }
+    #endregion
+
+    #region Soldier movement
+
+    //void MoveSoldiers() {
+    //    foreach (GameObject child in transform) {
+            
+    //    }
+    //}
+
+    #endregion
+
+    #region Target positions
+    [SerializeField]
+    Mesh capsuleMesh;
+    void RenderAllTargetPositions() {
+        Graphics.RenderMeshInstanced() // <- figure ts out
+    }
+
     #endregion
 
     #region Target soldier positions
