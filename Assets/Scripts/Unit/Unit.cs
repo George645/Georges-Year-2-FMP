@@ -1,14 +1,36 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
-using System.Xml;
 
 public class Unit : MonoBehaviour {
-    List<Soldier> childSoldiers = new();
-    List<TargetPosition> targetPositions = new();
-    List<Vector3> soldierPositions;
 
+    // ⌜ target position x,             target position y,             target position z,             unit number             ⌝
+    // | current position x,            current position y,            current position z,            soldier number          |
+    // | current velocity x,            current velocity y,            current velocity z,            fighting unit number    |
+    // ⌞ currently fighting position x, currently fighting position y, currently fighting position z, fighting soldier number ⌟
+
+    public int unitNumber;
+
+    /// <summary>
+    /// [0, 0] == [0] = target position x
+    /// [1, 0] == [1] = target position y
+    /// [2, 0] == [2] = target position z
+    /// [3. 0] == [3] = unit number
+    /// [0, 1] == [4] = current position x
+    /// [1, 1] == [5] = current position y
+    /// [2, 1] == [6] = current position z
+    /// [3. 1] == [7] = soldier number
+    /// [0, 2] == [8] =  current velocity x
+    /// [1, 2] == [9] =  current velocity y
+    /// [2, 2] == [10] = current velocity z
+    /// [3. 2] == [11] = opponent unit number
+    /// [0, 3] == [12] = opponent position x
+    /// [1, 3] == [13] = opponent position y
+    /// [2, 3] == [14] = opponent position z
+    /// [3. 3] == [15] = opponent soldier number
+    /// </summary>
+    Matrix4x4[] soldierInformation;
     public int AIIndex = -1;
 
     BoundingBox BoundingBox;
@@ -26,11 +48,28 @@ public class Unit : MonoBehaviour {
     int currentWidth;
     public int NumberOfSoldiers {
         get {
-            if (childSoldiers.Count == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
-                childSoldiers = transform.GetComponentsInChildren<Soldier>().ToList();
-                targetPositions = transform.GetComponentsInChildren<TargetPosition>().ToList();
+            if (soldierInformation.Length == 0 && transform.GetComponentsInChildren<Soldier>().Length > 0) {
+                soldierInformation = new Matrix4x4[transform.childCount];
+                for (int i = 0; i < soldierInformation.Length; i++) {
+                    soldierInformation[i][0, 0] = transform.GetChild(i).position.x;
+                    soldierInformation[i][1, 0] = transform.GetChild(i).position.y;
+                    soldierInformation[i][2, 0] = transform.GetChild(i).position.z;
+                    soldierInformation[i][3, 0] = unitNumber;
+                    soldierInformation[i][0, 1] = transform.GetChild(i).position.x;
+                    soldierInformation[i][1, 1] = transform.GetChild(i).position.y;
+                    soldierInformation[i][2, 1] = transform.GetChild(i).position.z;
+                    soldierInformation[i][3, 1] = unitNumber;
+                    soldierInformation[i][0, 2] = -offsetPerTroop.x * 10000;
+                    soldierInformation[i][1, 2] = 0;
+                    soldierInformation[i][2, 2] = -offsetPerTroop.z * 10000;
+                    soldierInformation[i][3, 2] = i;
+                    soldierInformation[i][0, 3] = 10000;
+                    soldierInformation[i][1, 3] = 10000;
+                    soldierInformation[i][2, 3] = 10000;
+                    soldierInformation[i][3, 3] = -1;
+                }
             }
-            return childSoldiers.Count;
+            return soldierInformation.Length;
         }
     }
 
@@ -64,14 +103,14 @@ public class Unit : MonoBehaviour {
         AssignPositionInListIndexes();
         currentlyFighting = new();
         if (playersUnit)
-            for (int i = 0; i < childSoldiers.Count; i++) {
+            for (int i = 0; i < soldierInformation.Length; i++) {
                 FindFirstObjectByType<Highlightedtargetpositions>().CreateHighlightedPosition();
             }
     }
     private void FixedUpdate() {
         MoveSoldiers();
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
             RenderAllTargetPositions();
 
         if (transform.childCount == 0 || previousStartingPoint.magnitude > 5000) {
@@ -80,12 +119,9 @@ public class Unit : MonoBehaviour {
             }
             Destroy(gameObject);
         }
-        if (Input.GetKey(KeyCode.Space)) foreach (TargetPosition targetPosition in targetPositions) targetPosition.Enable();
-        else foreach (TargetPosition targetPosition in targetPositions) targetPosition.Disable();
 
         if (!InCombat && currentlyFighting.Count() != 0) {
-            if (IsFacingOpponent() && !isAssigningPositions && System.Array.TrueForAll(childSoldiers.ToArray(), x => !x.moving)) {
-                Vector3[] newArrayOfPositions = new Vector3[childSoldiers.Count()];
+            if (IsFacingOpponent() && !isAssigningPositions && System.Array.TrueForAll(soldierInformation, x => x[0, 1] == x[0, 0] && x[2, 0] == x[2, 1])) {
                 Debug.Log(Vector3.Magnitude(currentlyFighting[0].CenterPoint - CenterPoint) / 5 * offsetPerRow);
                 Debug.Log(previousStartingPoint - Vector3.Magnitude(currentlyFighting[0].CenterPoint - CenterPoint) / 5 * offsetPerRow);
                 if (IsFacingOpponent())
@@ -99,19 +135,23 @@ public class Unit : MonoBehaviour {
 
     #region Soldier movement
 
-    //void MoveSoldiers() {
-    //    foreach (GameObject child in transform) {
-            
-    //    }
-    //}
+    void MoveSoldiers() {
+        foreach (GameObject child in transform) {
+
+        }
+    }
 
     #endregion
 
     #region Target positions
+    Matrix4x4[] targetPositionsMatrixed;
     [SerializeField]
     Mesh capsuleMesh;
+    [SerializeField]
+    Material material;
     void RenderAllTargetPositions() {
-        Graphics.RenderMeshInstanced() // <- figure ts out
+        RenderParams renderParams = new(material);
+        Graphics.RenderMeshInstanced(renderParams, capsuleMesh, 0, targetPositionsMatrixed); // <- figure ts out
     }
 
     #endregion
@@ -189,13 +229,21 @@ public class Unit : MonoBehaviour {
 
     #region Soldier questions
     void InitializePositions() {
-        soldierPositions = new();
         BoundingBox = new();
-        for (int i = 0; i < NumberOfSoldiers; i++) {
-            soldierPositions.Add(childSoldiers[i].transform.position);
-            BoundingBox.Encapsulate(transform.GetChild(i * 2).transform.position);
+        if (soldierInformation == null || soldierInformation.Length == 0) {
+            for (int i = 0; i < NumberOfSoldiers; i++) {
+                //set current position
+                soldierInformation[i][0, 1] = transform.GetChild(i).position.x;
+                soldierInformation[i][1, 1] = transform.GetChild(i).position.y;
+                soldierInformation[i][2, 1] = transform.GetChild(i).position.z;
+                //set target position
+                soldierInformation[i][0, 0] = transform.GetChild(i).position.x;
+                soldierInformation[i][1, 0] = transform.GetChild(i).position.y;
+                soldierInformation[i][2, 0] = transform.GetChild(i).position.z;
+                BoundingBox.Encapsulate(transform.GetChild(i * 2).transform.position);
+            }
+
         }
-        SetNewTargetSolderPositions(soldierPositions);
     }
 
     void AssignPositionInListIndexes() {
@@ -634,10 +682,10 @@ public class Unit : MonoBehaviour {
 
     void DisplayDiagonal() {
         GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardRightDiagonal()), Color.black);
-        Vector3 rotatedDiagonal = new (GetForwardRightDiagonal().z, GetForwardRightDiagonal().y, GetForwardRightDiagonal().x);
+        Vector3 rotatedDiagonal = new(GetForwardRightDiagonal().z, GetForwardRightDiagonal().y, GetForwardRightDiagonal().x);
         Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));
         GLFunctions.GLshapes.DrawArrow(CenterPoint, CenterPoint + Rotate90Degrees(GetForwardLeftDiagonal()), Color.black, 1);
-        rotatedDiagonal = new (GetForwardLeftDiagonal().z, GetForwardLeftDiagonal().y, GetForwardLeftDiagonal().x);
+        rotatedDiagonal = new(GetForwardLeftDiagonal().z, GetForwardLeftDiagonal().y, GetForwardLeftDiagonal().x);
         Debug.DrawLine(CenterPoint - Rotate90Degrees(rotatedDiagonal), CenterPoint + Rotate90Degrees(rotatedDiagonal));
         if (drawPlayerArrow) {
             GLFunctions.GLshapes.DrawArrow(CenterPoint, ScreenPointToGroundPoint(Event.current.mousePosition));
