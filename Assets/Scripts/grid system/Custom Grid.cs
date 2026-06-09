@@ -20,7 +20,7 @@ public class CustomGrid : MonoBehaviour {
     void MakeArrays() {
         //unitReferences = new Unit[] { };
         //unitSquareIndex = new int[] { };
-        soldierReferences = new Soldier[] { };
+        soldierReferences = new (int, int)[] { };
         soldierSquareIndex = new int[] { };
     }
     private void Start() {
@@ -296,38 +296,48 @@ public class CustomGrid : MonoBehaviour {
     [SerializeField]
     int[] soldierSquareIndex;
     [SerializeField]
-    Soldier[] soldierReferences;
+    (int, int)[] soldierReferences;
     int SoldierGridSquareWidth {
         get { return totalSizeOfMap / (soldierGridWidthCount * unitGridWidthCount); } // < one of these has to be unit
     }
 
     #endregion
 
-    public void UpdateSoldierPosition(Soldier soldier) {
+    public void UpdateSoldierPosition((int, int) soldier) {
         if (!Application.isPlaying && soldierSquareIndex.Length == 0) {
             MakeArrays();
             CreateSoldierList();
             //CreateUnitList();
         }
-        int index = soldier.customGridIndex;
-        soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(soldier.currentPosition));
+        int index = (int)AssignUnitNumber.instance.GetSoldier(soldier.Item1, soldier.Item2)[2];
+        soldierSquareIndex[index] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(AssignUnitNumber.instance.GetPositionOfSoldier(soldier.Item1, soldier.Item2)));
         SoldierSort(index);
     }
     void CreateSoldierList() {
-        Soldier[] tempList = FindObjectsByType<Soldier>(FindObjectsSortMode.None);
-        soldierReferences = new Soldier[tempList.Length];
+        Unit[] tempList = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+        soldierReferences = new (int, int)[tempList.Sum(x => x.soldierInformation.Length)];
         soldierSquareIndex = new int[tempList.Length];
+        int unitID = 0;
+        int soldierID = 0;
+        Unit unit = AssignUnitNumber.instance.GetUnit(unitID);
         for (int i = 0; i < tempList.Length; i++) {
-            soldierReferences[i] = tempList[i];
-            soldierReferences[i].customGridIndex = i;
-            soldierSquareIndex[i] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(tempList[i].transform.position));
+            soldierReferences[i] = (unitID, soldierID);
+            unit.SetGridIndex(soldierID, i);
+            soldierSquareIndex[i] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(unit.GetPosition(soldierID)));
+            
+            soldierID++;
+            if (soldierID == unit.soldierInformation.Length) {
+                soldierID = 0;
+                unitID++;
+                unit = AssignUnitNumber.instance.GetUnit(unitID);
+            }
         }
         SoldierSort();
     }
-    public Soldier[] RetrieveNearbySoldiers(Vector3 position) {
+    public (int, int)[] RetrieveNearbySoldiers(Vector3 position) {
         int arrayPositionOfPosition = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));
         int[] neighbourPositionsToCheck = SoldierNeighbours(arrayPositionOfPosition);
-        Soldier[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
+        (int, int)[] soldiersNearby = RetrieveSoldiersInSquare(arrayPositionOfPosition);
         for (int i = 0; i < neighbourPositionsToCheck.Length; i++) {
             soldiersNearby = RetrieveSoldiersInSquare(neighbourPositionsToCheck[i], soldiersNearby);
         }
@@ -404,7 +414,7 @@ public class CustomGrid : MonoBehaviour {
         return returningArray;
     }
 
-    public Soldier[] RetrieveSoldiersInSquare(int squareIndex, Soldier[] priorSoldierArray) {
+    public (int, int)[] RetrieveSoldiersInSquare(int squareIndex, (int, int)[] priorSoldierArray) {
         int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
         if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) {
             return priorSoldierArray;
@@ -417,7 +427,7 @@ public class CustomGrid : MonoBehaviour {
             firstIndexOfSquareIndex--;
         while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
             lastIndexOfSquareIndex++; //yan was here
-        Soldier[] returningArray = new Soldier[priorSoldierArrayLength + lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
+        (int, int)[] returningArray = new (int, int)[priorSoldierArrayLength + lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
         for (int i = 0; i < priorSoldierArrayLength; i++) {
             returningArray[i] = priorSoldierArray[i];
         }
@@ -426,7 +436,7 @@ public class CustomGrid : MonoBehaviour {
         }
         return returningArray;
     }
-    public Soldier[] RetrieveSoldiersInSquare(int squareIndex) {
+    public (int, int)[] RetrieveSoldiersInSquare(int squareIndex) {
         int indexOfSquareIndex = SoldierBinarySearchForSquare(squareIndex);
         if (soldierSquareIndex[indexOfSquareIndex] != squareIndex) return null;
 
@@ -436,38 +446,38 @@ public class CustomGrid : MonoBehaviour {
             firstIndexOfSquareIndex--;
         while (lastIndexOfSquareIndex + 1 < soldierSquareIndex.Length && soldierSquareIndex[lastIndexOfSquareIndex + 1] == squareIndex)
             lastIndexOfSquareIndex++;
-        Soldier[] returningArray = new Soldier[lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
+        (int, int)[] returningArray = new (int, int)[lastIndexOfSquareIndex - firstIndexOfSquareIndex + 1];
         for (int i = firstIndexOfSquareIndex; i <= lastIndexOfSquareIndex; i++) {
             returningArray[i - firstIndexOfSquareIndex] = soldierReferences[i];
         }
-        return returningArray.Where(x => x != null).ToArray();
+        return returningArray.ToArray();
     }
 
-    public void RemoveSoldier(Soldier soldier) {
-        int indexOfSoldier = soldier.customGridIndex;
+    public void RemoveSoldier((int, int) soldier) {
+        int indexOfSoldier = AssignUnitNumber.instance.GetUnit(soldier.Item1).GetGridIndex(soldier.Item2);
         int square = soldierSquareIndex[indexOfSoldier];
-        soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier); 
+        soldierSquareIndex = soldierSquareIndex.RemoveAt(indexOfSoldier);
         soldierReferences = soldierReferences.RemoveAt(indexOfSoldier);
         duplicateSoldierSquareIndexArray = duplicateSoldierSquareIndexArray.RemoveAt(indexOfSoldier);
         duplicateSoldierReferenceArray = duplicateSoldierReferenceArray.RemoveAt(indexOfSoldier);
-        foreach (Soldier soldier1 in soldierReferences.Where(soldier => soldier.customGridIndex > indexOfSoldier)) {
-            soldier1.customGridIndex -= 1;
+        foreach ((int, int) soldier1 in soldierReferences.Where(soldier => AssignUnitNumber.instance.GetUnit(soldier.Item1).GetGridIndex(soldier.Item2) > indexOfSoldier)) {
+            AssignUnitNumber.instance.GetUnit(soldier.Item1).SetGridIndex(soldier.Item2, AssignUnitNumber.instance.GetUnit(soldier.Item1).GetGridIndex(soldier.Item2));
         }
     }
 
     #region Soldier sort
-    Soldier[] duplicateSoldierReferenceArray;
+    (int, int)[] duplicateSoldierReferenceArray;
     int[] duplicateSoldierSquareIndexArray;
     void SoldierSort() {
         duplicateSoldierSquareIndexArray = new int[soldierSquareIndex.Length];
-        duplicateSoldierReferenceArray = new Soldier[soldierReferences.Length];
+        duplicateSoldierReferenceArray = new (int, int)[soldierReferences.Length];
 
         Array.Copy(soldierSquareIndex, duplicateSoldierSquareIndexArray, soldierSquareIndex.Length);
         Array.Copy(soldierReferences, duplicateSoldierReferenceArray, soldierSquareIndex.Length);
 
         SoldierSort(0, soldierSquareIndex.Length, ref soldierReferences, ref duplicateSoldierReferenceArray, ref soldierSquareIndex, ref duplicateSoldierSquareIndexArray);
     }
-    void SoldierSort(int begin, int end, ref Soldier[] soldierArray1, ref Soldier[] soldierArray2, ref int[] intArray1, ref int[] intArray2) {
+    void SoldierSort(int begin, int end, ref (int, int)[] soldierArray1, ref (int, int)[] soldierArray2, ref int[] intArray1, ref int[] intArray2) {
         if (end - begin <= 1) return;
 
         int middle = (end + begin) / 2;
@@ -478,7 +488,7 @@ public class CustomGrid : MonoBehaviour {
         SoldierMerge(begin, end, ref soldierArray2, ref soldierArray1, ref intArray2, ref intArray1);
     }
 
-    void SoldierMerge(int begin, int end, ref Soldier[] soldierArray1, ref Soldier[] soldierArray2, ref int[] intArray1, ref int[] intArray2) {
+    void SoldierMerge(int begin, int end, ref (int, int)[] soldierArray1, ref (int, int)[] soldierArray2, ref int[] intArray1, ref int[] intArray2) {
         int middleConst = (begin + end) / 2;
         int middle = middleConst;
 
@@ -486,13 +496,13 @@ public class CustomGrid : MonoBehaviour {
             //Debug.Log(intArray1[begin] + ", " + intArray1[middle] + ", " + (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])));
             if (begin < middleConst && (middle >= end || intArray1[begin] <= intArray1[middle])) {
                 soldierArray2[i] = soldierArray1[begin];
-                soldierArray2[i].customGridIndex = i;
+                AssignUnitNumber.instance.GetUnit(soldierArray2[i].Item1).SetGridIndex(soldierArray2[i].Item2, i);
                 intArray2[i] = intArray1[begin];
                 begin++;
             }
             else {
                 soldierArray2[i] = soldierArray1[middle];
-                soldierArray2[i].customGridIndex = i;
+                AssignUnitNumber.instance.GetUnit(soldierArray2[i].Item1).SetGridIndex(soldierArray2[i].Item2, i);
                 intArray2[i] = intArray1[middle];
                 middle++;
             }
@@ -502,7 +512,7 @@ public class CustomGrid : MonoBehaviour {
     void SoldierSort(int startingIndexInSquareIndexArray) {
 
         int squareIndex = soldierSquareIndex[startingIndexInSquareIndexArray];
-        Soldier soldier = soldierReferences[startingIndexInSquareIndexArray];
+        (int, int) soldier = soldierReferences[startingIndexInSquareIndexArray];
         try {
             soldierSquareIndex[startingIndexInSquareIndexArray] = soldierSquareIndex.Length - 1 <= (startingIndexInSquareIndexArray) ? soldierSquareIndex[startingIndexInSquareIndexArray - 1] : soldierSquareIndex[startingIndexInSquareIndexArray + 1];
         }
@@ -519,7 +529,8 @@ public class CustomGrid : MonoBehaviour {
             for (int i = startingIndexInSquareIndexArray; i < arrayPositionOfCorrectPosition; i++) {
                 soldierSquareIndex[i] = soldierSquareIndex[i + 1];
                 soldierReferences[i] = soldierReferences[i + 1];
-                soldierReferences[i].customGridIndex = i;
+                AssignUnitNumber.instance.GetUnit(soldierReferences[i].Item1).SetGridIndex(soldierReferences[i].Item2, i);
+                ;
             }
         else if (startingIndexInSquareIndexArray > arrayPositionOfCorrectPosition) {
             if (soldierSquareIndex[0] < squareIndex)
@@ -527,21 +538,20 @@ public class CustomGrid : MonoBehaviour {
             for (int i = startingIndexInSquareIndexArray; i > arrayPositionOfCorrectPosition; i--) {
                 soldierSquareIndex[i] = soldierSquareIndex[i - 1];
                 soldierReferences[i] = soldierReferences[i - 1];
-                soldierReferences[i].customGridIndex = i;
+                AssignUnitNumber.instance.GetUnit(soldierReferences[i].Item1).SetGridIndex(soldierReferences[i].Item2, i);
             }
         }
         soldierSquareIndex[arrayPositionOfCorrectPosition] = squareIndex;
         soldierReferences[arrayPositionOfCorrectPosition] = soldier;
-        soldierReferences[arrayPositionOfCorrectPosition].customGridIndex = arrayPositionOfCorrectPosition;
-        
+        AssignUnitNumber.instance.GetUnit(soldierReferences[arrayPositionOfCorrectPosition].Item1).SetGridIndex(soldierReferences[arrayPositionOfCorrectPosition].Item2, arrayPositionOfCorrectPosition);
     }
     #endregion
 
     #region Conversions
-    public void LogSoldierInfo(Vector3 position, int arrayPosition, Soldier name) {
+    public void LogSoldierInfo(Vector3 position, int arrayPosition, (int, int) soldierID) {
         int actualPosition = SoldierBinarySearchForSquare(WorldSpaceToArrayIndex(position));
         Debug.Log("Supposed position: " + arrayPosition + ", actual position " + actualPosition);
-        Debug.Log("Supposed soldier: " + name.gameObject.name + ", actual soldier in that position: " + soldierReferences[arrayPosition]);
+        Debug.Log("Supposed soldier: " + soldierID + ", actual soldier in that position: " + soldierReferences[arrayPosition]);
         Debug.Log("Supposed neighbours: " + soldierReferences[arrayPosition - 1] + ", and index higher: " + soldierReferences[arrayPosition + 1]);
         Debug.Log("actual neighbours: " + soldierReferences[actualPosition - 1] + ", and index higher: " + soldierReferences[actualPosition + 1]);
     }
@@ -569,12 +579,12 @@ public class CustomGrid : MonoBehaviour {
     #region DrawDebugSquares
 
     Color lightBlue = new(0.333324f, 0.4673822f, 0.9019608f, 0.1f);
-    public void DisplaySoldierCheckingSquares(Soldier soldier) {
+    public void DisplaySoldierCheckingSquares((int, int) soldier) {
         if (!displaySoldierGrid) return;
         if (soldierReferences == null || soldierSquareIndex == null || soldierReferences.Length == 0 || soldierSquareIndex.Length == 0) CreateSoldierList();
         UpdateSoldierPosition(soldier);
 
-        int index = soldier.customGridIndex;
+        int index = AssignUnitNumber.instance.GetUnit(soldier.Item1).GetGridIndex(soldier.Item2);
         FillInSoldierSquare(soldierSquareIndex[index], new Color(0, 0, 1, .2f));
 
         int[] neighbouringSquares = SoldierNeighbours(soldierSquareIndex[index]);
@@ -641,13 +651,19 @@ public class CustomGrid : MonoBehaviour {
     }
     #endregion
 
-    public void ColourSoldiersExcluding(Soldier soldier) {
-        Soldier[] SoldiersNearby;
-        SoldiersNearby = RetrieveNearbySoldiers(soldier.transform.position);
-        foreach (Soldier soldier1 in SoldiersNearby) {
-            if (soldier1 == soldier) continue;
-            soldier1.DrawCubeAroundThis(Color.softRed);
+    public void ColourSoldiersExcluding(int unitIndex, int soldierIndex) {
+        (int, int)[] SoldiersNearby;
+        SoldiersNearby = RetrieveNearbySoldiers(AssignUnitNumber.instance.GetPositionOfSoldier(unitIndex, soldierIndex));
+        foreach ((int, int) soldier in SoldiersNearby) {
+            if (soldier == (unitIndex, soldierIndex)) continue;
+            DrawCubeAroundSoldier(AssignUnitNumber.instance.GetPositionOfSoldier(soldier.Item1, soldier.Item2), Color.softRed);
         }
+    }
+
+    void DrawCubeAroundSoldier(Vector3 position, Color color) {
+        color.a = 0.3f;
+        Gizmos.color = color;
+        Gizmos.DrawCube(position, Vector3.one * 3);
     }
 
     private void OnDrawGizmos() {

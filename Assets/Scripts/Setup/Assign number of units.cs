@@ -43,6 +43,7 @@ public class AssignNumberOfUnits : MonoBehaviour {
             }
         }
     }
+
     private void Update() {
         if (transform.childCount == 0) {
             if (PlayersArmy)

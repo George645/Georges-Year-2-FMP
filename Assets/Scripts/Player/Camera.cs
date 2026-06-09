@@ -84,7 +84,7 @@ public class CameraScript : MonoBehaviour {
     }
     void CheckIfClickingOnUnit() {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition).origin, Camera.main.ScreenPointToRay(Input.mousePosition).direction * 10000, out RaycastHit hitInfo, 10000)) {
-            if (hitInfo.collider.gameObject.name.Contains("Soldier") && hitInfo.collider.gameObject.GetComponent<Soldier>().unit.playersUnit) {
+            if (hitInfo.collider.gameObject.name.Contains("Soldier") && hitInfo.collider.transform.parent.gameObject.GetComponent<Unit>().playersUnit) {
                 Select(hitInfo.collider.transform.parent.GetComponent<Unit>());
             }
         }
