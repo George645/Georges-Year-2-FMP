@@ -174,6 +174,7 @@ public class Unit : MonoBehaviour {
 
     //current position
     void SetPosition(int soldierNumber, Vector3 position) {
+        Debug.Log(soldierNumber + ", " + position);
         transform.GetChild(soldierNumber).transform.position = position;
 
         soldierInformation[soldierNumber][4] = position.x;
@@ -776,6 +777,8 @@ public class Unit : MonoBehaviour {
         Vector3 FirstPosition = (Vector3.forward + Vector3.right) / 2;
         for (int i = 0; i < soldierInformation.Length - 1; i++) {
             Vector3 positionOfThisSoldier = FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
+
+            Debug.Log(positionOfThisSoldier); ?
 
             InstantSetPosition(i, positionOfThisSoldier);
 
