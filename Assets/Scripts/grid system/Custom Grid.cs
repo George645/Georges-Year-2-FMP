@@ -315,7 +315,7 @@ public class CustomGrid : MonoBehaviour {
     }
     void CreateSoldierList() {
         Unit[] tempList = FindObjectsByType<Unit>(FindObjectsSortMode.None);
-        soldierReferences = new (int, int)[tempList.Sum(x => x.soldierInformation.Length)];
+        soldierReferences = new (int, int)[tempList.Sum(x => x.NumberOfSoldiers)];
         soldierSquareIndex = new int[tempList.Length];
         int unitID = 0;
         int soldierID = 0;
@@ -326,7 +326,7 @@ public class CustomGrid : MonoBehaviour {
             soldierSquareIndex[i] = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(unit.GetPosition(soldierID)));
             
             soldierID++;
-            if (soldierID == unit.soldierInformation.Length) {
+            if (soldierID == unit.NumberOfSoldiers) {
                 soldierID = 0;
                 unitID++;
                 unit = AssignUnitNumber.instance.GetUnit(unitID);

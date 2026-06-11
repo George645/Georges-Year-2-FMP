@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(Unit))]
 public class Uniteditor : Editor {
@@ -21,6 +22,10 @@ public class Uniteditor : Editor {
             ((Unit)target).SetSoldierCount(soldierCount.intValue);
             width.intValue = soldierCount.intValue / 5;
 
+        }
+
+        if (GUILayout.Button("Button")) {
+            ((Unit)target).DebugArrayNumber();
         }
     }
 
