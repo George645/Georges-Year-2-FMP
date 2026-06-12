@@ -1,5 +1,4 @@
 using System.Threading;
-using UnityEditor.UnityLinker;
 using UnityEngine;
 
 public class AssignUnitNumber : MonoBehaviour {
@@ -58,11 +57,5 @@ public class AssignUnitNumber : MonoBehaviour {
 
     public Vector3 GetPositionOfSoldier(int unitNumber, int soldierNumber) {
         return GetUnit(unitNumber).GetPosition(soldierNumber);
-    }
-
-
-    // Update is called once per frame
-    void Update() {
-
     }
 }

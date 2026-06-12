@@ -36,9 +36,10 @@ public class Unit : MonoBehaviour {
     //    private set { soldierInformation = value; }
     //}
 
-    [SerializeField]
-    public Matrix4x4[] soldierInformation;
+    Matrix4x4[] soldierInformation;
     public int AIIndex = -1;
+
+    Vector3 position;
 
     BoundingBox BoundingBox;
     public bool selected = false;
@@ -55,8 +56,10 @@ public class Unit : MonoBehaviour {
     int currentWidth;
     public int NumberOfSoldiers {
         get {
-            if ((soldierInformation == null || transform.childCount == 0) && transform.childCount > 0) {
-                soldierInformation = new Matrix4x4[transform.childCount];
+            if ((soldierInformation == null || soldierInformation.Length == 0) && (transform.childCount > 0 || Application.isEditor)) {
+                if (CustomSettings.instance == null)
+                    CustomSettings.AssignInstance();
+                soldierInformation = new Matrix4x4[CustomSettings.instance.unitSize];
                 for (int i = 0; i < transform.childCount; i++) {
 
                     SetTargetPosition(i, transform.GetChild(i).position);
@@ -74,6 +77,10 @@ public class Unit : MonoBehaviour {
                     SetOpponentToNone(i);
 
                     soldierInformation[i][3, 3] = -1;
+                    Debug.Log(i);
+                }
+                for (int i = transform.childCount; i < soldierInformation.Length; i++) {
+                    RemoveSoldier(i);
                 }
             }
             return transform.childCount;
@@ -156,6 +163,7 @@ public class Unit : MonoBehaviour {
 
     // target position
     void SetTargetPosition(int soldierNumber, Vector3 position) {
+        Debug.Log("Setting target positions: " + position);
         soldierInformation[soldierNumber][0] = position.x;
         soldierInformation[soldierNumber][1] = position.z;
     }
@@ -174,11 +182,13 @@ public class Unit : MonoBehaviour {
 
     //current position
     void SetPosition(int soldierNumber, Vector3 position) {
-        //Debug.Log(soldierNumber + ", " + position);
+        if (this.position == null || this.position == Vector3.zero)
+            this.position = transform.position;
+        Debug.Log("Setting positions: " + position);
         try {
-            transform.GetChild(soldierNumber).transform.position = position;
+            transform.GetChild(soldierNumber).transform.position = position + this.position + Vector3.up * 2;
         }
-        catch (Exception e){
+        catch (Exception e) {
             Debug.Log(transform.childCount);
             throw e;
         }
@@ -193,6 +203,7 @@ public class Unit : MonoBehaviour {
 
     //velocity
     void SetVelocity(int soldierNumber, Vector3 velocity) {
+        Debug.Log("Setting velocity: " + velocity);
         soldierInformation[soldierNumber][8] = velocity.x;
         soldierInformation[soldierNumber][9] = velocity.y;
         soldierInformation[soldierNumber][10] = velocity.z;
@@ -200,8 +211,9 @@ public class Unit : MonoBehaviour {
     public Vector3 GetVelocity(int soldierNumber) {
         return new Vector3(soldierInformation[soldierNumber][8], soldierInformation[soldierNumber][9], soldierInformation[soldierNumber][10]);
     }
-    void SetFacingDirection(int number, Vector3 normalisedDirection) {
-        SetVelocity(number, new Vector3(10000 * normalisedDirection.x, 0, 10000 * normalisedDirection.z));
+    void SetFacingDirection(int soldierNumber, Vector3 normalisedDirection) {
+        SetVelocity(soldierNumber, new Vector3(10000 * normalisedDirection.x, 0, 10000 * normalisedDirection.z));
+        transform.GetChild(soldierNumber).rotation = Quaternion.Euler(normalisedDirection);
     }
 
     //opponent position
@@ -225,7 +237,15 @@ public class Unit : MonoBehaviour {
     }
 
     void RemoveSoldier(int soldierIndex) {
-        soldierInformation[soldierIndex][].
+        for (int i = 0; i < 16; i++) {
+            try {
+                soldierInformation[soldierIndex][i] = float.NaN;
+            }
+            catch (Exception e) {
+                Debug.Log(soldierIndex + ", " + i);
+                throw e;
+            }
+        }
     }
     #endregion
 
@@ -784,12 +804,11 @@ public class Unit : MonoBehaviour {
         int currentWidthIndex = 0;
         int currentRowIndex = 0;
         Vector3 FirstPosition = (Vector3.forward + Vector3.right) / 2;
-        Debug.Log(transform.childCount + ", " + NumberOfSoldiers);
-        for (int i = 0; i < NumberOfSoldiers - 1; i++) {
+        for (int i = 0; i < NumberOfSoldiers; i++) {
             Vector3 positionOfThisSoldier = FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
 
             //Debug.Log(positionOfThisSoldier); 
-
+            Debug.Log(soldierInformation[i]);
             InstantSetPosition(i, positionOfThisSoldier);
 
 
@@ -801,40 +820,41 @@ public class Unit : MonoBehaviour {
         }
     }
     public void SetSoldierCount(int quantity) {
-        soldierInformation = null;
-        try {
-            Debug.Log(NumberOfSoldiers);
+        if (CustomSettings.instance == null) {
+            CustomSettings.AssignInstance();
         }
-        catch {
-            soldierInformation = new Matrix4x4[0];
-        }
-
-        if (soldierInformation == null || NumberOfSoldiers == 0 && transform.childCount > 0) {
-            Debug.Log(NumberOfSoldiers);
-        }
-
-        //remove any null values
-        for (int i = NumberOfSoldiers; i >= 0; i--) {
-            if (soldierInformation[i] == null) {
-                soldierInformation.RemoveAt(i);
+        if (soldierInformation == null || soldierInformation.Length != CustomSettings.instance.unitSize) {
+            Debug.Log("resetting soldierInformation");
+            soldierInformation = null;
+            try {
+                Debug.Log(NumberOfSoldiers);
             }
+            catch {
+                soldierInformation = new Matrix4x4[0];
+            }
+        }
+
+        if (soldierInformation == null || NumberOfSoldiers == 0 && soldierInformation.Length > 0) {
+            Debug.Log(NumberOfSoldiers);
         }
 
         //increase up to size
         if (NumberOfSoldiers < quantity) {
             Debug.Log("adding soldiers");
+            for (int i = soldierInformation.Length - 1; i > NumberOfSoldiers; i--) {
+                RemoveSoldier(i);
+            }
             for (int i = NumberOfSoldiers; i < quantity; i++) {
                 AddSoldierAndTargetPosition();
+                Debug.Log(soldierInformation[NumberOfSoldiers]);
             }
         }
         //shrink to size
-        else if (NumberOfSoldiers > quantity) {
-            for (int i = soldierInformation.Length; i > NumberOfSoldiers; i--) {
+        else if (NumberOfSoldiers >= quantity) {
+            for (int i = soldierInformation.Length - 1; i > NumberOfSoldiers; i--) {
                 RemoveSoldier(i);
             }
-            Debug.Log("Removing soldiers");
-            for (int i = NumberOfSoldiers - 1; i > quantity; i--) {
-                Debug.Log(i + ", " + quantity);
+            for (int i = NumberOfSoldiers - 1; i >= quantity; i--) {
                 DestroyImmediate(transform.GetChild(i).gameObject);
                 RemoveSoldier(i);
             }
@@ -851,21 +871,21 @@ public class Unit : MonoBehaviour {
     public static GameObject staticItem;
 
     void AddSoldierAndTargetPosition() {
+        int childCount = transform.childCount;
 
         GameObject addedSoldier = Instantiate(serializedItem);
         addedSoldier.transform.parent = transform;
-        addedSoldier.transform.name = "Soldier " + transform.childCount;
+        addedSoldier.transform.name = "Soldier " + childCount;
         int length = transform.childCount;
-        Debug.Log(transform.childCount);
         soldierInformation = new Matrix4x4[transform.childCount + 1];
-        Debug.Log(transform.childCount);
 
-        soldierInformation[^1] = new Matrix4x4(
-            new Vector4(0, 0, 0, unitNumber),
-            new Vector4(0, 0, 0, transform.childCount - 1),
-            new Vector4(float.PositiveInfinity * -offsetPerRow.x, 0, float.PositiveInfinity * -offsetPerRow.z, 0),
-            new Vector4(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, 0)
-            );
+        SetTargetPosition(childCount - 1, Vector3.zero);
+        soldierInformation[childCount - 1][3] = unitNumber;
+        SetPosition(childCount - 1, Vector3.zero);
+        soldierInformation[childCount - 1][7] = childCount - 1;
+        SetFacingDirection(childCount - 1, -offsetPerRow);
+        SetOpponent(childCount, Vector3.positiveInfinity, -1, -1);
+
     }
     #endregion
 
@@ -873,6 +893,11 @@ public class Unit : MonoBehaviour {
         Debug.Log(transform.childCount);
     }
 
+    [SerializeField, HideInInspector]
+    int a;
+    public void DebugSoldierInfo(int soldierIndesx) {
+        Debug.Log(soldierInformation[soldierIndesx]);
+    }
 
     #region Unity editor
 #if UNITY_EDITOR

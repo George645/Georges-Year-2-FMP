@@ -6,9 +6,13 @@ using UnityEngine;
 public class Uniteditor : Editor {
     SerializedProperty soldierCount;
     SerializedProperty width;
+
+    SerializedProperty extraVariableDeleteLater;
+
     private void OnEnable() {
         soldierCount = serializedObject.FindProperty("startingSoldierTotal");
         width = serializedObject.FindProperty("currentWidth");
+        extraVariableDeleteLater = serializedObject.FindProperty("a");
     }
     public override void OnInspectorGUI() {
         base.OnInspectorGUI();
@@ -21,12 +25,15 @@ public class Uniteditor : Editor {
         if (priorSoldierCount != soldierCount.intValue) {
             ((Unit)target).SetSoldierCount(soldierCount.intValue);
             width.intValue = soldierCount.intValue / 5;
-
         }
 
+        if (soldierCount.intValue - 1 < extraVariableDeleteLater.intValue)
+            extraVariableDeleteLater.intValue = soldierCount.intValue - 1;
+        EditorGUILayout.IntSlider(extraVariableDeleteLater, 0, soldierCount.intValue - 1);
         if (GUILayout.Button("Button")) {
-            ((Unit)target).DebugArrayNumber();
+            ((Unit)target).DebugSoldierInfo(extraVariableDeleteLater.intValue);
         }
+
     }
 
 }
