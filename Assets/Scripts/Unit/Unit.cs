@@ -163,7 +163,6 @@ public class Unit : MonoBehaviour {
 
     // target position
     void SetTargetPosition(int soldierNumber, Vector3 position) {
-        Debug.Log("Setting target positions: " + position);
         soldierInformation[soldierNumber][0] = position.x;
         soldierInformation[soldierNumber][1] = position.z;
     }
@@ -184,7 +183,6 @@ public class Unit : MonoBehaviour {
     void SetPosition(int soldierNumber, Vector3 position) {
         if (this.position == null || this.position == Vector3.zero)
             this.position = transform.position;
-        Debug.Log("Setting positions: " + position);
         try {
             transform.GetChild(soldierNumber).transform.position = position + this.position + Vector3.up * 2;
         }
@@ -203,7 +201,6 @@ public class Unit : MonoBehaviour {
 
     //velocity
     void SetVelocity(int soldierNumber, Vector3 velocity) {
-        Debug.Log("Setting velocity: " + velocity);
         soldierInformation[soldierNumber][8] = velocity.x;
         soldierInformation[soldierNumber][9] = velocity.y;
         soldierInformation[soldierNumber][10] = velocity.z;
@@ -808,7 +805,7 @@ public class Unit : MonoBehaviour {
             Vector3 positionOfThisSoldier = FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
 
             //Debug.Log(positionOfThisSoldier); 
-            Debug.Log(soldierInformation[i]);
+            Debug.Log(soldierInformation[i] + " ghe " + positionOfThisSoldier);
             InstantSetPosition(i, positionOfThisSoldier);
 
 
@@ -818,6 +815,7 @@ public class Unit : MonoBehaviour {
                 currentRowIndex++;
             }
         }
+        Debug.Log(currentWidthIndex + ", " + currentRowIndex);
     }
     public void SetSoldierCount(int quantity) {
         if (CustomSettings.instance == null) {
@@ -878,14 +876,19 @@ public class Unit : MonoBehaviour {
         addedSoldier.transform.name = "Soldier " + childCount;
         int length = transform.childCount;
         soldierInformation = new Matrix4x4[transform.childCount + 1];
-
-        SetTargetPosition(childCount - 1, Vector3.zero);
-        soldierInformation[childCount - 1][3] = unitNumber;
-        SetPosition(childCount - 1, Vector3.zero);
-        soldierInformation[childCount - 1][7] = childCount - 1;
-        SetFacingDirection(childCount - 1, -offsetPerRow);
-        SetOpponent(childCount, Vector3.positiveInfinity, -1, -1);
-
+        try {
+            SetTargetPosition(childCount , Vector3.zero);
+            soldierInformation[childCount][3] = unitNumber;
+            SetPosition(childCount, Vector3.zero);
+            soldierInformation[childCount][7] = childCount;
+            SetFacingDirection(childCount, -offsetPerRow);
+            SetOpponent(childCount, Vector3.positiveInfinity, -1, -1);
+        }
+        catch (Exception e){
+            Debug.Log(childCount);
+            Debug.Log(length);
+            Debug.Log(soldierInformation.Length);
+        }
     }
     #endregion
 
