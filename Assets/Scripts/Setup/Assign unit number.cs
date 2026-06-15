@@ -6,12 +6,12 @@ public class AssignUnitNumber : MonoBehaviour {
     Unit[] units;
     void Start() {
         AssignInstance();
-        AssignUnitNumbers();
     }
 
     public void AssignInstance() {
         if (instance == null) {
             instance = this;
+            AssignUnitNumbers();
         }
         else if (instance != this) {
             Destroy(gameObject);
@@ -19,13 +19,13 @@ public class AssignUnitNumber : MonoBehaviour {
     }
 
     public void AssignUnitNumbers() {
-        if (units == null || units.Length == 0)
-            return;
-        units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
-        int count = 0;
-        foreach (Unit unit in units) {
-            unit.unitNumber = count;
-            count++;
+        if (units == null || units.Length == 0) {
+            units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+            int count = 0;
+            foreach (Unit unit in units) {
+                unit.unitNumber = count;
+                count++;
+            }
         }
     }
 

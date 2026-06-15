@@ -150,7 +150,7 @@ public class Unit : MonoBehaviour {
     }
     #endregion
 
-    #region interact with soldier infromation variable
+    #region interact with soldier information variable
 
     public Matrix4x4 GetSoldier(int soldierIndex) {
         return soldierInformation[soldierIndex];
@@ -163,6 +163,13 @@ public class Unit : MonoBehaviour {
 
     // target position
     void SetTargetPosition(int soldierNumber, Vector3 position) {
+        if (targetPositionBoundingBox == null) {
+            targetPositionBoundingBox = new BoundingBox();
+            foreach (Matrix4x4 soldier in soldierInformation) {
+                targetPositionBoundingBox.Encapsulate(new Vector3(soldier[0], 0, soldier[1]));
+            }
+        }
+        targetPositionBoundingBox.ChangePoint(soldierNumber, position);
         soldierInformation[soldierNumber][0] = position.x;
         soldierInformation[soldierNumber][1] = position.z;
     }
@@ -280,7 +287,7 @@ public class Unit : MonoBehaviour {
             //moves towards the destination if possible, if not, tries to move around the unit in front
             if (currentSoldierTargetPosition != currentSoldierPosition) {
                 currentSoldierDirectionOfMovement = (currentSoldierTargetPosition - currentSoldierPosition).normalized;
-                if (currentSoldierDirectionOfMovement.y != 0) Debug.Log(currentSoldierTargetPosition - currentSoldierPosition);
+                if (currentSoldierDirectionOfMovement.y != 0) Debug.Log(currentSoldierTargetPosition - currentSoldierPosition + ", " + currentSoldierTargetPosition + ", " + currentSoldierPosition);
                 if (!IsFacing(childID, currentSoldierDirectionOfMovement)) {
                     RotateTowards(childID, currentSoldierVelocity, currentSoldierDirectionOfMovement);
                     return;
@@ -469,6 +476,7 @@ public class Unit : MonoBehaviour {
         BoundingBox.RemovePoint(indexInList);
         TargetPositionBoundingBox.RemovePoint(indexInList);
         for (int i = indexInList; i < NumberOfSoldiers; i++) {
+            CustomGrid.instance.RemoveOneFromIndex(soldierInformation[indexInList]. ); //the grid index of this solduier
             soldierInformation[i][7]--;
         }
 
@@ -729,8 +737,18 @@ public class Unit : MonoBehaviour {
         SetNewTargetSolderPositions(listOfPositions);
         List<Vector3> oldSoldierPositions = new();
         List<Vector3> oldTargetPositions = new();
-        List<int> soldierIndex = new(); ;
+        List<int> soldierIndex = new();
 
+        try {
+            soldierIndex = soldierInformation.VariableFromClasses(x => (int)x[7]).OfType<int>().ToList();
+        }
+        catch (Exception e){
+            Debug.Log(string.Join(", ", soldierInformation.VariableFromClasses(x => ((int)x[7]))));
+            throw e;
+        }
+        //Debug.Log(string.Join(' ', soldierInformation.VariableFromClasses(x => x[7])));
+        //Debug.Log(string.Join(' ', soldierInformation.VariableFromClasses(x => x[7]).OfType<int>()));
+        //Debug.Log(string.Join(' ', soldierInformation.VariableFromClasses(x => (int)x[7]).OfType<int>()));
         foreach (Matrix4x4 soldier in soldierInformation) {
             oldSoldierPositions.Add(new Vector3(soldier[4], soldier[5], soldier[6]));
             oldTargetPositions.Add(new Vector3(soldier[0], 0, soldier[1]));
@@ -771,7 +789,15 @@ public class Unit : MonoBehaviour {
                 count = 0;
             }
             if (oldTargetPositions[indexOfOldPosition] != null) {
-                SetTargetPosition(soldierIndex[indexOfOldPosition], listOfPositions[indexOfNewPosition]);
+                try {
+                    SetTargetPosition(soldierIndex[indexOfOldPosition], listOfPositions[indexOfNewPosition]);
+                }
+                catch (Exception e) {
+                    Debug.Log(indexOfOldPosition + ", " + indexOfNewPosition + soldierIndex.Count() + ", " + listOfPositions.Count());
+                    Debug.Log(string.Join(", ", soldierIndex));
+                    Debug.Log(string.Join(", ", listOfPositions));
+                    throw e;
+                }
             }
             oldTargetPositions.RemoveAt(indexOfOldPosition);
             oldSoldierPositions.RemoveAt(indexOfOldPosition);
@@ -805,7 +831,6 @@ public class Unit : MonoBehaviour {
             Vector3 positionOfThisSoldier = FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
 
             //Debug.Log(positionOfThisSoldier); 
-            Debug.Log(soldierInformation[i] + " ghe " + positionOfThisSoldier);
             InstantSetPosition(i, positionOfThisSoldier);
 
 
@@ -815,7 +840,6 @@ public class Unit : MonoBehaviour {
                 currentRowIndex++;
             }
         }
-        Debug.Log(currentWidthIndex + ", " + currentRowIndex);
     }
     public void SetSoldierCount(int quantity) {
         if (CustomSettings.instance == null) {
@@ -877,14 +901,14 @@ public class Unit : MonoBehaviour {
         int length = transform.childCount;
         soldierInformation = new Matrix4x4[transform.childCount + 1];
         try {
-            SetTargetPosition(childCount , Vector3.zero);
+            SetTargetPosition(childCount, Vector3.zero);
             soldierInformation[childCount][3] = unitNumber;
             SetPosition(childCount, Vector3.zero);
             soldierInformation[childCount][7] = childCount;
             SetFacingDirection(childCount, -offsetPerRow);
             SetOpponent(childCount, Vector3.positiveInfinity, -1, -1);
         }
-        catch (Exception e){
+        catch (Exception e) {
             Debug.Log(childCount);
             Debug.Log(length);
             Debug.Log(soldierInformation.Length);

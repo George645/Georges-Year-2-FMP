@@ -319,6 +319,12 @@ public class CustomGrid : MonoBehaviour {
         soldierSquareIndex = new int[tempList.Length];
         int unitID = 0;
         int soldierID = 0;
+        if (AssignUnitNumber.instance == null){
+            FindFirstObjectByType<AssignUnitNumber>().AssignInstance();
+        }
+        Debug.Log(AssignUnitNumber.instance);
+        Debug.Log(unitID);
+        Debug.Log(AssignUnitNumber.instance.GetUnit(unitID));
         Unit unit = AssignUnitNumber.instance.GetUnit(unitID);
         for (int i = 0; i < tempList.Length; i++) {
             soldierReferences[i] = (unitID, soldierID);
@@ -333,6 +339,9 @@ public class CustomGrid : MonoBehaviour {
             }
         }
         SoldierSort();
+    }
+    public void RemoveOneFromIndex(int index) {
+        soldierReferences[index].Item1--;
     }
     public (int, int)[] RetrieveNearbySoldiers(Vector3 position) {
         int arrayPositionOfPosition = SoldierSpaceToArrayIndex(WorldSpaceToSoldierSpace(position));

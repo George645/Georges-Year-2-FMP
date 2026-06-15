@@ -248,14 +248,24 @@ public class OverallAI : MonoBehaviour {
         unitsInDefendingLine = new Unit[(int)(AIUnits.Count() * 0.75f) + 1];
         notInDefendingLine = new Unit[AIUnits.Count() - ((int)(AIUnits.Count() * 0.75f) + 1)];
         defendingLine = new();
-        
+
         for (int i = 0; i <= AIUnits.Count() * 0.75; i++) {
             positionsInDefendingLine[i] = startPosition + (distancePerUnit + distanceBetweenStartAndEnd.normalized * 5) * i + AIUnits[i].offsetPerTroop * AIUnits[i].CurrentWidth / 2 + AIUnits[i].offsetPerRow * AIUnits[i].NumberOfSoldiers / AIUnits[i].CurrentWidth / 2;
             defendingLine.Encapsulate(positionsInDefendingLine[i]);
             unitsInDefendingLine[i] = AIUnits[i];
         }
         for (int i = (int)(AIUnits.Count() * 0.75); i < AIUnits.Count(); i++) {
-            notInDefendingLine[i - (int)(AIUnits.Count() * 0.75)] = AIUnits[i];
+            try {
+                notInDefendingLine[i - (int)(AIUnits.Count() * 0.75) - 1] = AIUnits[i];
+            }
+            catch (System.Exception e){
+                Debug.Log(i + ", " + (AIUnits.Count() * 0.75f));
+                Debug.Log(AIUnits.Length);
+                Debug.Log(AIUnits[i]);
+                Debug.Log(notInDefendingLine.Length);
+                Debug.Log(notInDefendingLine[i - (int)(AIUnits.Count() * 0.75) - 1]);
+                throw e;
+            }
         }
 
         Vector3 centerOfBackLine = centerOfFrontLine + (AIUnits[^1].forwardsMagnitude * AIUnits[^1].NumberOfSoldiers * normalizedDirectionOfPlayersUnits / AIUnits[^1].CurrentWidth * 3);
@@ -345,11 +355,11 @@ public class OverallAI : MonoBehaviour {
                     Vector3 facingDirection = (playersUnitsThatAreEngaged[i].CenterPoint - unit.CenterPoint).normalized;
                     AssignUnitPosition(playersUnitsThatAreEngaged[i].CenterPoint, new Vector3(-facingDirection.z, 0, facingDirection.x) * playersUnitsThatAreEngaged[i].rightMagnitude, -facingDirection * playersUnitsThatAreEngaged[i].forwardsMagnitude, unit.CurrentWidth, unit);
                 }
-                catch (System.Exception e){
+                catch (System.Exception e) {
                     Debug.Log(i);
                     throw e;
                 }
-                }
+            }
         }
     }
     #endregion

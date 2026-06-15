@@ -118,10 +118,19 @@ public class CameraScript : MonoBehaviour {
             foreach (List<GameObject> innerList in currentlyManipulatedTargetPositions.Where(x => x[^1].GetComponent<MeshRenderer>().enabled)) {
                 ToggleMeshRenderers(false, innerList);
             }
-            Vector3 oldCenter = new(currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.x) / currentlySelectedUnits.Count(), 21, currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.z) / currentlySelectedUnits.Count());
-            Vector3 newCenter = unitStartPosition;
-            Vector3 offset = newCenter - oldCenter;
 
+            Vector3 offset = Vector3.zero;
+            try {
+                Vector3 oldCenter = new(currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.x) / currentlySelectedUnits.Count(), 21, currentlySelectedUnits.Sum(x => x.TargetPositionBoundingBox.Center.z) / currentlySelectedUnits.Count());
+                Vector3 newCenter = unitStartPosition;
+                offset = newCenter - oldCenter;
+            }
+            catch (Exception e) {
+                Debug.Log(string.Join(" and ", currentlySelectedUnits));
+                Debug.Log(currentlySelectedUnits[0].TargetPositionBoundingBox);
+                currentlySelectedUnits[0].TargetPositionBoundingBox.LogInfo();
+                throw e;
+            }
             for (int i = 0; i < currentlyManipulatedTargetPositions.Count; i++) {
                 List<GameObject> unitDisks = currentlyManipulatedTargetPositions[i];
                 Vector3 oldMidPoint = currentlySelectedUnits[i].TargetPositionBoundingBox.Center;
@@ -154,7 +163,7 @@ public class CameraScript : MonoBehaviour {
             int currentRow = 0;
             for (int index = 0; index < currentlySelectedUnits.Count; index++) {
                 Vector3 soldierOffsetPerTroop = distanceBetweenStartAndEnd.normalized * currentlySelectedUnits[index].offsetPerTroop.magnitude;
-                Vector3 soldierOffsetPerRow = new (soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
+                Vector3 soldierOffsetPerRow = new(soldierOffsetPerTroop.z, soldierOffsetPerTroop.y, -soldierOffsetPerTroop.x);
                 currentlySelectedUnits[index].potentialOffsetPerRow = soldierOffsetPerRow;
                 currentlySelectedUnits[index].potentialOffsetPerTroop = soldierOffsetPerTroop;
 
