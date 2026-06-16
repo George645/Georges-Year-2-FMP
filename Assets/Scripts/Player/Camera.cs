@@ -274,8 +274,8 @@ public class CameraScript : MonoBehaviour {
         //speed boost
         if (Input.GetKey(KeyCode.LeftShift)) movement *= 3;
 
-        transform.parent.position += movement / 100;
-        position += movement / 100;
+        transform.parent.position += movement / 100 * 2;
+        position += movement / 100 * 2;
     }
     #endregion
 

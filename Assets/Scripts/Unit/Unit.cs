@@ -73,7 +73,8 @@ public class Unit : MonoBehaviour {
                 if (CustomSettings.instance == null)
                     CustomSettings.AssignInstance();
                 soldierInformation = new Matrix4x4[CustomSettings.instance.unitSize];
-                for (int i = 0; i < transform.childCount; i++) {
+                numberOfSoldiers = transform.childCount;
+                for (int i = 0; i < numberOfSoldiers; i++) {
 
                     SetTargetPosition(i, transform.GetChild(i).position);
 
@@ -91,13 +92,14 @@ public class Unit : MonoBehaviour {
 
                     soldierInformation[i][3, 3] = -1;
                 }
-                for (int i = transform.childCount; i < soldierInformation.Length; i++) {
+                for (int i = numberOfSoldiers; i < soldierInformation.Length; i++) {
                     RemoveSoldier(i);
                 }
             }
-            return transform.childCount;
+            return numberOfSoldiers;
         }
     }
+    int numberOfSoldiers;
 
     public Vector3 CenterPoint {
         get {
@@ -112,9 +114,9 @@ public class Unit : MonoBehaviour {
                 return bound.center;
             }
             if (BoundingBox == null) {
-                BoundingBox = new BoundingBox(transform.GetChild(0).transform.position);
-                for (int i = 1; i < transform.childCount; i ++) {
-                    BoundingBox.Encapsulate(transform.GetChild(i).position);
+                BoundingBox = new BoundingBox(GetPosition(0));
+                for (int i = 1; i < NumberOfSoldiers; i ++) {
+                    BoundingBox.Encapsulate(GetPosition(i));
                 }
                 return BoundingBox.Center;
             }
@@ -137,12 +139,13 @@ public class Unit : MonoBehaviour {
             }
     }
     private void Update() {
+        if (Time.timeScale == 0) return;
         MoveSoldiers();
 
         if (Input.GetKey(KeyCode.Space))
             RenderAllTargetPositions();
 
-        if (transform.childCount == 0 || previousStartingPoint.magnitude > 5000) {
+        if (NumberOfSoldiers == 0 || previousStartingPoint.magnitude > 5000) {
             foreach (Unit unit in currentlyFighting) {
                 unit.Defeated(this);
             }
@@ -206,7 +209,7 @@ public class Unit : MonoBehaviour {
         if (this.position == null || this.position == Vector3.zero)
             this.position = transform.position;
         try {
-            transform.GetChild(soldierNumber).transform.position = position + Vector3.up * 2;
+            transform.GetChild(soldierNumber).position = position + Vector3.up * 2;
         }
         catch (Exception e) {
             Debug.Log(transform.childCount);
@@ -293,12 +296,10 @@ public class Unit : MonoBehaviour {
             Vector3 currentSoldierVelocity = new Vector3(child[8], child[9], child[10]).normalized;
 
             int childID = (int)child[7];
-            Transform childTransform = transform.GetChild(childID);
 
 
             //sets the position to the destination if close enough
             if (Vector3.SqrMagnitude(currentSoldierPosition - currentSoldierTargetPosition) < .01f) {
-                childTransform.position = currentSoldierTargetPosition;
                 UpdateSoldierPosition(currentSoldierTargetPosition, childID);
 
                 if (!IsFacing(childID, -offsetPerRow.normalized)) {
@@ -341,7 +342,6 @@ public class Unit : MonoBehaviour {
                 //leftStuck = false;
                 //rightStuck = false;
             }
-            childTransform.position += currentSoldierVelocity / 100 * speed;
             currentSoldierPosition += currentSoldierVelocity / 100 * speed;
             UpdateSoldierPosition(currentSoldierPosition, childID);
 
@@ -354,7 +354,7 @@ public class Unit : MonoBehaviour {
     bool IsFacing(int soldierID, Vector3 direction) {
         //transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
         //Debug.Log(transform.GetChild(soldierID).forward.normalized + ", " + direction.normalized);
-        if (transform.GetChild(soldierID).forward.normalized == direction.normalized) {
+        if (GetVelocity(soldierID).normalized == direction.normalized) {
             return true;
         }
         return false;
@@ -831,7 +831,7 @@ public class Unit : MonoBehaviour {
 
             for (int i = 0; i < listOfPositions.Count; i++) {
                 for (int j = 0; j < oldSoldierPositions.Count; j++) {
-                    float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[i] - oldSoldierPositions[j]);
+                    float sqrMagnitude = (listOfPositions[i] - oldSoldierPositions[j]).sqrMagnitude;
                     if (sqrMagnitude > maxDistance) {
                         indexOfNewPosition = i;
                         maxDistance = sqrMagnitude;
@@ -842,7 +842,7 @@ public class Unit : MonoBehaviour {
             int indexOfOldPosition = -1;
             float minDistance = float.MaxValue;
             for (int i = 0; i < oldSoldierPositions.Count; i++) {
-                float sqrMagnitude = Vector3.SqrMagnitude(listOfPositions[indexOfNewPosition] - oldSoldierPositions[i]);
+                float sqrMagnitude = (listOfPositions[indexOfNewPosition] - oldSoldierPositions[i]).sqrMagnitude;
                 if (sqrMagnitude < minDistance) {
                     minDistance = sqrMagnitude;
                     indexOfOldPosition = i;
