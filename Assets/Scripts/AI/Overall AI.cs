@@ -166,6 +166,7 @@ public class OverallAI : MonoBehaviour {
                     currentWidth = 0;
                 }
             }
+            units[index].ApplyPotentials();
             units[index].NewPositions(arrayOfNewPositions.ToList());
         }
     }
@@ -246,7 +247,7 @@ public class OverallAI : MonoBehaviour {
         Vector3 distancePerUnit = distanceBetweenStartAndEndWithoutInBetweenGap / AIUnits[..(int)(AIUnits.Count() * 0.75f)].Count();
         positionsInDefendingLine = new Vector3[(int)(AIUnits.Count() * 0.75f) + 1];
         unitsInDefendingLine = new Unit[(int)(AIUnits.Count() * 0.75f) + 1];
-        notInDefendingLine = new Unit[AIUnits.Count() - ((int)(AIUnits.Count() * 0.75f) + 1)];
+        notInDefendingLine = new Unit[AIUnits.Count() - (int)(AIUnits.Count() * 0.75f) + 1];
         defendingLine = new();
 
         for (int i = 0; i <= AIUnits.Count() * 0.75; i++) {
@@ -256,14 +257,15 @@ public class OverallAI : MonoBehaviour {
         }
         for (int i = (int)(AIUnits.Count() * 0.75); i < AIUnits.Count(); i++) {
             try {
-                notInDefendingLine[i - (int)(AIUnits.Count() * 0.75) - 1] = AIUnits[i];
+                notInDefendingLine[i - (int)(AIUnits.Count() * 0.75)] = AIUnits[i];
             }
             catch (System.Exception e){
                 Debug.Log(i + ", " + (AIUnits.Count() * 0.75f));
+                Debug.Log((i - (int)(AIUnits.Count() * 0.75)));
                 Debug.Log(AIUnits.Length);
                 Debug.Log(AIUnits[i]);
                 Debug.Log(notInDefendingLine.Length);
-                Debug.Log(notInDefendingLine[i - (int)(AIUnits.Count() * 0.75) - 1]);
+                Debug.Log(notInDefendingLine[i - (int)(AIUnits.Count() * 0.75)]);
                 throw e;
             }
         }

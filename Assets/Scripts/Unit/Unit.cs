@@ -11,7 +11,20 @@ public class Unit : MonoBehaviour {
     // | current velocity x,            current velocity y,            current velocity z,            fighting unit number    |
     // ⌞ currently fighting position x, currently fighting position y, currently fighting position z, fighting soldier number ⌟
 
-    public int unitNumber;
+    public int UnitNumber {
+        get { return unitNumber; }
+        set {
+            for (int i = 0; i < soldierInformation.Length; i++) {
+                soldierInformation[i][3] = value;
+            }
+            unitNumber = value;
+        }
+    }
+
+    const int heightOfSoldiers = 21;
+
+    [SerializeField]
+    private int unitNumber;
 
     /// <summary>
     /// <para>[0, 0] == [0] = target position x       </para>
@@ -19,7 +32,7 @@ public class Unit : MonoBehaviour {
     /// <para>[2, 0] == [2] = custom grid index       </para>
     /// <para>[3. 0] == [3] = unit number             </para>
     /// <para>[0, 1] == [4] = current position x      </para>
-    /// <para>[1, 1] == [5] = current position y      </para>
+    /// <para>[1, 1] == [5] = spare      </para>
     /// <para>[2, 1] == [6] = current position z      </para>
     /// <para>[3. 1] == [7] = soldier number          </para>
     /// <para>[0, 2] == [8] =  current velocity x     </para>
@@ -70,14 +83,13 @@ public class Unit : MonoBehaviour {
 
                     soldierInformation[i][3, 1] = i;
 
-                    SetFacingDirection(i, -offsetPerRow);
+                    SetFacingDirection(i, -offsetPerRow * 100000);
 
                     soldierInformation[i][3, 2] = -1;
 
                     SetOpponentToNone(i);
 
                     soldierInformation[i][3, 3] = -1;
-                    Debug.Log(i);
                 }
                 for (int i = transform.childCount; i < soldierInformation.Length; i++) {
                     RemoveSoldier(i);
@@ -101,7 +113,7 @@ public class Unit : MonoBehaviour {
             }
             if (BoundingBox == null) {
                 BoundingBox = new BoundingBox(transform.GetChild(0).transform.position);
-                for (int i = 2; i < transform.childCount; i += 2) {
+                for (int i = 1; i < transform.childCount; i ++) {
                     BoundingBox.Encapsulate(transform.GetChild(i).position);
                 }
                 return BoundingBox.Center;
@@ -124,7 +136,7 @@ public class Unit : MonoBehaviour {
                 FindFirstObjectByType<Highlightedtargetpositions>().CreateHighlightedPosition();
             }
     }
-    private void FixedUpdate() {
+    private void Update() {
         MoveSoldiers();
 
         if (Input.GetKey(KeyCode.Space))
@@ -172,6 +184,9 @@ public class Unit : MonoBehaviour {
         targetPositionBoundingBox.ChangePoint(soldierNumber, position);
         soldierInformation[soldierNumber][0] = position.x;
         soldierInformation[soldierNumber][1] = position.z;
+
+        TryCreateTargetPositionsMatrix();
+        targetPositionsMatrixed[soldierNumber] = Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
     }
     public Vector3 GetTargetPosition(int soldierNumber) {
         return new Vector3(soldierInformation[soldierNumber][0], 0, soldierInformation[soldierNumber][1]);
@@ -191,7 +206,7 @@ public class Unit : MonoBehaviour {
         if (this.position == null || this.position == Vector3.zero)
             this.position = transform.position;
         try {
-            transform.GetChild(soldierNumber).transform.position = position + this.position + Vector3.up * 2;
+            transform.GetChild(soldierNumber).transform.position = position + Vector3.up * 2;
         }
         catch (Exception e) {
             Debug.Log(transform.childCount);
@@ -199,11 +214,10 @@ public class Unit : MonoBehaviour {
         }
 
         soldierInformation[soldierNumber][4] = position.x;
-        soldierInformation[soldierNumber][5] = position.y;
         soldierInformation[soldierNumber][6] = position.z;
     }
     public Vector3 GetPosition(int soldierNumber) {
-        return new Vector3(soldierInformation[soldierNumber][4], soldierInformation[soldierNumber][5], soldierInformation[soldierNumber][6]);
+        return new Vector3(soldierInformation[soldierNumber][4], heightOfSoldiers, soldierInformation[soldierNumber][6]);
     }
 
     //velocity
@@ -215,9 +229,9 @@ public class Unit : MonoBehaviour {
     public Vector3 GetVelocity(int soldierNumber) {
         return new Vector3(soldierInformation[soldierNumber][8], soldierInformation[soldierNumber][9], soldierInformation[soldierNumber][10]);
     }
-    void SetFacingDirection(int soldierNumber, Vector3 normalisedDirection) {
-        SetVelocity(soldierNumber, new Vector3(10000 * normalisedDirection.x, 0, 10000 * normalisedDirection.z));
-        transform.GetChild(soldierNumber).rotation = Quaternion.Euler(normalisedDirection);
+    void SetFacingDirection(int soldierNumber, Vector3 direction) {
+        SetVelocity(soldierNumber, direction);
+        transform.GetChild(soldierNumber).rotation = Quaternion.LookRotation(direction, Vector3.up);
     }
 
     //opponent position
@@ -262,64 +276,75 @@ public class Unit : MonoBehaviour {
     Vector3 airResistance;
 
     void MoveSoldiers() {
-        Vector3 currentSoldierDirectionOfMovement;
-        foreach (Matrix4x4 child in soldierInformation) {
-            if (child[8] + child[10] > 5000) return;
+        //if (selected) {
+        //    Debug.Log(soldierInformation[0][0] + ", " + soldierInformation[0][4]);
+        //}
 
-            Vector3 currentSoldierPosition = new Vector3(child[0], 21, child[1]);
-            Vector3 currentSoldierTargetPosition = new Vector3(child[4], child[5], child[6]);
-            Vector3 currentSoldierVelocity = new Vector3(child[8], child[9], child[10]);
+        if (playersUnit) {
+            //Debug.Log(IsFacing((int)soldierInformation[0][7], -offsetPerRow));
+            //Debug.Log(soldierInformation[0][0] + ", " + soldierInformation[0][4]);
+        }
+
+        foreach (Matrix4x4 child in soldierInformation) {
+            if (IsFacing((int)child[7], -offsetPerRow.normalized) && child[0] == child[4]) continue;
+
+            Vector3 currentSoldierTargetPosition = new Vector3(child[0], heightOfSoldiers, child[1]);
+            Vector3 currentSoldierPosition = new Vector3(child[4], heightOfSoldiers, child[6]);
+            Vector3 currentSoldierVelocity = new Vector3(child[8], child[9], child[10]).normalized;
 
             int childID = (int)child[7];
             Transform childTransform = transform.GetChild(childID);
 
+
             //sets the position to the destination if close enough
             if (Vector3.SqrMagnitude(currentSoldierPosition - currentSoldierTargetPosition) < .01f) {
-                childTransform.transform.position = currentSoldierTargetPosition;
-                currentSoldierPosition = currentSoldierTargetPosition;
-                UpdateSoldierPosition(currentSoldierPosition, childID);
+                childTransform.position = currentSoldierTargetPosition;
+                UpdateSoldierPosition(currentSoldierTargetPosition, childID);
+
                 if (!IsFacing(childID, -offsetPerRow.normalized)) {
                     RotateTowards(childID, currentSoldierVelocity.normalized, -offsetPerRow.normalized);
-                    return;
                 }
+                continue;
+            }
+            
+            Vector3 requiredFacingDirection = (currentSoldierTargetPosition - currentSoldierPosition).normalized;
+
+            if (!IsFacing(childID, requiredFacingDirection)) {
+                RotateTowards(childID, currentSoldierVelocity, requiredFacingDirection);
+                continue;
             }
 
             //moves towards the destination if possible, if not, tries to move around the unit in front
-            if (currentSoldierTargetPosition != currentSoldierPosition) {
-                currentSoldierDirectionOfMovement = (currentSoldierTargetPosition - currentSoldierPosition).normalized;
-                if (currentSoldierDirectionOfMovement.y != 0) Debug.Log(currentSoldierTargetPosition - currentSoldierPosition + ", " + currentSoldierTargetPosition + ", " + currentSoldierPosition);
-                if (!IsFacing(childID, currentSoldierDirectionOfMovement)) {
-                    RotateTowards(childID, currentSoldierVelocity, currentSoldierDirectionOfMovement);
-                    return;
-                }
-                if (!SoldierInPosition(currentSoldierPosition + currentSoldierVelocity / 100 * speed, childID, out Vector3 soldierInPosition) /*&& !ignoreColliders*/) {
-                    //float dotProduct = Vector3.Dot(rightDirection, soldierInPosition);
-                    //if (dotProduct < 0) {
-                    //    if (rightStuck) {
-                    //        StartCoroutine(nameof(TemporarilyIgnoreColliders));
-                    //    }
-                    //    leftStuck = true;
-                    //    currentSoldierDirectionOfMovement = rightDirection;
-                    //}
-                    //else if (dotProduct > 0) {
-                    //    if (leftStuck) {
-                    //        StartCoroutine(nameof(TemporarilyIgnoreColliders));
-                    //    }
-                    //    rightStuck = true;
-                    //    currentSoldierDirectionOfMovement = -rightDirection;
-                    //}
-                    //else {
-                    //    currentSoldierDirectionOfMovement = Vector3.zero;
-                    //}
-                }
-                else {
-                    //leftStuck = false;
-                    //rightStuck = false;
-                }
-                childTransform.position += currentSoldierDirectionOfMovement / 100 * speed;
-                currentSoldierPosition += currentSoldierDirectionOfMovement / 100 * speed;
-                UpdateSoldierPosition(currentSoldierPosition, childID);
+            if (currentSoldierVelocity.y != 0) Debug.Log(currentSoldierTargetPosition - currentSoldierPosition + ", " + currentSoldierTargetPosition + ", " + currentSoldierPosition);
+
+            if (!SoldierInPosition(currentSoldierPosition + currentSoldierVelocity / 100 * speed, childID, out Vector3 soldierInPosition) /*&& !ignoreColliders*/) {
+                //float dotProduct = Vector3.Dot(rightDirection, soldierInPosition);
+                //if (dotProduct < 0) {
+                //    if (rightStuck) {
+                //        StartCoroutine(nameof(TemporarilyIgnoreColliders));
+                //    }
+                //    leftStuck = true;
+                //    currentSoldierDirectionOfMovement = rightDirection;
+                //}
+                //else if (dotProduct > 0) {
+                //    if (leftStuck) {
+                //        StartCoroutine(nameof(TemporarilyIgnoreColliders));
+                //    }
+                //    rightStuck = true;
+                //    currentSoldierDirectionOfMovement = -rightDirection;
+                //}
+                //else {
+                //    currentSoldierDirectionOfMovement = Vector3.zero;
+                //}
             }
+            else {
+                //leftStuck = false;
+                //rightStuck = false;
+            }
+            childTransform.position += currentSoldierVelocity / 100 * speed;
+            currentSoldierPosition += currentSoldierVelocity / 100 * speed;
+            UpdateSoldierPosition(currentSoldierPosition, childID);
+
 
             if (currentSoldierVelocity.y != 0) Debug.LogWarning("movement direction y should be 0");
         }
@@ -328,7 +353,7 @@ public class Unit : MonoBehaviour {
 
     bool IsFacing(int soldierID, Vector3 direction) {
         //transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionOfMovement, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
-
+        //Debug.Log(transform.GetChild(soldierID).forward.normalized + ", " + direction.normalized);
         if (transform.GetChild(soldierID).forward.normalized == direction.normalized) {
             return true;
         }
@@ -337,10 +362,13 @@ public class Unit : MonoBehaviour {
 
 
     void RotateTowards(int soldierID, Vector3 fromDirection, Vector3 toDirection) {
-        Quaternion newRotation = Quaternion.LookRotation(Vector3.RotateTowards(fromDirection, toDirection, speedOfRotation * 0.01f, speedOfRotation * 0.01f), Vector3.up);
-        transform.GetChild(soldierID).rotation = newRotation;
+        Vector3 newRotation = Vector3.RotateTowards(fromDirection, toDirection, speedOfRotation * 0.01f, speedOfRotation * 0.01f);
 
-        SetFacingDirection(soldierID, newRotation * Vector3.forward);
+        if ((newRotation - toDirection).sqrMagnitude < 0.1) {
+            newRotation = toDirection;
+        }
+
+        SetFacingDirection(soldierID, newRotation * 10000);
     }
 
     #endregion
@@ -353,7 +381,27 @@ public class Unit : MonoBehaviour {
     Material material;
     void RenderAllTargetPositions() {
         RenderParams renderParams = new(material);
-        Graphics.RenderMeshInstanced(renderParams, capsuleMesh, 0, targetPositionsMatrixed); // <- figure ts out
+        TryCreateTargetPositionsMatrix();
+        try {
+            Graphics.RenderMeshInstanced(renderParams, capsuleMesh, 0, targetPositionsMatrixed); // <- figure ts out
+        }
+        catch (Exception e) {
+            Debug.Log(material);
+            Debug.Log(renderParams);
+            Debug.Log(capsuleMesh);
+            Debug.Log(targetPositionsMatrixed);
+            throw e;
+        }
+    }
+
+    void TryCreateTargetPositionsMatrix() {
+        if (targetPositionsMatrixed == null || targetPositionsMatrixed.Length != soldierInformation.Where(x => !float.IsNaN(x[0])).Count()) {
+            targetPositionsMatrixed = new Matrix4x4[soldierInformation.Where(x => !float.IsNaN(x[0])).Count()];
+            for (int i = 0; i < targetPositionsMatrixed.Length; i++) {
+                Matrix4x4 soldier = soldierInformation[i];
+                targetPositionsMatrixed[i] = Matrix4x4.TRS(position + new Vector3(soldier[0], 20, soldier[1]), Quaternion.identity, Vector3.one * 5);
+            }
+        }
     }
 
     #endregion
@@ -436,14 +484,24 @@ public class Unit : MonoBehaviour {
             for (int i = 0; i < NumberOfSoldiers; i++) {
                 //set current position
                 SetPosition(i, transform.GetChild(i).position);
+                BoundingBox.Encapsulate(transform.GetChild(i).transform.position);
 
                 //set target position
-                soldierInformation[i][0, 0] = transform.GetChild(i).position.x;
-                soldierInformation[i][1, 0] = transform.GetChild(i).position.y;
-                soldierInformation[i][2, 0] = transform.GetChild(i).position.z;
-                BoundingBox.Encapsulate(transform.GetChild(i * 2).transform.position);
-            }
+                SetTargetPosition(i, transform.GetChild(i).position);
 
+                SetOpponentToNone(i);
+
+                soldierInformation[i][7] = i;
+
+                SetFacingDirection(i, -offsetPerRow * 10000);
+
+                soldierInformation[i][3] = unitNumber;
+            }
+        }
+        if (BoundingBox.UpperBound == BoundingBox.LowerBound) { 
+            for (int i = 0; i < NumberOfSoldiers; i++) {
+                BoundingBox.Encapsulate(GetPosition(i));
+            }
         }
     }
 
@@ -476,7 +534,7 @@ public class Unit : MonoBehaviour {
         BoundingBox.RemovePoint(indexInList);
         TargetPositionBoundingBox.RemovePoint(indexInList);
         for (int i = indexInList; i < NumberOfSoldiers; i++) {
-            CustomGrid.instance.RemoveOneFromIndex(soldierInformation[indexInList]. ); //the grid index of this solduier
+            CustomGrid.instance.RemoveOneFromIndex((int)soldierInformation[i][2]);
             soldierInformation[i][7]--;
         }
 
@@ -493,7 +551,14 @@ public class Unit : MonoBehaviour {
     public void UpdateSoldierPosition(Vector3 position, int soldierID) {
         CustomGrid.instance.UpdateSoldierPosition((unitNumber, soldierID));
         SetPosition(soldierID, position);
-        BoundingBox.ChangePoint(soldierID, position);
+        try {
+            BoundingBox.ChangePoint(soldierID, position);
+        }
+        catch (Exception e){
+            Debug.Log(soldierID);
+            BoundingBox.LogInfo();
+            throw e;
+        }
         OverallAI.instance.UpdateUnitPosition(BoundingBox.Center, AIIndex, playersUnit);
     }
 
@@ -742,7 +807,7 @@ public class Unit : MonoBehaviour {
         try {
             soldierIndex = soldierInformation.VariableFromClasses(x => (int)x[7]).OfType<int>().ToList();
         }
-        catch (Exception e){
+        catch (Exception e) {
             Debug.Log(string.Join(", ", soldierInformation.VariableFromClasses(x => ((int)x[7]))));
             throw e;
         }
@@ -750,7 +815,7 @@ public class Unit : MonoBehaviour {
         //Debug.Log(string.Join(' ', soldierInformation.VariableFromClasses(x => x[7]).OfType<int>()));
         //Debug.Log(string.Join(' ', soldierInformation.VariableFromClasses(x => (int)x[7]).OfType<int>()));
         foreach (Matrix4x4 soldier in soldierInformation) {
-            oldSoldierPositions.Add(new Vector3(soldier[4], soldier[5], soldier[6]));
+            oldSoldierPositions.Add(new Vector3(soldier[4], heightOfSoldiers, soldier[6]));
             oldTargetPositions.Add(new Vector3(soldier[0], 0, soldier[1]));
 
         }
@@ -828,7 +893,7 @@ public class Unit : MonoBehaviour {
         int currentRowIndex = 0;
         Vector3 FirstPosition = (Vector3.forward + Vector3.right) / 2;
         for (int i = 0; i < NumberOfSoldiers; i++) {
-            Vector3 positionOfThisSoldier = FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
+            Vector3 positionOfThisSoldier = position + FirstPosition + offsetPerRow * currentRowIndex + offsetPerTroop * currentWidthIndex;
 
             //Debug.Log(positionOfThisSoldier); 
             InstantSetPosition(i, positionOfThisSoldier);
@@ -846,7 +911,6 @@ public class Unit : MonoBehaviour {
             CustomSettings.AssignInstance();
         }
         if (soldierInformation == null || soldierInformation.Length != CustomSettings.instance.unitSize) {
-            Debug.Log("resetting soldierInformation");
             soldierInformation = null;
             try {
                 Debug.Log(NumberOfSoldiers);
@@ -905,7 +969,7 @@ public class Unit : MonoBehaviour {
             soldierInformation[childCount][3] = unitNumber;
             SetPosition(childCount, Vector3.zero);
             soldierInformation[childCount][7] = childCount;
-            SetFacingDirection(childCount, -offsetPerRow);
+            SetFacingDirection(childCount, -offsetPerRow * 10000);
             SetOpponent(childCount, Vector3.positiveInfinity, -1, -1);
         }
         catch (Exception e) {

@@ -23,7 +23,8 @@ public class AssignUnitNumber : MonoBehaviour {
             units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
             int count = 0;
             foreach (Unit unit in units) {
-                unit.unitNumber = count;
+                //Debug.Log(count);
+                unit.UnitNumber = count;
                 count++;
             }
         }
