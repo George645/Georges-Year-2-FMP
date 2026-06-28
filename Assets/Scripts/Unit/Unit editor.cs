@@ -21,6 +21,7 @@ public class Uniteditor : Editor {
     }
     void HasSoldierCountChanged() {
         int priorSoldierCount = soldierCount.intValue;
+        if (soldierCount.intValue > ((Unit)(target)).transform.childCount) soldierCount.intValue = ((Unit)(target)).transform.childCount;
         EditorGUILayout.IntSlider(soldierCount, 0, 180);
         if (priorSoldierCount != soldierCount.intValue) {
             ((Unit)target).SetSoldierCount(soldierCount.intValue);

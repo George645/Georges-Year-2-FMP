@@ -29,8 +29,8 @@ public class GridEditor : Editor {
         SoldierSquareIndex = serializedObject.FindProperty("soldierSquareIndex");
 
         UnitGridSize = serializedObject.FindProperty("unitGridWidthCount");
-        DisplayUnitGrid = serializedObject.FindProperty("displayUnitGrid");
-        UnitGrid = serializedObject.FindProperty("unitGrid");
+        //DisplayUnitGrid = serializedObject.FindProperty("displayUnitGrid");
+        //UnitGrid = serializedObject.FindProperty("unitGrid");
         SoldierGridSize = serializedObject.FindProperty("soldierGridWidthCount");
         DisplaySoldierGrid = serializedObject.FindProperty("displaySoldierGrid");
         SoldierGrid = serializedObject.FindProperty("soldierGrid");
@@ -41,15 +41,15 @@ public class GridEditor : Editor {
     public override void OnInspectorGUI() {
         TotalSizeOfMap.intValue = EditorGUILayout.IntField(TotalSizeOfMap.displayName, TotalSizeOfMap.intValue);
 
-        int priorUnitGridSize = UnitGridSize.intValue;
+        //int priorUnitGridSize = UnitGridSize.intValue;
         int priorSoldierGridSize = SoldierGridSize.intValue;
 
-        UnitGridSize.intValue = EditorGUILayout.IntField(UnitGridSize.displayName, UnitGridSize.intValue);
-        DisplayUnitGrid.boolValue = EditorGUILayout.Toggle(DisplayUnitGrid.displayName, DisplayUnitGrid.boolValue);
+        //UnitGridSize.intValue = EditorGUILayout.IntField(UnitGridSize.displayName, UnitGridSize.intValue);
+        //DisplayUnitGrid.boolValue = EditorGUILayout.Toggle(DisplayUnitGrid.displayName, DisplayUnitGrid.boolValue);
 
-        if (UnitGridSize.intValue != priorUnitGridSize) {
-            //maybe do something, not sure yet
-        }
+        //if (UnitGridSize.intValue != priorUnitGridSize) {
+        //    //maybe do something, not sure yet
+        //}
 
 
         SoldierGridSize.intValue = EditorGUILayout.IntField(SoldierGridSize.displayName, SoldierGridSize.intValue);
@@ -58,8 +58,8 @@ public class GridEditor : Editor {
         if (SoldierGridSize.intValue != priorSoldierGridSize) {
             //maybe do something, not sure yet
         }
-        EditorGUILayout.PropertyField(UnitReferences);
-        EditorGUILayout.PropertyField(UnitSquareIndex);
+        //EditorGUILayout.PropertyField(UnitReferences);
+        //EditorGUILayout.PropertyField(UnitSquareIndex);
         if (SoldierReferences != null) {
             EditorGUILayout.PropertyField(SoldierReferences);
             EditorGUILayout.PropertyField(SoldierSquareIndex);

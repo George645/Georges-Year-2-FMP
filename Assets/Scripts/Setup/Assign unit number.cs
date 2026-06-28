@@ -31,7 +31,13 @@ public class AssignUnitNumber : MonoBehaviour {
     }
 
     public Unit GetUnit(int unitNumber) {
-        return units[unitNumber];
+        try {
+            return units[unitNumber];
+        }
+        catch (System.Exception e) {
+            Debug.Log(unitNumber);
+            throw e;
+        }
     }
 
     /// <summary>
